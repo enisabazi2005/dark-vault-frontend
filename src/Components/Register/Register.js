@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import styles from "../Register/Register.css";
 import { Link } from "react-router-dom";
-import { redirect } from "react-router-dom";
-import { BrowserRouter } from "react-router-dom";
-import App from "../../App";
 
 const Register = () => {
     const [formData, setFormData] = useState({

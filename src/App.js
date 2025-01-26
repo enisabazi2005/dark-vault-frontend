@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-import api from "./api";
-import styles from "./App.css";
+import React, { useEffect } from "react";
 import Register from "./Components/Register/Register";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Components/Login/Login";

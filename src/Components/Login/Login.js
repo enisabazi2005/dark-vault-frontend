@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-// import styles from "../Login/Login.css";
-import styles from "../Login/Login.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 const Login = () => {
     const [formData, setFormData] = useState({
