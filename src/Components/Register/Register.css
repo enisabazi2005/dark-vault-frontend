@@ -1,0 +1,226 @@
+/* Global reset to ensure box-sizing is applied to all elements */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.container-layout {
+    width: 100%;
+    max-width: 600px;
+    margin: 30px auto;
+    /* Keep margin on the container */
+    padding: 20px;
+    /* You can adjust padding as needed */
+    background-color: #17181E;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container-layout h2 {
+    color: #FFFFFF;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 40px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 20px;
+    padding: 5px;
+}
+
+.row .col {
+    flex-basis: 50%;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 7px;
+}
+
+input,
+select {
+    border: 3px solid #30303D;
+    border-radius: 18px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    background-color: transparent;
+    color: #FFFFFF;
+    font-weight: 400;
+    outline: none;
+    width: 100%;
+    /* Ensures full width */
+    padding: 12px 14px;
+    line-height: 1.5;
+    /* Ensures placeholder stays vertically centered */
+}
+
+option {
+    color: #17181E;
+}
+
+::placeholder {
+    color: #FFFFFF;
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    font-weight: 500;
+}
+
+button {
+    padding: 12px;
+    background-image: linear-gradient(to right, #B72EB2, #DF6ABA);
+    color: white;
+    border: none;
+    border-radius: 13px;
+    font-size: 16px;
+    outline: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.sphereBlack {
+    width: 120px;
+    height: 109px;
+    background: radial-gradient(circle at 30% 30%, rgba(128, 128, 128, 0.5), rgba(50, 50, 50, 0.8), rgba(0, 0, 0, 0.9));
+    border-radius: 50%;
+    position: absolute;
+    top: 95px;
+    right: 300px;
+}
+
+.sphere {
+    width: 200px;
+    height: 179px;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 140, 255, 0.9), rgba(170, 80, 200, 0.9), rgba(100, 50, 140, 0.9));
+    border-radius: 50%;
+    position: absolute;
+    top: -44px;
+    left: 300px;
+}
+
+.textLink {
+    margin-top: 20px;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.textLink a {
+    color: #FFFFFF;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.textLink a:hover {
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+@media (max-width:768px) {
+    .sphere {
+        width: 183px;
+        height: 162px;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 140, 255, 0.9), rgba(170, 80, 200, 0.9), rgba(100, 50, 140, 0.9));
+        border-radius: 50%;
+        position: absolute;
+        top: -43px;
+        left: 1px;
+    }
+    .sphereBlack {
+        width: 120px;
+        height: 109px;
+        background: radial-gradient(circle at 30% 30%, rgba(128, 128, 128, 0.5), rgba(50, 50, 50, 0.8), rgba(0, 0, 0, 0.9));
+        border-radius: 50%;
+        position: absolute;
+        top: 37px;
+        right: 7px;
+    }
+}
+
+@media only screen and (min-width:769px) and (max-width:991px) {
+    .sphere {
+        width: 200px;
+        height: 179px;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 140, 255, 0.9), rgba(170, 80, 200, 0.9), rgba(100, 50, 140, 0.9));
+        border-radius: 50%;
+        position: absolute;
+        top: -52px;
+        left: 1px;
+    }
+    .sphereBlack {
+        width: 120px;
+        height: 109px;
+        background: radial-gradient(circle at 30% 30%, rgba(128, 128, 128, 0.5), rgba(50, 50, 50, 0.8), rgba(0, 0, 0, 0.9));
+        border-radius: 50%;
+        position: absolute;
+        top: 28px;
+        right: 50px;
+    }
+}
+
+@media only screen and (min-width:992px) and (max-width:1023px) {
+    .sphere {
+        width: 200px;
+        height: 179px;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 140, 255, 0.9), rgba(170, 80, 200, 0.9), rgba(100, 50, 140, 0.9));
+        border-radius: 50%;
+        position: absolute;
+        top: -47px;
+        left: 27px;
+    }
+    .sphereBlack {
+        width: 120px;
+        height: 109px;
+        background: radial-gradient(circle at 30% 30%, rgba(128, 128, 128, 0.5), rgba(50, 50, 50, 0.8), rgba(0, 0, 0, 0.9));
+        border-radius: 50%;
+        position: absolute;
+        top: 119px;
+        right: 70px;
+    }
+    .container-layout {
+        margin: 143px auto;
+    }
+}
+
+@media only screen and (min-width:1024px) {
+    .sphere {
+        width: 200px;
+        height: 179px;
+        background: radial-gradient(circle at 30% 30%, rgba(255, 140, 255, 0.9), rgba(170, 80, 200, 0.9), rgba(100, 50, 140, 0.9));
+        border-radius: 50%;
+        position: absolute;
+        top: -49px;
+        left: 20px;
+    }
+    .sphereBlack {
+        width: 120px;
+        height: 109px;
+        background: radial-gradient(circle at 30% 30%, rgba(128, 128, 128, 0.5), rgba(50, 50, 50, 0.8), rgba(0, 0, 0, 0.9));
+        border-radius: 50%;
+        position: absolute;
+        top: 110px;
+        right: 300px;
+    }
+    .container-layout {
+        margin: 123px auto;
+    }
+}

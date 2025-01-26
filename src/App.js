@@ -1,28 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import api from './api';  // Import the Axios instance
+import React, { useState, useEffect } from "react";
+import api from "./api";
+import styles from "./App.css";
+import Register from "./Components/Register/Register";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./Components/Login/Login";
 
 const App = () => {
-  const [data, setData] = useState(null);
+    useEffect(() => {
+        // Check if the current page is the root (localhost:3000)
+        if (window.location.pathname === "/") {
+            window.location.href = "/login"; // Redirect to login
+        }
+    }, []); // This hook runs only once when the app first loads
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get("api/test");  // API call
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data", error);
-      }
-    };
-
-    fetchData();
-  }, []);  // Empty dependency array to run this once on mount
-
-  return (
-    <div>
-      <h1>API Response</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
-  );
+    return ( <
+        div className = "container" >
+        <
+        Router >
+        <
+        Routes >
+        <
+        Route path = "/register"
+        element = { < Register / > }
+        />{" "} <
+        Route path = "/login"
+        element = { < Login / > }
+        />{" "} <
+        /Routes>{" "} <
+        /Router>{" "} <
+        /div>
+    );
 };
 
 export default App;
