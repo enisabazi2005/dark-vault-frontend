@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Register from "./Components/Register/Register";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Components/Login/Login";
-
+import "./App.css";
 const App = () => {
     useEffect(() => {
         // Check if the current page is the root (localhost:3000)
