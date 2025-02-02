@@ -1,0 +1,118 @@
+/* Sidebar styles */
+#default-sidebar {
+    width: 256px; /* Sidebar width */
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: #f8f9fa; /* Light background */
+    transition: transform 0.3s ease-in-out;
+    z-index: 40;
+  }
+  
+  #default-sidebar.dark {
+    background-color: #343a40; /* Dark mode background */
+  }
+  
+  #default-sidebar .h-full {
+    padding: 16px;
+    overflow-y: auto;
+  }
+  
+  #default-sidebar ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+  }
+  
+  #default-sidebar ul li {
+    margin-bottom: 16px;
+  }
+  
+  #default-sidebar ul li a {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  #default-sidebar ul li a:hover {
+    background-color: #e2e6ea; /* Hover background color */
+  }
+  
+  #default-sidebar ul li a.dark:hover {
+    background-color: #495057; /* Hover color in dark mode */
+  }
+  
+  /* Icon styles */
+  #default-sidebar ul li a svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    transition: fill 0.3s ease;
+  }
+  
+  #default-sidebar ul li a:hover svg {
+    fill: #007bff; /* Icon color change on hover */
+  }
+  
+  #default-sidebar ul li a span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  /* Badge style */
+  #default-sidebar ul li a .inline-flex {
+    padding: 3px 10px;
+    font-size: 12px;
+    background-color: #d6d8db; /* Badge background */
+    color: #495057; /* Badge text color */
+    border-radius: 9999px;
+    margin-left: 12px;
+  }
+  
+  #default-sidebar ul li a:hover .inline-flex {
+    background-color: #007bff; /* Badge background on hover */
+    color: #ffffff;
+  }
+  
+  #default-sidebar ul li a.dark .inline-flex {
+    background-color: #495057;
+    color: #d6d8db;
+  }
+  
+  /* Responsiveness for small screens */
+  @media (max-width: 768px) {
+    #default-sidebar {
+      width: 240px;
+    }
+  }
+
+  main {
+    padding: 20px;
+    margin-left: 256px; /* Sidebar width */
+  }
+  
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 20px;
+        place-items: center;
+    }
+    
+    .grid > div {
+        display: flex; /* Using flexbox */
+        justify-content: center; /* Centers horizontally */
+        align-items: center; /* Centers vertically */
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        flex-direction: column;
+      }
+      

@@ -135,6 +135,41 @@ input[type="number"] {
     font-weight: 600;
 }
 
+/* Success Modal Style */
+.success-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #28a745;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Adding shadow */
+    font-size: 16px;
+    z-index: 3; /* Ensure modal is on top */
+    animation: fadeInOut 2s ease-out;
+  }
+  
+  /* Blur Effect for the Register Page Background */
+  .register-container-blur {
+    filter: blur(5px); /* Apply blur to the background */
+    pointer-events: none; /* Prevent interaction with the blurred background */
+  }
+  
+  /* Animation for Modal Fade In/Out */
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  
 @media (max-width:768px) {
     .sphere {
         width: 183px;
@@ -196,9 +231,6 @@ input[type="number"] {
         top: 119px;
         right: 70px;
     }
-    .container-layout {
-        margin: 143px auto;
-    }
 }
 
 @media only screen and (min-width:1024px) {
@@ -219,8 +251,5 @@ input[type="number"] {
         position: absolute;
         top: 110px;
         right: 300px;
-    }
-    .container-layout {
-        margin: 123px auto;
     }
 }
