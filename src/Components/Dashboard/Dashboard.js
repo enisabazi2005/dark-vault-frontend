@@ -13,16 +13,74 @@ import React, { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
-
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const location = useLocation();
+  const [totalStored, setTotalStored] = useState(0);
+  const MAX_STORAGE = 100;
 
+  const [data, setData] = useState([
+    { id: 0, value: 0, label: "Passwords" },
+    { id: 1, value: 0, label: "Emails" },
+    { id: 2, value: 0, label: "Private Info" },
+    { id: 3, value: 0, label: "Notes" },
+  ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [passwordsRes, emailsRes, privateInfosRes, notesRes] =
+          await Promise.all([
+            api.get("/store-passwords"),
+            api.get("/store-emails"),
+            api.get("/store-private-infos"),
+            api.get("/store-notes"),
+          ]);
+
+        const passwordsCount = passwordsRes.data.length;
+        const emailsCount = emailsRes.data.length;
+        const privateInfosCount = privateInfosRes.data.length;
+        const notesCount = notesRes.data.length;
+
+        const total =
+          passwordsCount + emailsCount + privateInfosCount + notesCount;
+        if (total === 0) return;
+        setTotalStored(total);
+
+        setData([
+          {
+            id: 0,
+            value: (passwordsCount / total) * 100,
+            label: "Passwords",
+          },
+          {
+            id: 1,
+            value: (emailsCount / total) * 100,
+            label: "Emails",
+          },
+          {
+            id: 2,
+            value: (privateInfosCount / total) * 100,
+            label: "Private Info",
+          },
+          {
+            id: 3,
+            value: (notesCount / total) * 100,
+            label: "Notes",
+          },
+        ]);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userId = localStorage.getItem("user_id"); 
+        const userId = localStorage.getItem("user_id");
         const token = localStorage.getItem("token");
 
         if (!userId || !token) {
@@ -36,7 +94,7 @@ const Dashboard = () => {
           },
         });
 
-        setUser(response.data); 
+        setUser(response.data);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -138,7 +196,7 @@ const Dashboard = () => {
             </li>
             <li>
               <Link
-                to="#"
+                to="private-info"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <svg
@@ -157,7 +215,7 @@ const Dashboard = () => {
             </li>
             <li>
               <Link
-                to="#"
+                to="store-notes"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 <svg
@@ -181,56 +239,47 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="ml-64 p-6 bg-gray-100 w-full">
         <Outlet />
-       {location.pathname === '/dashboard' && (
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-         {/* Content Boxes */}
-         <div className="bg-white p-4 rounded-lg shadow-lg">
-           <PieChart
-             series={[
-               {
-                 data: [
-                   { id: 0, value: 10, label: "Passwords" },
-                   { id: 1, value: 15, label: "Emails" },
-                   { id: 2, value: 20, label: "Private Info" },
-                   { id: 3, value: 40, label: "Notes" },
-                 ],
-               },
-             ]}
-             width={400}
-             height={200}
-           />
-         </div>
+        {location.pathname === "/dashboard" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Content Boxes */}
+            <div className="bg-white p-4 rounded-lg shadow-lg">
+              {data.length === 0 || data.every((item) => item.value === 0) ? (
+                <p>Nothing is stored yet</p>
+              ) : (
+                <PieChart series={[{ data }]} width={400} height={200} />
+              )}
+            </div>
 
-         <div className="bg-white p-4 rounded-lg shadow-lg">
-           <GaugeContainer
-             width={200}
-             height={200}
-             startAngle={-110}
-             endAngle={110}
-             value={30}
-           >
-             <GaugeReferenceArc />
-             <GaugeValueArc />
-             <GaugePointer />
-           </GaugeContainer>
-           <p>Total Password Saved based on your storage</p>
-         </div>
+            <div className="bg-white p-4 rounded-lg shadow-lg">
+              <GaugeContainer
+                width={200}
+                height={200}
+                startAngle={-110}
+                endAngle={110}
+                value={(totalStored / MAX_STORAGE) * 100}
+              >
+                <GaugeReferenceArc />
+                <GaugeValueArc />
+                <GaugePointer />
+              </GaugeContainer>
+              <p>Total stored entities saved based on your storage</p>
+            </div>
 
-         <div className="bg-white p-4 rounded-lg shadow-lg">
-           <h2 className="text-xl font-semibold">
-             Welcome Back{" "}
-             <span>
-               {user ? `${user.name} ${user.lastname}` : "Loading..."}
-             </span>
-           </h2>
-           <p>We missed your presence...</p>
-         </div>
-         <div className="bg-white p-4 rounded-lg shadow-lg">
-           <h2 className="text-xl font-semibold">Store anything you want</h2>
-           <p>100% encrypted end-to-end</p>
-         </div>
-       </div>
-       )}
+            <div className="bg-white p-4 rounded-lg shadow-lg">
+              <h2 className="text-xl font-semibold">
+                Welcome Back{" "}
+                <span>
+                  {user ? `${user.name} ${user.lastname}` : "Loading..."}
+                </span>
+              </h2>
+              <p>We missed your presence...</p>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-lg">
+              <h2 className="text-xl font-semibold">Store anything you want</h2>
+              <p>100% encrypted end-to-end</p>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );
