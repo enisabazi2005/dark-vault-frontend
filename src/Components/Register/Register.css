@@ -44,8 +44,8 @@
     padding: 10px 7px;
 }
 
-input,
-select {
+.inputs,
+.selects {
     border: 3px solid #30303D;
     border-radius: 18px;
     margin-bottom: 10px;
@@ -74,7 +74,7 @@ option {
     font-weight: 500;
 }
 
-button {
+.registerButton {
     padding: 12px;
     background-image: linear-gradient(to right, #B72EB2, #DF6ABA);
     color: white;

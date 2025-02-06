@@ -83,6 +83,16 @@
     background-color: #495057;
     color: #d6d8db;
   }
+
+  .sign-out-list { 
+    margin: 300px 0;
+  }
+  .log-out { 
+    background-color: transparent !important;
+    background-image: none;
+    color: #495057 !important;
+    font-size: 14px !important;
+  }
   
   /* Responsiveness for small screens */
   @media (max-width: 768px) {

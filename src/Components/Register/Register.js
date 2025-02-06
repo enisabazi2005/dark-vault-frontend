@@ -85,30 +85,30 @@ const Register = () => {
       )}
 
       <form onSubmit={handleSubmit} className="form">
-        <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Name" required />
-        <input type="text" name="lastname" value={formData.lastname} onChange={handleChange} placeholder="Lastname" required />
-        <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="E-mail" required />
-        <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" required />
+        <input className="inputs" type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Name" required />
+        <input className="inputs" type="text" name="lastname" value={formData.lastname} onChange={handleChange} placeholder="Lastname" required />
+        <input className="inputs" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="E-mail" required />
+        <input className="inputs" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" required />
 
         <div className="row">
           <div className="col">
-            <select name="gender" value={formData.gender} onChange={handleChange} required>
+            <select className="selects" name="gender" value={formData.gender} onChange={handleChange} required>
               <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
           </div>
           <div className="col">
-            <input type="number" name="age" value={formData.age} onChange={handleChange} placeholder="Age" required />
+            <input className="inputs" type="number" name="age" value={formData.age} onChange={handleChange} placeholder="Age" required />
           </div>
         </div>
 
         <div className="row">
           <div className="col">
-            <input type="file" name="picture" onChange={handleChange} accept="image/*" />
+            <input className="inputs" type="file" name="picture" onChange={handleChange} accept="image/*" />
           </div>
           <div className="col">
-            <input type="date" name="birthdate" value={formData.birthdate} onChange={handleChange} required />
+            <input className="inputs" type="date" name="birthdate" value={formData.birthdate} onChange={handleChange} required />
           </div>
         </div>
 
