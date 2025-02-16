@@ -24,5 +24,6 @@ api.interceptors.request.use(
   }
 );
 
+export const STORAGE_URL = "http://127.0.0.1:8000/storage";
 
 export default api;

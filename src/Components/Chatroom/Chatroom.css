@@ -1,0 +1,119 @@
+.full-width-layout {
+    width: 100%;
+  }
+  
+  .full-width-layout .row-layout {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 15px 0;
+    padding: 20px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 100%;
+    column-gap: 10px;
+    overflow: visible !important; /* FIX: Ensures dropdown isn't hidden */
+  }
+  
+  .full-width-layout .row-layout .col-50 {
+    position: relative;
+    flex-basis: 50%;
+    padding: 15px;
+    /* border: 1px solid black; */
+    min-height: 150px; /* FIX: Gives space for dropdown */
+  }
+  
+  .full-width-layout .row-layout .col-50 .search-layout {
+    position: relative;
+    width: 100%;
+    padding-bottom: 50px; /* FIX: Makes sure dropdown fits */
+  }
+  
+  .full-width-layout .row-layout .col-50 .search-layout input {
+    padding: 10px;
+    border-radius: 10px;
+    outline: none;
+    border: 1px solid black;
+    width: 100%;
+    font-size: 17px;
+    color: black;
+  }
+  
+  /* Move dropdown inside the col-50 */
+  .dropdown {
+    width: 100%;
+    background: rgb(67, 65, 65);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    color: #ccc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    margin-top: 5px; /* Adds spacing */
+  }
+  
+  .dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .dropdown-item:hover {
+    background: #f4f4f4;
+  }
+  
+  .user-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Style for the user picture */
+  .user-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  
+  .user-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  /* Style for the user details */
+  .user-details {
+    text-align: center;
+  }
+  
+  .user-details p {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Style for the add friend button */
+  .add-friend-btn {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .add-friend-btn:hover {
+    background-color: #0056b3;
+  }

@@ -4,6 +4,7 @@ import StorePassword from "../StorePassword/Password";
 import StoreEmail from "../StoreEmail/Email";
 import PrivateInfo from "../PrivateInfo/PrivateInfo";
 import Notes from "../StoreNotes/Notes";
+import Chatroom from "../Chatroom/Chatroom";
 
 const AppRoutes  = () => {
   return (
@@ -14,6 +15,7 @@ const AppRoutes  = () => {
         <Route path='/store-email' element={<StoreEmail />} />
         <Route path='/private-info' element={<PrivateInfo />} />
         <Route path='/store-notes' element={<Notes />} />
+        <Route path='/chatroom' element={<Chatroom />} />
       </Routes>
     </Router>
   );
