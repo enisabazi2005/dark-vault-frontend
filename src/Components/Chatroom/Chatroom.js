@@ -4,6 +4,8 @@ import api from "../../api";
 import { STORAGE_URL } from "../../api";
 import Pusher from "pusher-js";
 import Echo from "laravel-echo";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const Chatroom = () => {
   const [users, setUsers] = useState([]);
@@ -14,8 +16,9 @@ const Chatroom = () => {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [friendRequestSent, setFriendRequestSent] = useState(false);
-  const [message, setMessage] = useState(""); // State for message input
-  const [messages, setMessages] = useState([]); // Default to an empty array
+  const [message, setMessage] = useState(""); 
+  const [messages, setMessages] = useState([]); 
+  const [isOpen, setIsOpen] = useState(false);
 
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
@@ -32,28 +35,22 @@ const Chatroom = () => {
         const response = await api.get(
           `/messages/${userId}/${selectedUser.id}`
         );
-        // const senderRequestId = [];
-        // const receiverRequestId = [];
         const messages = [];
 
-        // Loop through the response data to extract sender_id, receiver_id, and message
         response.data.forEach((message) => {
           senderRequestId.push(message.sender_id);
           recieverRequestId.push(message.receiver_id);
           messages.push(message.message);
         });
 
-        // Now you have your separated arrays
         console.log(senderRequestId, recieverRequestId, messages);
 
-        // Set your state here to update the UI or use these variables further
-        setMessages(messages); // Assuming you only need to display messages
-        // Optionally set sender and receiver IDs as needed
+        setMessages(messages); 
         setSenderRequestId(senderRequestId);
         setRecieverReqeustId(recieverRequestId);
       } catch (error) {
         console.error("Error fetching messages:", error);
-        setMessages([]); // Clear messages on error
+        setMessages([]); 
       }
     };
 
@@ -65,7 +62,6 @@ const Chatroom = () => {
       console.error("Request ID is not available");
       return;
     }
-    // Laravel Echo setup to listen for the new message event
     const echo = new Echo({
       broadcaster: "pusher",
       key: "5fa2841f32689bcde49e",
@@ -73,18 +69,16 @@ const Chatroom = () => {
       forceTLS: true,
     });
 
-    // Listen for new messages on the user's channel
     echo
       .channel(`chatroom.${requestId}`)
       .listen("App\\Events\\NewMessage", (data) => {
         console.log("Received new message:", data);
 
-        // Append the new message to the existing messages list
         setMessages((prevMessages) => {
           const updatedMessages = [
             ...prevMessages,
             {
-              message: data.message.message, // Assuming 'message' is inside the 'data' object
+              message: data.message.message, 
               sender_id: data.message.sender_id,
               reciever_id: data.message.reciever_id,
               dark_users_id: data.dark_users_id,
@@ -97,7 +91,6 @@ const Chatroom = () => {
 
     return () => {
       echo.leaveChannel(`chatroom.${requestId}`);
-      // echo.leaveChannel(`chatroom.${selectedUser.request_id}`);
     };
   }, [requestId, requestId]);
 
@@ -119,9 +112,8 @@ const Chatroom = () => {
         message: message,
         dark_users_id: userId,
       });
-      console.log("API Response:", response.data); // Check API response
+      console.log("API Response:", response.data); 
 
-      // Optimistically update the messages list
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -131,7 +123,7 @@ const Chatroom = () => {
           dark_users_id: userId,
         },
       ]);
-      setMessage(""); // Clear the input after sending
+      setMessage(""); 
       console.log(response, "this is response");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -212,7 +204,6 @@ const Chatroom = () => {
           )
         );
 
-        // Refresh the friends list
         const fetchFriends = async () => {
           try {
             const response = await api.get(
@@ -271,23 +262,32 @@ const Chatroom = () => {
     setFilteredUsers(filtered);
   };
 
-  const handleSelectUser = (user) => {
+  const handleSelectUser = (user, isFriendSelection = false) => {
     setSelectedUser(user);
+
+    if (isFriendSelection) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false); 
+    }
+  };
+
+  const handleCloseChat = () => {
+    setSelectedUser(null);
+    setIsOpen(null);
   };
 
   const isFriend = (userId) => {
-    // Check if friends is an array
     if (Array.isArray(friends)) {
       return friends.some((friend) => friend.request_id === userId);
     }
-    // If not an array, return false (no friends)
     return false;
   };
 
-  // console.log(messages);
-  messages.map((msg, index) => {
-    console.log(msg, index);
-  });
+  const sortedMessages = messages.sort(
+    (a, b) => new Date(a.created_at) - new Date(b.created_at)
+  );
+
   return (
     <div className="full-width-layout">
       <div className="row-layout">
@@ -309,7 +309,7 @@ const Chatroom = () => {
                 <li
                   key={index}
                   className="dropdown-item"
-                  onClick={() => handleSelectUser(user)}
+                  onClick={() => handleSelectUser(user, false)} 
                 >
                   {user.name} {user.lastname} ({user.email})
                 </li>
@@ -403,7 +403,7 @@ const Chatroom = () => {
               {friends.map((friend, index) => (
                 <li
                   key={index}
-                  onClick={() => handleSelectUser(friend)}
+                  onClick={() => handleSelectUser(friend, true)} 
                   style={{ cursor: "pointer" }}
                 >
                   {friend.name} {friend.lastname} ({friend.email})
@@ -415,53 +415,66 @@ const Chatroom = () => {
           )}
         </div>
       </div>
-
-      {selectedUser && messages && (
-  <div className="chat-layout">
-    <div className="chat-window">
-      <div className="messages">
-        {messages.length > 0 ? (
-          messages.map((msg, index) => {
-            console.log("Message Content:", msg); // Check content of the message
-
-            const userRequestId = localStorage.getItem("request_id");
-            console.log(userRequestId);
-
-            const isSent = senderRequestId[index] === userRequestId;
-            const isReceived = recieverRequestId[index] === userRequestId;
-
-            console.log(senderRequestId, recieverRequestId);
-            console.log("Full msg:", msg); // Log the message to check if it's an object or string
-
-            // If msg is an object, access msg.message; otherwise, use msg directly
-            const messageContent = typeof msg === "object" ? msg.message : msg;
-
-            return (
-              <div
-                key={index}
-                className={`message ${isSent ? "sent" : isReceived ? "received" : ""}`}
-              >
-                <p>{messageContent}</p> {/* Render the correct content */}
+      {selectedUser && isOpen && (
+        <div className="overshadow" onClick={handleCloseChat}></div>
+      )}
+      {isOpen && selectedUser && messages && (
+        <div className="chat-layout">
+          <div className="chat-window">
+            <div className="messages">
+              <div className="display-friend-row">
+                <img
+                  src={
+                    selectedUser.picture
+                      ? `${STORAGE_URL}/${selectedUser.picture}`
+                      : `${defaultBlankPhotoUrl}`
+                  }
+                  className="display-friend-image"
+                ></img>
+                <h1>{selectedUser.name}</h1>
+                <div className="close-chat-window">
+                  <button onClick={handleCloseChat}>
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                </div>
               </div>
-            );
-          })
-        ) : (
-          <p>No messages yet</p>
-        )}
-      </div>
+              {messages.length > 0 ? (
+                sortedMessages.map((msg, index) => {
+                  const userRequestId = localStorage.getItem("request_id");
 
-      <div className="message-input">
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type your message..."
-        />
-        <button onClick={handleSendMessage}>Send</button>
-      </div>
-    </div>
-  </div>
-)}
+                  const isSent = senderRequestId[index] === userRequestId;
+                  const isReceived = recieverRequestId[index] === userRequestId;
 
+                  const messageContent =
+                    typeof msg === "object" ? msg.message : msg;
+
+                  return (
+                    <div
+                      key={index}
+                      className={`message ${
+                        isSent ? "sent" : isReceived ? "received" : ""
+                      }`}
+                    >
+                      <p>{messageContent}</p> 
+                    </div>
+                  );
+                })
+              ) : (
+                <p>No messages yet</p>
+              )}
+            </div>
+
+            <div className="message-input">
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Type your message..."
+              />
+              <button onClick={handleSendMessage}>Send</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
