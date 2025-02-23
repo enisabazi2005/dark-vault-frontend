@@ -11,6 +11,12 @@ import "@fontsource/roboto";
 import api from "../../api";
 import React, { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import MyProfile from "../MyProfile/MyProfile";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNetworkWired, faLock, faSquareEnvelope, faCircleInfo, faNoteSticky, faCommentDots, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+
+
+
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -146,6 +152,9 @@ const Dashboard = () => {
   return (
     <>
       {/* Sidebar */}
+      <div className="myProfile">
+        <MyProfile />
+      </div>
       <aside
         id="default-sidebar"
         className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-50 dark:bg-gray-800"
@@ -159,23 +168,7 @@ const Dashboard = () => {
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
                 {/* Dashboard Icon */}
-                <svg
-                  class="w-6 h-6 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M11 6.5h2M11 18h2m-7-5v-2m12 2v-2M5 8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Zm0 12h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Zm12 0h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Zm0-12h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1Z"
-                  />
-                </svg>
+                <FontAwesomeIcon icon={faNetworkWired} />
 
                 <span className="ms-3">Dashboard</span>
               </Link>
@@ -186,23 +179,7 @@ const Dashboard = () => {
                 to="store-password"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
-                <svg
-                  class="w-6 h-6 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"
-                  />
-                </svg>
+                <FontAwesomeIcon icon={faLock} />
 
                 <span className="flex-1 ms-3 whitespace-nowrap">
                   Store Password
@@ -214,22 +191,7 @@ const Dashboard = () => {
                 to="store-email"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
-                <svg
-                  class="w-6 h-6 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-width="2"
-                    d="m3.5 5.5 7.893 6.036a1 1 0 0 0 1.214 0L20.5 5.5M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
-                  />
-                </svg>
+                <FontAwesomeIcon icon={faSquareEnvelope} />
 
                 <span className="flex-1 ms-3 whitespace-nowrap">
                   Store Emails
@@ -241,23 +203,7 @@ const Dashboard = () => {
                 to="private-info"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
-                <svg
-                  class="w-6 h-6 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
+                <FontAwesomeIcon icon={faCircleInfo} />
 
                 <span className="flex-1 ms-3 whitespace-nowrap">
                   Store Private Info
@@ -269,23 +215,7 @@ const Dashboard = () => {
                 to="store-notes"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
-                <svg
-                  class="w-6 h-6 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6.03v13m0-13c-2.819-.831-4.715-1.076-8.029-1.023A.99.99 0 0 0 3 6v11c0 .563.466 1.014 1.03 1.007 3.122-.043 5.018.212 7.97 1.023m0-13c2.819-.831 4.715-1.076 8.029-1.023A.99.99 0 0 1 21 6v11c0 .563-.466 1.014-1.03 1.007-3.122-.043-5.018.212-7.97 1.023"
-                  />
-                </svg>
+                <FontAwesomeIcon icon={faNoteSticky} />
 
                 <span className="flex-1 ms-3 whitespace-nowrap">
                   Store Notes
@@ -297,23 +227,7 @@ const Dashboard = () => {
                 to="chatroom"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
-                <svg
-                  className="w-6 h-6 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 10h8M8 14h5m-1 7a9 9 0 1 0-8.7-5.9L2 21l5.9-1.3c1.3.6 2.7.9 4.1.9Z"
-                  />
-                </svg>
+                <FontAwesomeIcon icon={faCommentDots} />
 
                 <span className="flex-1 ms-3 whitespace-nowrap">
                   Go to Chatroom
@@ -322,23 +236,7 @@ const Dashboard = () => {
             </li>
             <li className="sign-out-list">
               <Link to="sign-out">
-                <svg
-                  class="w-6 h-6 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2"
-                  />
-                </svg>
+              <FontAwesomeIcon icon={faArrowRightFromBracket} />
 
                 <button className="log-out" onClick={handleLogout}>
                   Log Out

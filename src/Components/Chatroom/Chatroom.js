@@ -251,16 +251,21 @@ const Chatroom = () => {
       return;
     }
 
+    const currentUserRequestId = localStorage.getItem("request_id"); 
+    
     const filtered = users.filter((user) => {
+
       return (
-        user.name?.toLowerCase().includes(value) ||
-        user.lastname?.toLowerCase().includes(value) ||
-        user.email?.toLowerCase().includes(value)
+        user.request_id !== currentUserRequestId &&  
+        (user.name?.toLowerCase().includes(value) ||
+        user.lastname?.toLowerCase().includes(value))
       );
+  
     });
 
     setFilteredUsers(filtered);
   };
+  
 
   const handleSelectUser = (user, isFriendSelection = false) => {
     setSelectedUser(user);
@@ -311,7 +316,16 @@ const Chatroom = () => {
                   className="dropdown-item"
                   onClick={() => handleSelectUser(user, false)} 
                 >
-                  {user.name} {user.lastname} ({user.email})
+                 <img
+                  src={
+                    user.picture
+                      ? `${STORAGE_URL}/${user.picture}`
+                      : `${defaultBlankPhotoUrl}`
+                  }
+                  alt={`${user.name} ${user.lastname}`}
+                  className="user-image-filter"
+                />
+                   {user.name} {user.lastname}
                 </li>
               ))}
             </ul>
@@ -438,6 +452,7 @@ const Chatroom = () => {
                   </button>
                 </div>
               </div>
+              <div className="personal-chat-layout">
               {messages.length > 0 ? (
                 sortedMessages.map((msg, index) => {
                   const userRequestId = localStorage.getItem("request_id");
@@ -447,21 +462,22 @@ const Chatroom = () => {
 
                   const messageContent =
                     typeof msg === "object" ? msg.message : msg;
-
+                  console.log(messageContent,'messageContent');
                   return (
                     <div
                       key={index}
                       className={`message ${
-                        isSent ? "sent" : isReceived ? "received" : ""
+                        isSent ? "sent" : isReceived ? "received" : "just-sent"
                       }`}
                     >
-                      <p>{messageContent}</p> 
+                      <p className="message-content">{messageContent}</p> 
                     </div>
                   );
                 })
               ) : (
-                <p>No messages yet</p>
+                <p className="message-content-fallback">No messages yet</p>
               )}
+            </div>
             </div>
 
             <div className="message-input">

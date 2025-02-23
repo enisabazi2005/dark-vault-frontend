@@ -1,17 +1,16 @@
-/* Sidebar styles */
 #default-sidebar {
-    width: 256px; /* Sidebar width */
+    width: 256px; 
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    background-color: #f8f9fa; /* Light background */
+    background-color: #f8f9fa; 
     transition: transform 0.3s ease-in-out;
     z-index: 40;
   }
   
   #default-sidebar.dark {
-    background-color: #343a40; /* Dark mode background */
+    background-color: #343a40; 
   }
   
   #default-sidebar .h-full {
@@ -40,14 +39,13 @@
   }
   
   #default-sidebar ul li a:hover {
-    background-color: #e2e6ea; /* Hover background color */
+    background-color: #e2e6ea; 
   }
   
   #default-sidebar ul li a.dark:hover {
-    background-color: #495057; /* Hover color in dark mode */
+    background-color: #495057; 
   }
   
-  /* Icon styles */
   #default-sidebar ul li a svg {
     width: 20px;
     height: 20px;
@@ -56,7 +54,7 @@
   }
   
   #default-sidebar ul li a:hover svg {
-    fill: #007bff; /* Icon color change on hover */
+    fill: #007bff; 
   }
   
   #default-sidebar ul li a span {
@@ -64,24 +62,31 @@
     font-weight: 500;
   }
   
-  /* Badge style */
   #default-sidebar ul li a .inline-flex {
     padding: 3px 10px;
     font-size: 12px;
-    background-color: #d6d8db; /* Badge background */
-    color: #495057; /* Badge text color */
+    background-color: #d6d8db; 
+    color: #495057; 
     border-radius: 9999px;
     margin-left: 12px;
   }
   
   #default-sidebar ul li a:hover .inline-flex {
-    background-color: #007bff; /* Badge background on hover */
+    background-color: #007bff; 
     color: #ffffff;
   }
   
   #default-sidebar ul li a.dark .inline-flex {
     background-color: #495057;
     color: #d6d8db;
+  }
+
+  .myProfile { 
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    border-bottom-left-radius: 50px;
+    border-top-left-radius: 50px;
   }
 
   .sign-out-list { 
@@ -92,9 +97,9 @@
     background-image: none;
     color: #495057 !important;
     font-size: 14px !important;
+    border:none;
   }
   
-  /* Responsiveness for small screens */
   @media (max-width: 768px) {
     #default-sidebar {
       width: 240px;
@@ -103,7 +108,7 @@
 
   main {
     padding: 20px;
-    margin-left: 256px; /* Sidebar width */
+    margin-left: 256px; 
   }
   
     .grid {
@@ -114,9 +119,9 @@
     }
     
     .grid > div {
-        display: flex; /* Using flexbox */
-        justify-content: center; /* Centers horizontally */
-        align-items: center; /* Centers vertically */
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
         width: 100%;
         height: 100%;
         background-color: #fff;

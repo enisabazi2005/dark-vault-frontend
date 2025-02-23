@@ -8,7 +8,7 @@ import Email from "./Components/StoreEmail/Email";
 import PrivateInfo from "./Components/PrivateInfo/PrivateInfo";
 import Notes from "./Components/StoreNotes/Notes";
 import Chatroom from "./Components/Chatroom/Chatroom";
-// import "./App.css";
+import Settings from "./Components/Settings/Settings";
 import "./App.css";
 
 const App = () => {
@@ -31,6 +31,7 @@ const App = () => {
             <Route path="private-info" element={<PrivateInfo />} />
             <Route path="store-notes" element={<Notes />} />
             <Route path="chatroom" element={<Chatroom />} />
+            <Route path="settings" element={<Settings />}></Route>
           </Route>
         </Routes>
       </Router>
