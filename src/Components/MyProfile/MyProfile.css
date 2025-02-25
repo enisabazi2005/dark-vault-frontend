@@ -2,7 +2,7 @@
     position: relative;
     width: 100%;
     border: 2px solid rgb(88, 88, 88);
-    
+    overflow: visible;
   }
 .profile-settings {
     width: 100%;
@@ -11,15 +11,17 @@
     cursor: pointer;
     z-index: 100;
     overflow: visible; 
-    
   }
   
   .profile-settings .profile-info-row {
     display: flex;
     align-items: center;
+    justify-content: end;
     column-gap: 10px;
     padding: 10px;
     cursor: pointer;
+    margin-right: 50px;
+    position: relative;
   }
   
   .profile-settings .profile-info-row .profile-info-col img {
@@ -36,69 +38,89 @@
     position: relative;
   }
 
-  .dropdown-menu {
-    position: absolute;
-    top: 70px;
+  .modal-overlay-status {
+    position: fixed;
+    top: 0;
     left: 0;
-    background-color:#f1f1f1;
-    border: 1px solid #f1f1f1;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    z-index: 200; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modal-content-status {
+    background: white;
+    padding: 20px;
     border-radius: 10px;
-    animation: showDropDown 0.4s ease-in;
-  }
-  
-  .dropdown-menu ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+    width: 400px;
+    text-align: center;
     position: relative;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: showDropDown 0.2s linear;
   }
-  
-  .dropdown-menu li{
-    padding: 10px;
-    cursor: pointer;
-    color: rgb(14, 13, 13);
-    position: relative;
+  .modal-content-status h2 { 
+    font-size: 23px;
     font-family: sans-serif;
     font-weight: 500;
-    text-decoration: none;
+    padding: 10px 0;
+
   }
-  .dropdown-menu li a { 
-    margin: 0;
+  
+  .modal-content-status ul {
+    list-style: none;
     padding: 0;
+    margin: 0;
   }
-  .dropdown-menu .status-online::before { 
+  
+  .modal-content-status li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+  }
+  
+  .modal-content-status li:last-child {
+    border-bottom: none;
+  }
+
+  .modal-content-status .status-online::before { 
     position: absolute;
     content: " ";
+    top: 13px;
     width: 15px;
     height: 15px;
     border-radius: 100%;
     background: rgb(24, 181, 24);
     right: 10px;
   }
-  .dropdown-menu .status-offline::before { 
+  .modal-content-status .status-offline::before { 
     position: absolute;
     content: " ";
+    top:13px;
     width: 15px;
     height: 15px;
     border-radius: 100%;
     background: rgb(208, 185, 57);
     right: 10px;
   }
-  .dropdown-menu .status-away::before { 
+  .modal-content-status .status-away::before { 
     position: absolute;
     content: " ";
+    top:13px;
     width: 15px;
     height: 15px;
     border-radius: 100%;
     background: rgb(72, 75, 72);
     right: 10px;
   }
-  .dropdown-menu .status-do-not-disturb::before { 
+.modal-content-status .status-do-not-disturb::before { 
     position: absolute;
     content: " ";
+    top:13px;
     width: 15px;
     height: 15px;
     border-radius: 100%;
@@ -106,9 +128,26 @@
     right: 10px;
   }
   
-  .dropdown-menu li:hover {
-    background-color: #d1d1d1;
+  .close-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
   }
+  
+  .close-btn:hover {
+    background: #cc0000;
+  }
+
+  .active-status {
+    font-weight: bold;
+    color: white !important;
+  }
+  
+
   @keyframes showDropDown {
     from { 
       opacity: 0.6;

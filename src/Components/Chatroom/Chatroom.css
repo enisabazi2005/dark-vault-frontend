@@ -181,7 +181,8 @@
     flex-direction: column;
     flex-grow: 1;
     overflow: hidden; /* Prevent messages from overflowing */
-    height: 100%;
+    /* height: 100%; */
+    height: 65%;
   }
   
   
@@ -198,6 +199,11 @@
     margin: 10px 0;
     border-radius: 10px;
     word-wrap: break-word;
+    white-space: normal; /* Ensure the text wraps properly */
+    display: inline-block; /* Ensure it's inline so it doesn't break below */
+    position: relative;
+    overflow: hidden;
+    height: auto;
   }
   
   .sent {
@@ -218,14 +224,23 @@
     align-self: flex-end;
     background-color: #f1f1f1; 
     margin-left: 10px;
+    display: inline-block;
+    max-width: 70%;
     padding: 25px 15px;
+    word-break: break-word;
+    word-wrap: break-word; 
   }
   .message-content , .message-content-fallback { 
-    font-size: 17px;
+    font-size: 14px;
     font-family: sans-serif;
     color: rgb(13, 11, 11);
     position: relative;
+    margin: 0 !important;
+    padding: 0 !important;
     bottom: 10px;
+    overflow-wrap: break-word; 
+    word-wrap: break-word; 
+    white-space: normal; 
   }
 
   .message-input {
@@ -240,7 +255,7 @@
     justify-content: start;
     margin: 10px 0;
     position: relative;
-    padding: 10px 0;
+    padding: 25px 0;
   }
   .overshadow {
     position: fixed;
@@ -248,8 +263,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-    z-index: 100; /* Make sure it's above everything */
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 100; 
     transition: opacity 0.3s ease-in-out;
   }
   .display-friend-row h1{
@@ -266,22 +281,15 @@
     border-radius: 100%;
     border: 3px solid green;
   }
-  /* .personal-chat-layout { 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    scrollbar-color: #ffffff #e2e2e2;
-    scrollbar-width: thin;
-    overflow-y: scroll;
-  } */
+
   .personal-chat-layout { 
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    overflow-y: auto; /* Enable scrolling */
-    max-height: 350px; /* Set a fixed height before it scrolls */
+    overflow-y: auto; 
+    max-height: 350px; 
     width: 100%;
-    padding-right: 5px; /* Prevent text cutoff */
+    padding-right: 5px; 
     margin-bottom: 10px;
     scrollbar-color: #ffffff #e2e2e2;
     scrollbar-width: thin;
@@ -292,8 +300,6 @@
     top: 20px;
   }
   .close-chat-window button { 
-    /* width: 100%; */
-    /* padding: 5px; */
     font-size: 20px;
     background-color: rgb(223, 37, 37);
     border: none;

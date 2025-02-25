@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import "../MyProfile/MyProfile.css";
 import { useState, useEffect } from "react";
 import api from "../../api";
@@ -7,9 +6,8 @@ import { STORAGE_URL } from "../../api";
 import { Link } from "react-router-dom";
 
 const MyProfile = () => {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [isHovered , setIsHovered] = useState(false);
+  const [isModalOpen , setIsModalOpen] = useState(false);
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
   const [selectedStatus , setSelectedStatus] = useState("online");
@@ -58,6 +56,7 @@ const MyProfile = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      setIsModalOpen(false);
       console.log(`Status updated to: ${status}`);
     } catch (error) {
       console.error("Error updating status:", error);
@@ -79,65 +78,67 @@ const MyProfile = () => {
   
   return (
     <div className="profile-settings-wrapper">
-    <div className="profile-settings">
-    <div
-        className="profile-info-row"
-        onMouseEnter={() => setIsHovered(true)}  
-        onMouseLeave={() => setIsHovered(false)} 
-        style={{
-          padding: isHovered ? "10px 10px 250px 10px" : "10px", 
-        }}
-      >
-        <div className="profile-info-col">
-          <img
-            src={
-              user.picture
-                ? `${STORAGE_URL}/${user.picture}`
-                : `${defaultBlankPhotoUrl}`
-            }
-            alt={`${user.name} ${user.lastname}`}
-            className="user-pic"
-            style={{
+      <div className="profile-settings">
+        <div className="profile-info-row" onClick={() => setIsModalOpen(true)}>
+          <div className="profile-info-col">
+            <img
+              src={
+                user.picture
+                  ? `${STORAGE_URL}/${user.picture}`
+                  : `${defaultBlankPhotoUrl}`
+              }
+              alt={`${user.name} ${user.lastname}`}
+              className="user-pic"
+              style={{
                 border: `3px solid ${borderColor}`,
               }}
-          />
+            />
+          </div>
+          <div className="profile-info-col">
+            <h1 className="user-name">
+              {user.name} {user.lastname}
+            </h1>
+            <p className="user-status">
+              {selectedStatus.replace(/_/g, " ").replace(/\b\w/g, (char) =>
+                char.toUpperCase()
+              )}
+            </p>
+          </div>
         </div>
-        <div className="profile-info-col">
-          <h1 className="user-name">
-            {user.name} {user.lastname}
-          </h1>
-          <p className="user-status">
-            {selectedStatus.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
-          </p>
+      </div>
 
-        </div>
-
-        {isHovered && (
-          <div className="dropdown-menu">
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="modal-overlay-status" onClick={() => setIsModalOpen(false)}>
+          <div className="modal-content-status" onClick={(e) => e.stopPropagation()}>
+            <h2>Change Status</h2>
             <ul>
-              <li 
-              className="status-online"
-              onClick={() => handleStatusChange("online")}
-                >Online</li>
-              <li className="status-offline"
-              onClick={() => handleStatusChange("offline")}
-                >Offline</li>
-              <li className="status-away"
-              onClick={() => handleStatusChange("away")}
-                >Away</li>
-              <li className="status-do-not-disturb"
-              onClick={() => handleStatusChange("do_not_disturb")}
-                >Do Not Disturb</li>
-              <li>
-              <Link className="settings" to="/dashboard/settings">Settings</Link>
-                
+              {Object.keys(statusBorderColors).map((status) => (
+                <li
+                  key={status}
+                  className={`status-option ${selectedStatus === status ? "active-status" : ""}`}
+                  style={{
+                    color: selectedStatus === status ? "white" : "black",
+                    backgroundColor: selectedStatus === status ? statusBorderColors[status] : "transparent",
+                  }}
+                  onClick={() => handleStatusChange(status)}
+                >
+                  {status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
+                </li>
+              ))}
+              <li onClick={() => setIsModalOpen(false)}>
+                <Link className="settings" to="/dashboard/settings">
+                  Settings
+                </Link>
               </li>
             </ul>
+            <button className="close-btn" onClick={() => setIsModalOpen(false)}>
+              Close
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
-   </div>
   );
 };
 

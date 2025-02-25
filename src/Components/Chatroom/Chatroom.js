@@ -19,6 +19,8 @@ const Chatroom = () => {
   const [message, setMessage] = useState(""); 
   const [messages, setMessages] = useState([]); 
   const [isOpen, setIsOpen] = useState(false);
+  Pusher.logToConsole = true;  // Enable logging
+
 
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
@@ -26,73 +28,6 @@ const Chatroom = () => {
   const userId = localStorage.getItem("user_id");
   const [senderRequestId, setSenderRequestId] = useState([]);
   const [recieverRequestId, setRecieverReqeustId] = useState([]);
-
-  useEffect(() => {
-    if (!requestId || !selectedUser) return;
-
-    const fetchMessages = async () => {
-      try {
-        const response = await api.get(
-          `/messages/${userId}/${selectedUser.id}`
-        );
-        const messages = [];
-
-        response.data.forEach((message) => {
-          senderRequestId.push(message.sender_id);
-          recieverRequestId.push(message.receiver_id);
-          messages.push(message.message);
-        });
-
-        console.log(senderRequestId, recieverRequestId, messages);
-
-        setMessages(messages); 
-        setSenderRequestId(senderRequestId);
-        setRecieverReqeustId(recieverRequestId);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-        setMessages([]); 
-      }
-    };
-
-    fetchMessages();
-  }, [selectedUser, requestId]);
-
-  useEffect(() => {
-    if (!requestId) {
-      console.error("Request ID is not available");
-      return;
-    }
-    const echo = new Echo({
-      broadcaster: "pusher",
-      key: "5fa2841f32689bcde49e",
-      cluster: "eu",
-      forceTLS: true,
-    });
-
-    echo
-      .channel(`chatroom.${requestId}`)
-      .listen("App\\Events\\NewMessage", (data) => {
-        console.log("Received new message:", data);
-
-        setMessages((prevMessages) => {
-          const updatedMessages = [
-            ...prevMessages,
-            {
-              message: data.message.message, 
-              sender_id: data.message.sender_id,
-              reciever_id: data.message.reciever_id,
-              dark_users_id: data.dark_users_id,
-            },
-          ];
-
-          return updatedMessages;
-        });
-      });
-
-    return () => {
-      echo.leaveChannel(`chatroom.${requestId}`);
-    };
-  }, [requestId, requestId]);
 
   const handleSendMessage = async () => {
     if (message.trim() === "") {
@@ -130,6 +65,68 @@ const Chatroom = () => {
       alert("Failed to send message.");
     }
   };
+
+  useEffect(() => {
+    if (!requestId || !selectedUser) return;
+  
+    const pusher = new Pusher("5fa2841f32689bcde49e", {
+      cluster: "eu",
+      encrypted: true,
+    });
+  
+    const channel = pusher.subscribe(`chatroom.${selectedUser.request_id}`);
+    console.log(`Subscribed to chatroom.${selectedUser.request_id}`);
+  
+    channel.bind("App\\Events\\NewMessage", function (data) {
+      console.log("New message received:", data);
+      
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          message: data.message.message,  
+          sender_id: data.message.sender_id,
+          reciever_id: data.message.reciever_id,
+          dark_users_id: data.dark_users_id,
+        },
+      ]);
+    });
+    
+  
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [selectedUser]);  
+  
+  
+  useEffect(() => {
+    if (!requestId || !selectedUser) return;
+  
+    const fetchMessages = async () => {
+      try {
+        const response = await api.get(`/messages/${userId}/${selectedUser.id}`);
+        const messages = [];
+  
+        response.data.forEach((message) => {
+          messages.push({
+            message: message.message,
+            sender_id: message.sender_id,
+            reciever_id: message.reciever_id,
+            dark_users_id: message.dark_users_id,
+          });
+        });
+  
+        setMessages(messages);
+        setSenderRequestId(senderRequestId);
+        setRecieverReqeustId(recieverRequestId);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+        setMessages([]);
+      }
+    };
+  
+    fetchMessages();
+  }, [selectedUser, requestId]);  
 
   useEffect(() => {
     if (!requestId) {
@@ -457,22 +454,20 @@ const Chatroom = () => {
                 sortedMessages.map((msg, index) => {
                   const userRequestId = localStorage.getItem("request_id");
 
-                  const isSent = senderRequestId[index] === userRequestId;
-                  const isReceived = recieverRequestId[index] === userRequestId;
+                  const isSent = msg.sender_id === userRequestId;
+                  // const isReceived = msg.reciever_id;
+                  const isReceived = selectedUser.request_id;
+    
+                  const messageContent = msg.message;
 
-                  const messageContent =
-                    typeof msg === "object" ? msg.message : msg;
-                  console.log(messageContent,'messageContent');
                   return (
                     <div
-                      key={index}
-                      className={`message ${
-                        isSent ? "sent" : isReceived ? "received" : "just-sent"
-                      }`}
+                        key={index}
+                        className={`message ${isSent ? "sent" : isReceived ? "received" : "just-sent"}`}
                     >
-                      <p className="message-content">{messageContent}</p> 
+                        <p className="message-content">{messageContent}</p>
                     </div>
-                  );
+                );
                 })
               ) : (
                 <p className="message-content-fallback">No messages yet</p>

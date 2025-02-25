@@ -85,8 +85,8 @@
     position: absolute;
     top: -2px;
     right: -2px;
-    border-bottom-left-radius: 50px;
-    border-top-left-radius: 50px;
+    width: 100%;
+    z-index: 2;
   }
 
   .sign-out-list { 
@@ -109,6 +109,7 @@
   main {
     padding: 20px;
     margin-left: 256px; 
+    margin-top: 50px;
   }
   
     .grid {
