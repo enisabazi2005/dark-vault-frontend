@@ -25,5 +25,7 @@ api.interceptors.request.use(
 );
 
 export const STORAGE_URL = "http://127.0.0.1:8000/storage";
+export const PUSHER_APP_KEY = "5fa2841f32689bcde49e";
+export const PUSHER_CLUSTER = "eu";
 
 export default api;

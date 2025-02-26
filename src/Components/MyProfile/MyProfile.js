@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import api from "../../api";
 import { STORAGE_URL } from "../../api";
 import { Link } from "react-router-dom";
+import Notification from "../Notification/Notification";
 
 const MyProfile = () => {
   const [user, setUser] = useState(null);
@@ -81,6 +82,7 @@ const MyProfile = () => {
       <div className="profile-settings">
         <div className="profile-info-row" onClick={() => setIsModalOpen(true)}>
           <div className="profile-info-col">
+            <Notification />
             <img
               src={
                 user.picture

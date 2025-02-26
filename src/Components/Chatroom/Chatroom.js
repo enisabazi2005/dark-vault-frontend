@@ -6,6 +6,7 @@ import Pusher from "pusher-js";
 import Echo from "laravel-echo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { PUSHER_APP_KEY, PUSHER_CLUSTER } from "../../api";
 
 const Chatroom = () => {
   const [users, setUsers] = useState([]);
@@ -19,7 +20,7 @@ const Chatroom = () => {
   const [message, setMessage] = useState(""); 
   const [messages, setMessages] = useState([]); 
   const [isOpen, setIsOpen] = useState(false);
-  Pusher.logToConsole = true;  // Enable logging
+  Pusher.logToConsole = true;  
 
 
   const defaultBlankPhotoUrl =
@@ -69,11 +70,10 @@ const Chatroom = () => {
   useEffect(() => {
     if (!requestId || !selectedUser) return;
   
-    const pusher = new Pusher("5fa2841f32689bcde49e", {
-      cluster: "eu",
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
       encrypted: true,
     });
-  
     const channel = pusher.subscribe(`chatroom.${selectedUser.request_id}`);
     console.log(`Subscribed to chatroom.${selectedUser.request_id}`);
   
