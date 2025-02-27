@@ -257,6 +257,12 @@
     position: relative;
     padding: 25px 0;
   }
+  .friend-creds { 
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    cursor: pointer;
+  }
   .overshadow {
     position: fixed;
     top: 0;
@@ -343,4 +349,48 @@
     gap: 10px;
     overflow-y: scroll;
     max-height: 400px; 
+  }
+  .modal-profile-clicked { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 10px;
+    z-index: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    flex-direction: row;
+    background-color: #838383;
+    padding: 10px 30px;
+    border-radius: 10px;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .modal-profile-clicked .modal-profile-clicked-row { 
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    justify-content: center;
+  }
+  .modal-profile-clicked .modal-profile-clicked-row h2 { 
+    font-size: 17px;
+    font-weight: 500;
+    font-family: sans-serif;
+    color: #fff;
+  }
+  .modal-profile-clicked .modal-profile-clicked-row button { 
+    padding: 8px 12px;
+    font-size: 14px;
+    background-color: #636363;
+    border: 1px solid #636363;
+    border-radius: 5px;
+    color: #1b1b1b;
+    cursor: pointer;
+    font-family: sans-serif;
+  }
+  .modal-profile-clicked .modal-profile-clicked-row button:hover { 
+    background-color: #3e3e3e;
+    border: 1px solid #3e3e3e;
+    color: #fff;
+    transition: 0.25s ease-in;
   }

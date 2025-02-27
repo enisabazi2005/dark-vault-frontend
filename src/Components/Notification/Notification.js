@@ -2,20 +2,25 @@ import React, { useState, useEffect } from "react";
 import api from "../../api";
 import { PUSHER_APP_KEY, PUSHER_CLUSTER } from "../../api";
 import Pusher from "pusher-js";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "../Notification/Notification.css";
 
-const Notification = () => {
-  const [unreadMessages, setUnreadMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  const userId = localStorage.getItem("user_id");
+const Notification = ({count}) => {
+  const [, setUnreadMessages] = useState([]);
+  const [, setLoading] = useState(true);
+  const [, setUser] = useState(null);
+  const userId = localStorage.getItem("user_id"); 
+
   useEffect(() => {
-    // Fetch user profile data
+    if (!userId) return;
+
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem("token");
 
-        if (!userId || !token) {
-          console.error("No user ID or token found");
+        if (!token) {
+          console.error("No token found");
           return;
         }
 
@@ -32,100 +37,63 @@ const Notification = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [userId]); 
 
-  useEffect(() => {
-    if (!user) return;
-
-    // Function to fetch unread messages
-    const fetchUnreadMessages = async () => {
-        try {
-            const response = await api.get("/get-unread-messages");
-            setUnreadMessages(response.data);
-        } catch (error) {
-            console.error("Error fetching unread messages:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Function to subscribe to Pusher and keep it active
-    const subscribeToPusher = () => {
-        const pusher = new Pusher(PUSHER_APP_KEY, {
-            cluster: PUSHER_CLUSTER,
-            encrypted: true,
-        });
-
-        // Subscribe to the correct channel
-        const channel = pusher.subscribe('unread-messages-' + userId);
-
-        console.log("Subscribed to unread-messages-" + userId);
-
-        // Listen for new unread messages in real-time
-        channel.bind('App\\Events\\UnreadMessagesEvent', (data) => {
-            console.log("Received unread messages event", data);
-        
-            if (Array.isArray(data.notifications)) {
-                // Only append new notifications if they are not already in the state
-                setUnreadMessages((prevMessages) => {
-                    const newMessages = data.notifications.filter(
-                        (message) => !prevMessages.some((prev) => prev.id === message.id)
-                    );
-                    return [...prevMessages, ...newMessages];
-                });
-            }
-        });
-
-        return () => {
-            channel.unbind_all();
-            channel.unsubscribe();
-          };
-    };
-
-    // Fetch unread messages when the component is mounted or when user changes
-    fetchUnreadMessages();
-
-    // Subscribe to Pusher and keep it active even if status changes
-    const pusher = subscribeToPusher();
-
-    // Cleanup when the component unmounts or user changes
-    return () => {
-        pusher.unsubscribe(`unread-messages-${userId}`);
-    };
-}, [user]); // Re-run only when user data changes
-
-  const handleMarkAsRead = async () => {
+  const fetchUnreadMessages = async () => {
     try {
-      await api.post("/mark-notifications-read");
-      setUnreadMessages([]); // Clear unread messages after marking as read
+      const response = await api.get("/get-unread-messages");
+      setUnreadMessages(response.data);
+      console.log("📩 Fetched unread messages:", response.data);
     } catch (error) {
-      console.error("Error marking notifications as read:", error);
+      console.error("Error fetching unread messages:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (!userId) return; 
+
+    fetchUnreadMessages(); 
+
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: true,
+    });
+
+    const channel = pusher.subscribe(`unread-messages-${userId}`);
+
+    channel.bind("App\\Events\\UnreadMessagesEvent", (data) => {
+      if (Array.isArray(data.notifications)) {
+        setUnreadMessages((prevMessages) => {
+          const newMessages = data.notifications.filter(
+            (message) => !prevMessages.some((prev) => prev.id === message.id)
+          );
+          return [...newMessages, ...prevMessages]; 
+        });
+      }
+    });
+    
+    return () => {
+      channel.unbind("App\\Events\\UnreadMessagesEvent");
+      pusher.unsubscribe(`unread-messages-${userId}`);
+    };
+  }, [userId]);
+
   return (
     <div>
-      {loading ? (
-        <p>Loading notifications...</p>
+      <div className="notificationIconContainer">
+        <FontAwesomeIcon
+          icon={faBell}
+          size="2x"
+          className="bellIcon"
+        />
+        {count > 0 ? (
+        <span className="notificationCount">{count}</span>
       ) : (
-        <>
-          {unreadMessages.length > 0 ? (
-            <div>
-              <h3>You have {unreadMessages.length} unread messages</h3>
-              <ul>
-                {unreadMessages.map((message, index) => (
-                  <li key={index}>
-                    {message.message} from {message.sender_id}
-                  </li>
-                ))}
-              </ul>
-              <button onClick={handleMarkAsRead}>Mark All as Read</button>
-            </div>
-          ) : (
-            <p>No unread messages</p>
-          )}
-        </>
+        <span className="no-notificationCount">0</span>
       )}
+      </div>
     </div>
   );
 };

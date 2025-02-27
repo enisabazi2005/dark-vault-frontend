@@ -3,10 +3,10 @@ import "../Chatroom/Chatroom.css";
 import api from "../../api";
 import { STORAGE_URL } from "../../api";
 import Pusher from "pusher-js";
-import Echo from "laravel-echo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { PUSHER_APP_KEY, PUSHER_CLUSTER } from "../../api";
+import Muted from "../Muted/Muted";
 
 const Chatroom = () => {
   const [users, setUsers] = useState([]);
@@ -17,18 +17,38 @@ const Chatroom = () => {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [friendRequestSent, setFriendRequestSent] = useState(false);
-  const [message, setMessage] = useState(""); 
-  const [messages, setMessages] = useState([]); 
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  Pusher.logToConsole = true;  
-
-
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
   const requestId = localStorage.getItem("request_id");
   const userId = localStorage.getItem("user_id");
   const [senderRequestId, setSenderRequestId] = useState([]);
   const [recieverRequestId, setRecieverReqeustId] = useState([]);
+  const [isProfileClicked, setIsProfileClicked] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+
+  const handleProfileClick = (user) => {
+    setSelectedUser(user);
+    setIsProfileClicked(true);
+  };
+
+  const handleCloseProfileClick = () => {
+  setIsProfileClicked(false);  
+  };
+
+  const handleMuteToggle = (newMuteStatus) => {
+    setIsMuted(newMuteStatus); 
+  };
+
+  const handleBlockUser = () => {
+    console.log("Block this user");
+  };
+
+  const handleRemoveFriend = () => {
+    console.log("Remove friend request");
+  };
 
   const handleSendMessage = async () => {
     if (message.trim() === "") {
@@ -48,7 +68,7 @@ const Chatroom = () => {
         message: message,
         dark_users_id: userId,
       });
-      console.log("API Response:", response.data); 
+      console.log("API Response:", response.data);
 
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -59,7 +79,7 @@ const Chatroom = () => {
           dark_users_id: userId,
         },
       ]);
-      setMessage(""); 
+      setMessage("");
       console.log(response, "this is response");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -69,44 +89,44 @@ const Chatroom = () => {
 
   useEffect(() => {
     if (!requestId || !selectedUser) return;
-  
+
     const pusher = new Pusher(PUSHER_APP_KEY, {
       cluster: PUSHER_CLUSTER,
       encrypted: true,
     });
     const channel = pusher.subscribe(`chatroom.${selectedUser.request_id}`);
     console.log(`Subscribed to chatroom.${selectedUser.request_id}`);
-  
+
     channel.bind("App\\Events\\NewMessage", function (data) {
       console.log("New message received:", data);
-      
+
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          message: data.message.message,  
+          message: data.message.message,
           sender_id: data.message.sender_id,
           reciever_id: data.message.reciever_id,
           dark_users_id: data.dark_users_id,
         },
       ]);
     });
-    
-  
+
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [selectedUser]);  
-  
-  
+  }, [selectedUser, requestId]); 
+
   useEffect(() => {
     if (!requestId || !selectedUser) return;
-  
+
     const fetchMessages = async () => {
       try {
-        const response = await api.get(`/messages/${userId}/${selectedUser.id}`);
+        const response = await api.get(
+          `/messages/${userId}/${selectedUser.id}`
+        );
         const messages = [];
-  
+
         response.data.forEach((message) => {
           messages.push({
             message: message.message,
@@ -115,7 +135,7 @@ const Chatroom = () => {
             dark_users_id: message.dark_users_id,
           });
         });
-  
+
         setMessages(messages);
         setSenderRequestId(senderRequestId);
         setRecieverReqeustId(recieverRequestId);
@@ -124,9 +144,9 @@ const Chatroom = () => {
         setMessages([]);
       }
     };
-  
+
     fetchMessages();
-  }, [selectedUser, requestId]);  
+  }, [selectedUser, requestId, senderRequestId, recieverRequestId, userId]); // Add senderRequestId, recieverRequestId, and userId here
 
   useEffect(() => {
     if (!requestId) {
@@ -248,21 +268,18 @@ const Chatroom = () => {
       return;
     }
 
-    const currentUserRequestId = localStorage.getItem("request_id"); 
-    
-    const filtered = users.filter((user) => {
+    const currentUserRequestId = localStorage.getItem("request_id");
 
+    const filtered = users.filter((user) => {
       return (
-        user.request_id !== currentUserRequestId &&  
+        user.request_id !== currentUserRequestId &&
         (user.name?.toLowerCase().includes(value) ||
-        user.lastname?.toLowerCase().includes(value))
+          user.lastname?.toLowerCase().includes(value))
       );
-  
     });
 
     setFilteredUsers(filtered);
   };
-  
 
   const handleSelectUser = (user, isFriendSelection = false) => {
     setSelectedUser(user);
@@ -270,13 +287,13 @@ const Chatroom = () => {
     if (isFriendSelection) {
       setIsOpen(true);
     } else {
-      setIsOpen(false); 
+      setIsOpen(false);
     }
   };
 
   const handleCloseChat = () => {
     setSelectedUser(null);
-    setIsOpen(null);
+    setIsOpen(false); 
   };
 
   const isFriend = (userId) => {
@@ -311,18 +328,18 @@ const Chatroom = () => {
                 <li
                   key={index}
                   className="dropdown-item"
-                  onClick={() => handleSelectUser(user, false)} 
+                  onClick={() => handleSelectUser(user, false)}
                 >
-                 <img
-                  src={
-                    user.picture
-                      ? `${STORAGE_URL}/${user.picture}`
-                      : `${defaultBlankPhotoUrl}`
-                  }
-                  alt={`${user.name} ${user.lastname}`}
-                  className="user-image-filter"
-                />
-                   {user.name} {user.lastname}
+                  <img
+                    src={
+                      user.picture
+                        ? `${STORAGE_URL}/${user.picture}`
+                        : `${defaultBlankPhotoUrl}`
+                    }
+                    alt={`${user.name} ${user.lastname}`}
+                    className="user-image-filter"
+                  />
+                  {user.name} {user.lastname}
                 </li>
               ))}
             </ul>
@@ -414,10 +431,10 @@ const Chatroom = () => {
               {friends.map((friend, index) => (
                 <li
                   key={index}
-                  onClick={() => handleSelectUser(friend, true)} 
+                  onClick={() => handleSelectUser(friend, true)}
                   style={{ cursor: "pointer" }}
                 >
-                  {friend.name} {friend.lastname} ({friend.email})
+                  {friend.name} {friend.lastname}
                 </li>
               ))}
             </ul>
@@ -434,15 +451,39 @@ const Chatroom = () => {
           <div className="chat-window">
             <div className="messages">
               <div className="display-friend-row">
-                <img
-                  src={
-                    selectedUser.picture
-                      ? `${STORAGE_URL}/${selectedUser.picture}`
-                      : `${defaultBlankPhotoUrl}`
-                  }
-                  className="display-friend-image"
-                ></img>
-                <h1>{selectedUser.name}</h1>
+                <div
+                  className="friend-creds"
+                  onClick={() => handleProfileClick(selectedUser)}
+                >
+                  {selectedUser && (
+                    <img
+                      src={
+                        selectedUser.picture
+                          ? `${STORAGE_URL}/${selectedUser.picture}`
+                          : `${defaultBlankPhotoUrl}`
+                      }
+                      alt=""
+                      className="display-friend-image"
+                    ></img>
+                  )}
+                  {selectedUser && <h1>{selectedUser.name}</h1>}
+                </div>
+                {isProfileClicked && selectedUser && (
+                  <div className="modal-profile-clicked" >
+                    <div className="modal-profile-clicked-row">
+                      <h2 onClick={handleCloseProfileClick}>{selectedUser.name}'s Options</h2>
+                      <button onClick={handleBlockUser}>Block</button>
+                      <Muted
+                        selectedUserId={selectedUser.id}
+                        isMuted={isMuted}
+                        onMuteToggle={handleMuteToggle}
+                      />
+                      <button onClick={handleRemoveFriend}>
+                        Unfriend
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <div className="close-chat-window">
                   <button onClick={handleCloseChat}>
                     <FontAwesomeIcon icon={faXmark} />
@@ -450,29 +491,35 @@ const Chatroom = () => {
                 </div>
               </div>
               <div className="personal-chat-layout">
-              {messages.length > 0 ? (
-                sortedMessages.map((msg, index) => {
-                  const userRequestId = localStorage.getItem("request_id");
+                {messages.length > 0 ? (
+                  sortedMessages.map((msg, index) => {
+                    const userRequestId = localStorage.getItem("request_id");
 
-                  const isSent = msg.sender_id === userRequestId;
-                  // const isReceived = msg.reciever_id;
-                  const isReceived = selectedUser.request_id;
-    
-                  const messageContent = msg.message;
+                    const isSent = msg.sender_id === userRequestId;
+                    // const isReceived = msg.reciever_id;
+                    const isReceived = selectedUser.request_id;
 
-                  return (
-                    <div
+                    const messageContent = msg.message;
+
+                    return (
+                      <div
                         key={index}
-                        className={`message ${isSent ? "sent" : isReceived ? "received" : "just-sent"}`}
-                    >
+                        className={`message ${
+                          isSent
+                            ? "sent"
+                            : isReceived
+                            ? "received"
+                            : "just-sent"
+                        }`}
+                      >
                         <p className="message-content">{messageContent}</p>
-                    </div>
-                );
-                })
-              ) : (
-                <p className="message-content-fallback">No messages yet</p>
-              )}
-            </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="message-content-fallback">No messages yet</p>
+                )}
+              </div>
             </div>
 
             <div className="message-input">

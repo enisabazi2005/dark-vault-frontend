@@ -1,0 +1,51 @@
+.notificationIconContainer { 
+    position: "relative";
+    cursor: "pointer";
+    display: "inline-block";
+}
+
+.bellIcon { 
+    color: #2b2626;
+}
+
+.notificationCount { 
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #ff5656;
+    color: #fff;
+    border-radius: 15px;
+    padding: 5px;
+    font-size: 14px;
+    font-family: sans-serif;
+    font-weight: 700;
+}
+.no-notificationCount { 
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #686868;
+    color: #fff;
+    border-radius: 15px;
+    padding: 5px;
+    font-size: 14px;
+    font-family: sans-serif;
+    font-weight: 700;
+}
+.modal { 
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent { 
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+}
