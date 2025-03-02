@@ -394,3 +394,27 @@
     color: #fff;
     transition: 0.25s ease-in;
   }
+
+  @media (max-width: 768px) {
+    .full-width-layout .row-layout { 
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .full-width-layout .row-layout .col-50 .search-layout { 
+      padding: 15px 0;
+    }
+    .user-card { 
+      margin: 0;
+    }
+    .chat-window { 
+      width: 100%;
+      right: 0;
+      height: 100%;
+      top: 0;
+    }
+    .full-width-layout .row-layout .col-50 { 
+      height: auto;
+      min-height: 0;
+    }
+  }

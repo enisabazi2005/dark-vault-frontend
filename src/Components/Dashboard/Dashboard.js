@@ -1,4 +1,3 @@
-// import * as React from "react";
 import { PieChart } from "@mui/x-charts";
 import {
   useGaugeState,
@@ -14,15 +13,24 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import MyProfile from "../MyProfile/MyProfile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNetworkWired, faLock, faSquareEnvelope, faCircleInfo, faNoteSticky, faCommentDots, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-
-
-
+import Notification from "../Notification/Notification";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const location = useLocation();
   const [totalStored, setTotalStored] = useState(0);
   const MAX_STORAGE = 100;
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const navigate = useNavigate();
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [data, setData] = useState([
     { id: 0, value: 0, label: "Passwords" },
@@ -138,7 +146,7 @@ const Dashboard = () => {
     window.location.href = "/login";
   };
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -155,97 +163,71 @@ const Dashboard = () => {
       <div className="myProfile">
         <MyProfile />
       </div>
-      <aside
-        id="default-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-50 dark:bg-gray-800"
-        aria-label="Sidebar"
-      >
-        <div className="h-full px-3 py-4 overflow-y-auto">
-          <ul className="space-y-2 font-medium">
-            <li>
-              <Link
-                to="/dashboard"
+      {!isMobile && (
+        <aside id="default-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-50 dark:bg-gray-800"
+        aria-label="Siderbar"
+        >
+          <div className="h-full px-3 py-4 overflow-y-auto">
+            <ul>
+              <li>
+                <Link to="/dashboard"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                {/* Dashboard Icon */}
-                <FontAwesomeIcon icon={faNetworkWired} />
-
-                <span className="ms-3">Dashboard</span>
-              </Link>
-            </li>
-            {/* Other List Items */}
-            <li>
-              <Link
-                to="store-password"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <FontAwesomeIcon icon={faLock} />
-
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Store Password
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="store-email"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <FontAwesomeIcon icon={faSquareEnvelope} />
-
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Store Emails
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="private-info"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <FontAwesomeIcon icon={faCircleInfo} />
-
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Store Private Info
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="store-notes"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <FontAwesomeIcon icon={faNoteSticky} />
-
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Store Notes
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="chatroom"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <FontAwesomeIcon icon={faCommentDots} />
-
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Go to Chatroom
-                </span>
-              </Link>
-            </li>
-            <li className="sign-out-list">
-              <Link to="sign-out">
-              <FontAwesomeIcon icon={faArrowRightFromBracket} />
-
-                <button className="log-out" onClick={handleLogout}>
+                >
+                  <FontAwesomeIcon icon={faNetworkWired} />
+                  <span className="ms-3" >Dashboard</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="store-password"
+                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                >
+                  <FontAwesomeIcon icon={faLock} />
+                  <span className="flex-1 ms-3 whitespace-nowrap">Store Password</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="store-email"
+                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                >
+                  <FontAwesomeIcon icon={faSquareEnvelope} />
+                  <span className="flex-1 ms-3 whitespace-nowrap">Store Emails</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="private-info"
+                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                >
+                  <FontAwesomeIcon icon={faCircleInfo} />
+                  <span className="flex-1 ms-3 whitespace-nowrap">Store Private Info</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="store-notes"
+                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                >
+                  <FontAwesomeIcon icon={faNoteSticky} />
+                  <span className="flex-1 ms-3 whitespace-nowrap">Store Notes</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="chatroom"
+                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                >
+                  <FontAwesomeIcon icon={faCommentDots} />
+                  <span className="flex-1 ms-3 whitespace-nowrap">Go to Chatroom</span>
+                </Link>
+              </li>
+              <li className="sign-out-list">
+                <button onClick={handleLogout} className="logout-btn">
+                  <FontAwesomeIcon icon={faArrowRightFromBracket} />
                   Log Out
                 </button>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </aside>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      )}
+
 
       {/* Main Content */}
       <main className="ml-64 p-6 bg-gray-100 w-full">
@@ -292,6 +274,32 @@ const Dashboard = () => {
           </div>
         )}
       </main>
+      {isNotificationModalOpen && (
+        <div className="modal-overlay-notification" onClick={() => setIsNotificationModalOpen(false)}>
+          <div className="modal-content-notification" onClick={(e) => e.stopPropagation()}>
+            <h2>Notifications</h2>
+            <p>Display notifications here...</p>
+            <button className="close-btn" onClick={() => setIsNotificationModalOpen(false)}>Close</button>
+          </div>
+        </div>
+      )}
+
+      {isMobile && (
+        <nav className="bottom-nav">
+          <Link to="/dashboard">
+            <FontAwesomeIcon icon={faNetworkWired} />
+          </Link>
+          <Link to="chatroom">
+            <FontAwesomeIcon icon={faCommentDots} />
+          </Link>
+          <span className="notification-mobile" onClick={() => setIsNotificationModalOpen(true)}>
+            <Notification />
+          </span>
+          <span className="profile-mobile">
+            <MyProfile />
+          </span>
+        </nav>
+      )}
     </>
   );
 };

@@ -165,7 +165,7 @@ const MyProfile = () => {
             />
           </div>
           <div
-            className="profile-info-col"
+            className="profile-info-col profile-info-col-user-names"
             onClick={() => setIsModalOpen(true)}
           >
             <h1 className="user-name">

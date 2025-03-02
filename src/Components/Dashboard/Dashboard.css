@@ -1,134 +1,209 @@
 #default-sidebar {
-    width: 256px; 
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    background-color: #f8f9fa; 
-    transition: transform 0.3s ease-in-out;
-    z-index: 40;
+  width: 256px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #f8f9fa;
+  transition: transform 0.3s ease-in-out;
+  z-index: 40;
+}
+
+#default-sidebar.dark {
+  background-color: #343a40;
+}
+
+#default-sidebar .h-full {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+#default-sidebar ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+#default-sidebar ul li {
+  margin-bottom: 16px;
+}
+
+#default-sidebar ul li a {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  color: #495057;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+#default-sidebar ul li a:hover {
+  background-color: #e2e6ea;
+}
+
+#default-sidebar ul li a.dark:hover {
+  background-color: #495057;
+}
+
+#default-sidebar ul li a svg {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  transition: fill 0.3s ease;
+}
+
+#default-sidebar ul li a:hover svg {
+  fill: #007bff;
+}
+
+#default-sidebar ul li a span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#default-sidebar ul li a .inline-flex {
+  padding: 3px 10px;
+  font-size: 12px;
+  background-color: #d6d8db;
+  color: #495057;
+  border-radius: 9999px;
+  margin-left: 12px;
+}
+
+#default-sidebar ul li a:hover .inline-flex {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+#default-sidebar ul li a.dark .inline-flex {
+  background-color: #495057;
+  color: #d6d8db;
+}
+
+.myProfile {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 100%;
+  z-index: 2;
+}
+
+.sign-out-list {
+  margin: 300px 0;
+}
+.log-out {
+  background-color: transparent !important;
+  background-image: none;
+  color: #495057 !important;
+  font-size: 14px !important;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  #default-sidebar {
+    width: 240px;
   }
-  
-  #default-sidebar.dark {
-    background-color: #343a40; 
+}
+
+main {
+  padding: 20px;
+  margin-left: 256px;
+  margin-top: 50px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+  place-items: center;
+}
+
+.grid > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+}
+
+/* Main Content */
+.main-with-sidebar {
+  margin-left: 256px;
+  padding: 20px;
+  width: calc(100% - 256px);
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  align-items: center;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  padding: 10px 0;
+  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-nav a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+}
+
+.bottom-nav a svg {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 768px) {
+  .sidebar, .myProfile {
+    display: none;
   }
-  
-  #default-sidebar .h-full {
-    padding: 16px;
-    overflow-y: auto;
+  .container { 
+    overflow-y: scroll;
   }
-  
-  #default-sidebar ul {
+  main { 
+    margin: 20px;
     padding: 0;
-    margin: 0;
-    list-style-type: none;
+    height: 115vh;
   }
-  
-  #default-sidebar ul li {
-    margin-bottom: 16px;
-  }
-  
-  #default-sidebar ul li a {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    color: #495057;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-  }
-  
-  #default-sidebar ul li a:hover {
-    background-color: #e2e6ea; 
-  }
-  
-  #default-sidebar ul li a.dark:hover {
-    background-color: #495057; 
-  }
-  
-  #default-sidebar ul li a svg {
-    width: 20px;
-    height: 20px;
-    margin-right: 12px;
-    transition: fill 0.3s ease;
-  }
-  
-  #default-sidebar ul li a:hover svg {
-    fill: #007bff; 
-  }
-  
-  #default-sidebar ul li a span {
-    font-size: 14px;
-    font-weight: 500;
-  }
-  
-  #default-sidebar ul li a .inline-flex {
-    padding: 3px 10px;
-    font-size: 12px;
-    background-color: #d6d8db; 
-    color: #495057; 
-    border-radius: 9999px;
-    margin-left: 12px;
-  }
-  
-  #default-sidebar ul li a:hover .inline-flex {
-    background-color: #007bff; 
-    color: #ffffff;
-  }
-  
-  #default-sidebar ul li a.dark .inline-flex {
-    background-color: #495057;
-    color: #d6d8db;
-  }
-
-  .myProfile { 
-    position: absolute;
-    top: -2px;
-    right: -2px;
+  .grid > div { 
+    max-width: 400px;
     width: 100%;
-    z-index: 2;
+  }
+  .profile-settings-wrapper { 
+    border: none !important;
+  }
+  .profile-settings .profile-info-row { 
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    column-gap: 0 !important;
+  }
+  .profile-info-col-notification{ 
+    display: none;
+  }
+  .profile-info-col-user-names { 
+    display: none;
   }
 
-  .sign-out-list { 
-    margin: 300px 0;
-  }
-  .log-out { 
-    background-color: transparent !important;
-    background-image: none;
-    color: #495057 !important;
-    font-size: 14px !important;
-    border:none;
-  }
-  
-  @media (max-width: 768px) {
-    #default-sidebar {
-      width: 240px;
-    }
-  }
-
-  main {
+  .main-full {
+    margin-left: 0;
+    width: 100%;
     padding: 20px;
-    margin-left: 256px; 
-    margin-top: 50px;
   }
-  
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-        gap: 20px;
-        place-items: center;
-    }
-    
-    .grid > div {
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        width: 100%;
-        height: 100%;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        flex-direction: column;
-      }
-      
+}
