@@ -24,6 +24,15 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
+  const handleLinkClick = () => {
+    console.log('Link clicked, scrolling to top');
+    const container = document.querySelector('.container'); 
+    if (container) {
+      container.scrollTo(0, 0);
+      console.log('Scrolled to top');
+    }
+  };
+  
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -286,10 +295,10 @@ const Dashboard = () => {
 
       {isMobile && (
         <nav className="bottom-nav">
-          <Link to="/dashboard">
+          <Link className="nigga" to="/dashboard" onClick={handleLinkClick}>
             <FontAwesomeIcon icon={faNetworkWired} />
           </Link>
-          <Link to="chatroom">
+          <Link to="chatroom" onClick={handleLinkClick}>
             <FontAwesomeIcon icon={faCommentDots} />
           </Link>
           <span className="notification-mobile" onClick={() => setIsNotificationModalOpen(true)}>

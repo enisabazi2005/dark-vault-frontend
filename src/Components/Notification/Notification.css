@@ -56,4 +56,9 @@
         top: -13px;
         font-size: 10px;    
     }
+    .notificationCount { 
+        position: relative;
+        top: -13px;
+        font-size: 10px;
+    }
 }

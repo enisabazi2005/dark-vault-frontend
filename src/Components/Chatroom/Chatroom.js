@@ -29,6 +29,7 @@ const Chatroom = () => {
   const [isProfileClicked, setIsProfileClicked] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
+
   const handleProfileClick = (user) => {
     setSelectedUser(user);
     setIsProfileClicked(true);
@@ -311,14 +312,14 @@ const Chatroom = () => {
     <div className="full-width-layout">
       <div className="row-layout">
         <div className="col-50">
-          <h2 className="text-xl font-semibold">Search for a friend...</h2>
+          <h2 className="text-xl font-semibold">Add a friend...</h2>
           <div className="search-layout">
-            <label htmlFor="filter-input">Search</label>
+            {/* <label htmlFor="filter-input">Search</label> */}
             <input
               name="filter-input"
               type="text"
-              placeholder="Search by name, lastname, or email..."
               value={search}
+              placeholder="Search"
               onChange={handleSearch}
             />
           </div>
@@ -384,7 +385,7 @@ const Chatroom = () => {
         </div>
       </div>
 
-      <div className="row-layout">
+      <div className="row-layout row-layout-friends">
         <div className="col-50">
           <h3>Pending Friend Requests</h3>
           {loading ? (
@@ -392,9 +393,10 @@ const Chatroom = () => {
           ) : pendingRequests.length > 0 ? (
             <ul>
               {pendingRequests.map((request, index) => (
-                <li key={index}>
-                  {request.friend_name}{" "}
+                <li key={index} className="friend-request-name">
+                  {request.friend_name}
                   <button
+                   className="accept-friend-request-button"
                     onClick={() =>
                       respondToFriendRequest(
                         request.request_friend_id,
@@ -405,6 +407,7 @@ const Chatroom = () => {
                     Accept
                   </button>
                   <button
+                    className="reject-friend-request-button"
                     onClick={() =>
                       respondToFriendRequest(
                         request.request_friend_id,
@@ -434,6 +437,14 @@ const Chatroom = () => {
                   onClick={() => handleSelectUser(friend, true)}
                   style={{ cursor: "pointer" }}
                 >
+                   <img src={
+                      friend.picture
+                        ? `${STORAGE_URL}/${friend.picture}`
+                        : `${defaultBlankPhotoUrl}`
+                    }
+                    alt={`${friend.name} ${friend.lastname}`}
+                    className="user-image-filter"
+                  />
                   {friend.name} {friend.lastname}
                 </li>
               ))}

@@ -147,7 +147,7 @@ const Settings = ({ onClose }) => {
             </div>
           </div>
 
-          <div className="form-row">
+          <div className="form-row form-row-password">
             <div className="form-group">
               <label htmlFor="current_password">Current Password</label>
               <input
@@ -195,9 +195,6 @@ const Settings = ({ onClose }) => {
                 onChange={handleChange}
               />
             </div>
-          </div>
-
-          <div className="form-row">
             <div className="form-group">
               <label htmlFor="picture">Profile Picture</label>
               <input

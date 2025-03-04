@@ -25,7 +25,92 @@
     /* border: 1px solid black; */
     min-height: 150px; /* FIX: Gives space for dropdown */
   }
-  
+  .full-width-layout .row-layout .col-50 h2 { 
+    font-size: 22px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #3e3e3e;    
+  }
+  .full-width-layout .row-layout .col-50 h3  { 
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #3e3e3e;
+  }
+  .full-width-layout .row-layout .col-50 p { 
+    font-size: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    color:#636363;
+    padding: 5px 0;
+  }
+  .full-width-layout .row-layout .col-50 ul li { 
+    font-size: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #636363;
+    padding: 15px 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    justify-content: center;
+  }
+
+  .full-width-layout .row-layout .col-50 ul li .accept-friend-request-button { 
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #3e3e3e;
+    width: 100px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 500;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    outline: none;
+    background: #75be9c;
+    color: #fff;
+  }
+  .full-width-layout .row-layout .col-50 ul li .accept-friend-request-button:hover { 
+    color:#75be9c;
+    background-color: transparent;
+    border: 1px solid #75be9c;
+    transition: .2s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  .full-width-layout .row-layout .col-50 ul li .reject-friend-request-button { 
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #3e3e3e;
+    width: 100px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 500;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    outline: none;
+    background: #f2649a;
+    color: #fff;
+  }
+  .full-width-layout .row-layout .col-50 ul li .reject-friend-request-button:hover { 
+    color:#f2649a;
+    background-color: transparent;
+    border: 1px solid #f2649a;
+    transition: .2s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  .full-width-layout .row-layout .col-50 ul li::before { 
+    position: absolute;
+    content: "";
+    bottom: 0;
+    left: 0;
+    width: 0;
+    background-color: rgb(77, 69, 69);
+    height: 3px;
+    border-radius: 20px;
+    text-align: center;
+  }
+  .full-width-layout .row-layout .col-50 ul li:hover::before { 
+    width: 100%;
+    transition: .2s linear;
+  }
+  .full-width-layout .row-layout .col-50 ul .friend-request-name { 
+    font-size: 17px;
+  }
   .full-width-layout .row-layout .col-50 .search-layout {
     position: relative;
     width: 100%;
@@ -45,7 +130,7 @@
   /* Move dropdown inside the col-50 */
   .dropdown {
     width: 100%;
-    background: rgb(67, 65, 65);
+    background: #ddd;
     border: 1px solid #ccc;
     border-radius: 5px;
     max-height: 200px;
@@ -63,16 +148,20 @@
     align-items: center;
     justify-content: center;
     column-gap: 10px;
+    color: #3e3e3e;
+    font-weight: 400;
+    font-family:Arial, Helvetica, sans-serif;
   }
   .user-image-filter { 
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     object-fit: cover;
     border-radius: 100%;
   }
   
   .dropdown-item:hover {
     background: #f4f4f4;
+    transition: .2s ease-in;
   }
   
   .user-card {
@@ -401,8 +490,20 @@
       justify-content: center;
       align-items: center;
     }
-    .full-width-layout .row-layout .col-50 .search-layout { 
+    .full-width-layout .row-layout-friends { 
+      flex-direction: row-reverse;
+    }
+    .full-width-layout .row-layout .col-50 .search-layout {
       padding: 15px 0;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+    
+    .full-width-layout .row-layout .col-50 .search-layout input {
+      padding: 10px; 
+      border: 1px solid #ccc;
+      width: 100%;
     }
     .user-card { 
       margin: 0;
@@ -415,6 +516,7 @@
     }
     .full-width-layout .row-layout .col-50 { 
       height: auto;
+      width: 100%;
       min-height: 0;
     }
   }

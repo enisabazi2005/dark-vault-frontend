@@ -97,6 +97,7 @@ const StorePassword = () => {
           type="password"
           placeholder="Write your password here"
           value={password}
+          className="password-input"
           onChange={(e) => setPassword(e.target.value)}
         />
         <button onClick={handleSavePassword}>Save Password</button>
@@ -144,6 +145,7 @@ const StorePassword = () => {
               <input
                 type="password"
                 value={editPassword}
+                className="password-input"
                 onChange={(e) => setEditPassword(e.target.value)}
               />
             </label>
