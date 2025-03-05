@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "../StorePassword/Password.css";
 import api from "../../api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 const StorePassword = () => {
   const [passwords, setPasswords] = useState([]);
   const [password, setPassword] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState({ type: "", id: null }); // Manage only one modal at a time
+  const [isModalOpen, setIsModalOpen] = useState({ type: "", id: null });
   const [editPassword, setEditPassword] = useState("");
   const [editPasswordId, setEditPasswordId] = useState(null);
   const [deletePasswordId, setDeletePasswordId] = useState(null);
   const [viewPassword, setViewPassword] = useState("");
+  const [selectedPasswordId, setSelectedPasswordId] = useState(null);
   
-
   useEffect(() => {
     const fetchPasswords = async () => {
       try {
@@ -38,6 +40,7 @@ const StorePassword = () => {
   const handleEditPassword = (id, currentPassword) => {
     setEditPassword(currentPassword);
     setEditPasswordId(id);
+    setSelectedPasswordId(id); 
     setIsModalOpen({ type: "edit", id });
   };
 
@@ -59,6 +62,7 @@ const StorePassword = () => {
 
   const handleDeletePassword = (id) => {
     setDeletePasswordId(id);
+    setSelectedPasswordId(id); 
     setIsModalOpen({ type: "delete", id });
   };
 
@@ -82,6 +86,7 @@ const StorePassword = () => {
     setEditPassword("");
     setDeletePasswordId(null);
     setViewPassword("");
+    setSelectedPasswordId(null); 
   };
 
   return (
@@ -96,11 +101,10 @@ const StorePassword = () => {
         <input
           type="password"
           placeholder="Write your password here"
-          value={password}
           className="password-input"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button onClick={handleSavePassword}>Save Password</button>
+        <button className="save-password-button" onClick={handleSavePassword}>Save Password</button>
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow-lg">
@@ -108,25 +112,29 @@ const StorePassword = () => {
         <div className="passwordsGrid">
           {passwords.length > 0 ? (
             passwords.map((storedPassword, index) => (
-              <div key={storedPassword.id} className="passwordItem">
-                <button
+              <div key={storedPassword.id} 
+              className={`passwordItem ${selectedPasswordId === storedPassword.id ? "selected" : ""}`} 
+              id={storedPassword.id}>
+               <div className="edit-delete-buttons">
+               <button
                   className="passwordButton"
-                  onClick={() => handleViewPassword(storedPassword.password)} // Show password in modal
+                  onClick={() => handleViewPassword(storedPassword.password)} 
                 >
                   Password {index + 1}
                 </button>
-                <button
+               <button
                   className="editButton"
                   onClick={() => handleEditPassword(storedPassword.id, storedPassword.password)}
                 >
-                  Edit
+                  <FontAwesomeIcon icon={faEdit} />
                 </button>
                 <button
                   className="deleteButton"
                   onClick={() => handleDeletePassword(storedPassword.id)}
                 >
-                  Delete
+                  <FontAwesomeIcon icon={faXmark} />
                 </button>
+               </div>
               </div>
             ))
           ) : (
@@ -135,49 +143,51 @@ const StorePassword = () => {
         </div>
       </div>
 
-      {/* Edit Modal for editing password */}
       {isModalOpen.type === "edit" && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className="content-modal">
+          <div className="modal-content-password">
             <h3>Edit Password</h3>
-            <label>
-              Change this password:
               <input
                 type="password"
-                value={editPassword}
+                placeholder="Edit Password..."
                 className="password-input"
                 onChange={(e) => setEditPassword(e.target.value)}
               />
-            </label>
             <div className="modal-actions">
-              <button onClick={handleSaveChanges}>Save Changes</button>
-              <button onClick={closeModals}>Cancel</button>
+             <div className="modal-actions-col">
+             <button className="handleSaveChangesButton" onClick={handleSaveChanges}>
+                <FontAwesomeIcon icon={faCheck} />
+              </button>
+             </div>
+             <div className="modal-actions-col">
+              <button className="handleCloseModalButton" onClick={closeModals}>
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+             </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
       {isModalOpen.type === "delete" && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className="content-modal">
+          <div className="modal-content-password">
             <h3>Are you sure you want to delete this password?</h3>
             <div className="modal-actions">
-              <button onClick={confirmDeletePassword}>Delete</button>
-              <button onClick={closeModals}>Cancel</button>
+              <button className="confirmDelete" onClick={confirmDeletePassword}>Delete</button>
+              <button className="confirmClose" onClick={closeModals}>Cancel</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* View Password Modal */}
       {isModalOpen.type === "view" && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className="content-modal">
+          <div className="modal-content-password">
             <h3>View Password</h3>
-            <p>{viewPassword}</p>
+            <p className="viewPassword">{viewPassword}</p>
             <div className="modal-actions">
-              <button onClick={closeModals}>Close</button>
+              <button className="closeModalViewPassword" onClick={closeModals}>Close</button>
             </div>
           </div>
         </div>

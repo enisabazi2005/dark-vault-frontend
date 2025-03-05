@@ -1,0 +1,17 @@
+
+.privateGrids { 
+    width: 100%;
+}
+.private-info-input { 
+    border-radius: 10px;
+    outline: none;
+    font-size: 17px;
+    color: black;
+    padding: 10px;
+    border: 1px solid #ccc;
+    width: 100%;
+    margin: 5px 0;
+}
+.closeModalViewPassword-1 { 
+    width: 100%;
+}

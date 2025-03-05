@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../PrivateInfo/PrivateInfo.css";
 import api from "../../api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faXmark, faCheck, faEye } from "@fortawesome/free-solid-svg-icons";
 
 const PrivateInfo = () => {
   const [privateInfos, setPrivateInfos] = useState([]);
@@ -8,6 +10,15 @@ const PrivateInfo = () => {
   const [info1, setInfo1] = useState("");
   const [info2, setInfo2] = useState("");
   const [info3, setInfo3] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState({ type: "", id: null });
+  const [editInfo, setEditInfo] = useState({});
+  const [deleteInfoId, setDeleteInfoId] = useState(null);
+  const [viewInfo, setViewInfo] = useState({});
+  const [selectedPrivateInfoId, setSelectedPrivateInfoId] = useState(null);
+
+  const handleSelectPrivateInfo = (id) => {
+    setSelectedPrivateInfoId(id);
+  };
 
   useEffect(() => {
     const fetchPrivateInfos = async () => {
@@ -40,44 +51,51 @@ const PrivateInfo = () => {
     }
   };
 
-  const handleEditPrivateInfo = (id) => {
-    const updatedName = prompt("Edit the name:");
-    const updatedInfo1 = prompt("Edit Info 1:");
-    const updatedInfo2 = prompt("Edit Info 2:");
-    const updatedInfo3 = prompt("Edit Info 3:");
-    
-    if (updatedName && updatedInfo1 && updatedInfo2 && updatedInfo3) {
-      api.put(`/store-private-info/${id}`, {
-        name: updatedName,
-        info_1: updatedInfo1,
-        info_2: updatedInfo2,
-        info_3: updatedInfo3,
-      })
-        .then(() => {
-          setPrivateInfos(privateInfos.map((entry) =>
-            entry.id === id
-              ? {
-                  ...entry,
-                  name: updatedName,
-                  info_1: updatedInfo1,
-                  info_2: updatedInfo2,
-                  info_3: updatedInfo3,
-                }
-              : entry
-          ));
-        })
-        .catch((error) => console.error("Error editing private info", error));
+  const handleEditPrivateInfo = (id, currentInfo) => {
+    setEditInfo(currentInfo);
+    setIsModalOpen({ type: "edit", id });
+  };
+
+  const handleSaveChanges = async () => {
+    const { id, name, info_1, info_2, info_3 } = editInfo;
+    try {
+      await api.put(`/store-private-info/${id}`, { name, info_1, info_2, info_3 });
+      setPrivateInfos(
+        privateInfos.map((entry) =>
+          entry.id === id ? { ...entry, name, info_1, info_2, info_3 } : entry
+        )
+      );
+      closeModals();
+    } catch (error) {
+      console.error("Error saving changes", error);
     }
   };
 
   const handleDeletePrivateInfo = (id) => {
-    if (window.confirm("Are you sure you want to delete this private info?")) {
-      api.delete(`/store-private-info/${id}`)
-        .then(() => {
-          setPrivateInfos(privateInfos.filter((entry) => entry.id !== id));
-        })
-        .catch((error) => console.error("Error deleting private info", error));
+    setDeleteInfoId(id);
+    setIsModalOpen({ type: "delete", id });
+  };
+
+  const confirmDeletePrivateInfo = async () => {
+    try {
+      await api.delete(`/store-private-info/${deleteInfoId}`);
+      setPrivateInfos(privateInfos.filter((entry) => entry.id !== deleteInfoId));
+      closeModals();
+    } catch (error) {
+      console.error("Error deleting private info", error);
     }
+  };
+
+  const handleViewPrivateInfo = (info) => {
+    setViewInfo(info);
+    setIsModalOpen({ type: "view", id: info.id });
+  };
+
+  const closeModals = () => {
+    setIsModalOpen({ type: "", id: null });
+    setEditInfo({});
+    setDeleteInfoId(null);
+    setViewInfo({});
   };
 
   return (
@@ -90,91 +108,145 @@ const PrivateInfo = () => {
       <div className="bg-white p-4 rounded-lg shadow-lg">
         <h2 className="privateInfoHeader">Store Private Info</h2>
         <input
+          className="private-info-input"
           type="text"
           placeholder="Enter your name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <input
+          className="private-info-input"
           type="text"
           placeholder="Enter Info 1"
           value={info1}
           onChange={(e) => setInfo1(e.target.value)}
         />
         <input
+          className="private-info-input"
           type="text"
           placeholder="Enter Info 2"
           value={info2}
           onChange={(e) => setInfo2(e.target.value)}
         />
         <input
+          className="private-info-input"
           type="text"
           placeholder="Enter Info 3"
           value={info3}
           onChange={(e) => setInfo3(e.target.value)}
         />
-        <button onClick={handleSavePrivateInfo}>Save Info</button>
+        <button className="save-password-button" onClick={handleSavePrivateInfo}>Save Info</button>
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow-lg">
         <h2 className="privateInfoHeader">Stored Private Info</h2>
-        <div className="privateInfoGrid">
-          {privateInfos.length > 0 ? (
-            privateInfos.map((entry, index) => (
-              <div key={entry.id} className="privateInfoItem">
-                <button
-                  className="privateInfoButton"
-                  onClick={() =>
-                    alert(
-                      `Info ${index + 1}: ${entry.name}\n1: ${entry.info_1}\n2: ${entry.info_2}\n3: ${entry.info_3}`
-                    )
-                  }
-                >
-                  {entry.name}
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>No private info stored yet.</p>
-          )}
+        <div className="passwordsGrid privateGrids">
+  {privateInfos.length > 0 ? (
+    privateInfos.map((entry) => (
+      <div
+        key={entry.id}
+        className={`passwordItem ${selectedPrivateInfoId === entry.id ? "selected" : ""}`}
+        onClick={() => handleSelectPrivateInfo(entry.id)}
+      >
+        <div className="edit-delete-buttons">
+          <button
+            className="passwordButton"
+            onClick={() => handleViewPrivateInfo(entry)}
+          >
+            {entry.name}
+          </button>
+          <button
+            className="editButton"
+            onClick={() => handleEditPrivateInfo(entry.id, entry)}
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </button>
+          <button
+            className="deleteButton"
+            onClick={() => handleDeletePrivateInfo(entry.id)}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </button>
         </div>
+      </div>
+    ))
+  ) : (
+    <p>No private info stored yet.</p>
+  )}
+</div>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="privateInfoHeader">Editable and Deletable Private Info</h2>
-        <div className="privateInfoGrid">
-          {privateInfos.length > 0 ? (
-            privateInfos.map((entry, index) => (
-              <div key={entry.id} className="privateInfoItem">
-                <button
-                  className="privateInfoButton"
-                  onClick={() =>
-                    alert(
-                      `Info ${index + 1}: ${entry.name}\n1: ${entry.info_1}\n2: ${entry.info_2}\n3: ${entry.info_3}`
-                    )
-                  }
-                >
-                  {entry.name}
-                </button>
-                <button
-                  className="editButton"
-                  onClick={() => handleEditPrivateInfo(entry.id)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="deleteButton"
-                  onClick={() => handleDeletePrivateInfo(entry.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>No private info stored yet.</p>
-          )}
+      {/* View Modal */}
+      {isModalOpen.type === "view" && (
+        <div className="content-modal">
+          <div className="modal-content-password">
+            <h3>Private Info</h3>
+            <p><strong>Name:</strong> {viewInfo.name}</p>
+            <p><strong>Info 1:</strong> {viewInfo.info_1}</p>
+            <p><strong>Info 2:</strong> {viewInfo.info_2}</p>
+            <p><strong>Info 3:</strong> {viewInfo.info_3}</p>
+            <button className="closeModalViewPassword closeModalViewPassword-1" onClick={closeModals}>
+              Close
+            </button>
+          </div>
         </div>
+      )}
+
+      {/* Edit Modal */}
+      {isModalOpen.type === "edit" && (
+        <div className="content-modal">
+          <div className="modal-content-password">
+            <h3>Edit Private Info</h3>
+            <input
+              className="save-password-button"
+              type="text"
+              value={editInfo.name}
+              onChange={(e) => setEditInfo({ ...editInfo, name: e.target.value })}
+              placeholder="Edit Name"
+            />
+            <input
+              className="save-password-button"
+              type="text"
+              value={editInfo.info_1}
+              onChange={(e) => setEditInfo({ ...editInfo, info_1: e.target.value })}
+              placeholder="Edit Info 1"
+            />
+            <input
+              className="save-password-button"
+              type="text"
+              value={editInfo.info_2}
+              onChange={(e) => setEditInfo({ ...editInfo, info_2: e.target.value })}
+              placeholder="Edit Info 2"
+            />
+            <input
+              className="save-password-button"
+              type="text"
+              value={editInfo.info_3}
+              onChange={(e) => setEditInfo({ ...editInfo, info_3: e.target.value })}
+              placeholder="Edit Info 3"
+            />
+            <button className="handleSaveChangesButton" onClick={handleSaveChanges}>
+              <FontAwesomeIcon icon={faCheck} />
+            </button>
+          </div>
+        </div>
+      )}
+      {isModalOpen.type === "delete" && (
+  <div className="content-modal">
+    <div className="modal-content-password">
+      <h3>Are you sure you want to delete this private info?</h3>
+      <div className="modal-actions">
+        <button className="confirmDelete" onClick={confirmDeletePrivateInfo}>
+          <FontAwesomeIcon icon={faCheck} /> Delete
+        </button>
+        <button className="confirmClose" onClick={closeModals}>
+          <FontAwesomeIcon icon={faXmark} /> Cancel
+        </button>
       </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
