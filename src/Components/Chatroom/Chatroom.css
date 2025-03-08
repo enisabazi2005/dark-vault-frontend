@@ -195,11 +195,16 @@
   .user-details {
     text-align: center;
   }
+  .user-details .selected-user-details { 
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    padding: 10px 0;
+  }
   
   .user-details p {
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 10px;
   }
   
   /* Style for the add friend button */
@@ -330,6 +335,9 @@
     overflow-wrap: break-word; 
     word-wrap: break-word; 
     white-space: normal; 
+  }
+  .message-content-fallback { 
+    bottom: 0 !important;
   }
 
   .message-input {

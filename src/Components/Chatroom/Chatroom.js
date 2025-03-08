@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { PUSHER_APP_KEY, PUSHER_CLUSTER } from "../../api";
 import Muted from "../Muted/Muted";
+import Unfriend from "../Unfriend/Unfriend";
+import Blocked from "../Blocked/Blocked";
 
 const Chatroom = () => {
   const [users, setUsers] = useState([]);
@@ -28,7 +30,57 @@ const Chatroom = () => {
   const [recieverRequestId, setRecieverReqeustId] = useState([]);
   const [isProfileClicked, setIsProfileClicked] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [selectedUserFriends, setSelectedUserFriends] = useState(null);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [friend, setFriend] = useState(true);
+  const [blockedUsers, setBlockedUsers] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [blockedBy, setBlockedBy] = useState([]);
 
+  useEffect(() => {
+    const getBlockedByUsers = async () => {
+      try {
+        const response = await api.get("/blocked-by");
+        setBlockedBy(response.data); 
+        console.log(response.data, "response.data");
+      } catch (error) {
+        console.error("Error fetching the blocked by users", error);
+      }
+    };
+    getBlockedByUsers();
+  }, []);
+
+  useEffect(() => {
+    const fetchBlockedUsers = async () => {
+      try {
+        const response = await api.get("/blocked-users");
+        setBlockedUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching blocked users", error);
+        throw error;
+      }
+    };
+    fetchBlockedUsers();
+  }, []);
+
+  useEffect(() => {
+    const fetchSelectedUserFriends = async () => {
+      if (!selectedUser || !selectedUser.request_id) return;
+  
+      try {
+        const response = await api.get(
+          `/dark-user/${selectedUser.request_id}/get-friends`
+        );
+  
+        setSelectedUserFriends(response.data);
+        console.log(response.data, 'Selected user friends count: ', response.data.friends_count);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+  
+    fetchSelectedUserFriends();
+  }, [selectedUser, selectedUserFriends]);
 
   const handleProfileClick = (user) => {
     setSelectedUser(user);
@@ -36,19 +88,15 @@ const Chatroom = () => {
   };
 
   const handleCloseProfileClick = () => {
-  setIsProfileClicked(false);  
+    setIsProfileClicked(false);
   };
 
-  const handleMuteToggle = (newMuteStatus) => {
-    setIsMuted(newMuteStatus); 
+  const handleBlockToggle = (newBlockStatus) => {
+    setIsBlocked(newBlockStatus);
   };
 
-  const handleBlockUser = () => {
-    console.log("Block this user");
-  };
-
-  const handleRemoveFriend = () => {
-    console.log("Remove friend request");
+  const handleUnfriendToggle = (newFriendStatus) => {
+    setFriend(newFriendStatus);
   };
 
   const handleSendMessage = async () => {
@@ -116,7 +164,7 @@ const Chatroom = () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [selectedUser, requestId]); 
+  }, [selectedUser, requestId]);
 
   useEffect(() => {
     if (!requestId || !selectedUser) return;
@@ -147,7 +195,14 @@ const Chatroom = () => {
     };
 
     fetchMessages();
-  }, [selectedUser, requestId, senderRequestId, recieverRequestId, userId]); // Add senderRequestId, recieverRequestId, and userId here
+  }, [
+    selectedUser,
+    requestId,
+    senderRequestId,
+    recieverRequestId,
+    userId,
+    blockedUsers,
+  ]); 
 
   useEffect(() => {
     if (!requestId) {
@@ -250,13 +305,23 @@ const Chatroom = () => {
       if (response.status === 200) {
         console.log("Friend request sent successfully");
         setFriendRequestSent(true);
+        setErrorMessage("");
         setFilteredUsers((prevUsers) =>
           prevUsers.filter((user) => user.request_id !== userRequestId)
         );
       }
+      if (
+        response.status === 400 &&
+        response.data.message === "User blocked you"
+      ) {
+        setIsBlocked(true);
+      } else {
+        setIsBlocked(false);
+      }
     } catch (error) {
       console.error("Error sending friend request:", error);
-      alert("Failed to send friend request.");
+      setIsBlocked(true);
+      setErrorMessage(error.response.data.message);
     }
   };
 
@@ -271,9 +336,13 @@ const Chatroom = () => {
 
     const currentUserRequestId = localStorage.getItem("request_id");
 
+    const blockedUserIds = Array.isArray(blockedUsers)
+      ? blockedUsers.map((user) => user.id)
+      : []; 
     const filtered = users.filter((user) => {
       return (
         user.request_id !== currentUserRequestId &&
+        !blockedUserIds.includes(user.id) && 
         (user.name?.toLowerCase().includes(value) ||
           user.lastname?.toLowerCase().includes(value))
       );
@@ -294,7 +363,7 @@ const Chatroom = () => {
 
   const handleCloseChat = () => {
     setSelectedUser(null);
-    setIsOpen(false); 
+    setIsOpen(false);
   };
 
   const isFriend = (userId) => {
@@ -314,7 +383,6 @@ const Chatroom = () => {
         <div className="col-50">
           <h2 className="text-xl font-semibold">Add a friend...</h2>
           <div className="search-layout">
-            {/* <label htmlFor="filter-input">Search</label> */}
             <input
               name="filter-input"
               type="text"
@@ -353,11 +421,13 @@ const Chatroom = () => {
               <div className="user-picture">
                 <img
                   src={
-                    selectedUser.picture
-                      ? `${STORAGE_URL}/${selectedUser.picture}`
-                      : `${defaultBlankPhotoUrl}`
+                    blockedBy.some((user) => user.id === selectedUser.id) 
+                      ? defaultBlankPhotoUrl
+                      : selectedUser.picture
+                      ? `${STORAGE_URL}/${selectedUser.picture}` 
+                      : defaultBlankPhotoUrl 
                   }
-                  alt={`${selectedUser.name} ${selectedUser.lastname}`}
+                  alt="Profile"
                   className="user-image"
                 />
               </div>
@@ -365,20 +435,30 @@ const Chatroom = () => {
                 <p>
                   {selectedUser.name} {selectedUser.lastname}
                 </p>
-                <button
-                  className="add-friend-btn"
-                  onClick={() =>
-                    isFriend(selectedUser.request_id)
-                      ? null
-                      : sendFriendRequest(selectedUser.request_id)
-                  }
-                >
-                  {isFriend(selectedUser.request_id)
-                    ? "Friends"
-                    : friendRequestSent
-                    ? "Friend Request Sent"
-                    : "Add Friend"}
-                </button>
+                <div className="selected-user-details">
+                  <p>
+                    {isFriend(selectedUser.request_id) &&
+                      selectedUserFriends?.friends_count > 0 && (
+                        <p>{selectedUserFriends.friends_count} Friends</p>
+                      )}
+                  </p>
+                  <button
+                    className="add-friend-btn"
+                    onClick={() =>
+                      isFriend(selectedUser.request_id)
+                        ? null
+                        : sendFriendRequest(selectedUser.request_id)
+                    }
+                  >
+                    {isFriend(selectedUser.request_id)
+                      ? "Friends"
+                      : friendRequestSent
+                      ? "Friend Request Sent"
+                      : errorMessage
+                      ? errorMessage
+                      : "Add Friend"}
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -394,9 +474,18 @@ const Chatroom = () => {
             <ul>
               {pendingRequests.map((request, index) => (
                 <li key={index} className="friend-request-name">
+                  <img
+                    src={
+                      request.friend_picture_url
+                        ? `${STORAGE_URL}/${request.friend_picture_url}`
+                        : `${defaultBlankPhotoUrl}`
+                    }
+                    alt={`${request.request_friend_id}`}
+                    className="user-image-filter"
+                  />
                   {request.friend_name}
                   <button
-                   className="accept-friend-request-button"
+                    className="accept-friend-request-button"
                     onClick={() =>
                       respondToFriendRequest(
                         request.request_friend_id,
@@ -437,7 +526,8 @@ const Chatroom = () => {
                   onClick={() => handleSelectUser(friend, true)}
                   style={{ cursor: "pointer" }}
                 >
-                   <img src={
+                  <img
+                    src={
                       friend.picture
                         ? `${STORAGE_URL}/${friend.picture}`
                         : `${defaultBlankPhotoUrl}`
@@ -480,18 +570,28 @@ const Chatroom = () => {
                   {selectedUser && <h1>{selectedUser.name}</h1>}
                 </div>
                 {isProfileClicked && selectedUser && (
-                  <div className="modal-profile-clicked" >
+                  <div className="modal-profile-clicked">
                     <div className="modal-profile-clicked-row">
-                      <h2 onClick={handleCloseProfileClick}>{selectedUser.name}'s Options</h2>
-                      <button onClick={handleBlockUser}>Block</button>
+                      <h2 onClick={handleCloseProfileClick}>
+                        {selectedUser.name}'s Options
+                      </h2>
+                      <Blocked
+                        selectedUserId={selectedUser.request_id}
+                        isBlocked={isBlocked}
+                        onBlockToggle={handleBlockToggle}
+                      />
                       <Muted
                         selectedUserId={selectedUser.id}
                         isMuted={isMuted}
-                        onMuteToggle={handleMuteToggle}
+                        onMuteToggle={(newMuteStatus) =>
+                          setIsMuted(newMuteStatus)
+                        }
                       />
-                      <button onClick={handleRemoveFriend}>
-                        Unfriend
-                      </button>
+                      <Unfriend
+                        selectedUserId={selectedUser.request_id}
+                        isFriend={friend}
+                        onUnfriendToggle={handleUnfriendToggle}
+                      />
                     </div>
                   </div>
                 )}
@@ -507,7 +607,6 @@ const Chatroom = () => {
                     const userRequestId = localStorage.getItem("request_id");
 
                     const isSent = msg.sender_id === userRequestId;
-                    // const isReceived = msg.reciever_id;
                     const isReceived = selectedUser.request_id;
 
                     const messageContent = msg.message;

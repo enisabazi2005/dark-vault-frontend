@@ -30,7 +30,6 @@ const MyProfile = () => {
           console.error("No user ID or token found");
           return;
         }
-
         const response = await api.get(`/users/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
