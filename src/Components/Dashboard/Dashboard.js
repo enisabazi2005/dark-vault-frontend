@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import MyProfile from "../MyProfile/MyProfile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faNetworkWired, faLock, faSquareEnvelope, faCircleInfo, faNoteSticky, faCommentDots, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faNetworkWired, faLock, faSquareEnvelope, faCircleInfo, faNoteSticky, faCommentDots, faArrowRightFromBracket, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import Notification from "../Notification/Notification";
 
 const Dashboard = () => {
@@ -226,11 +226,19 @@ const Dashboard = () => {
                   <span className="flex-1 ms-3 whitespace-nowrap">Go to Chatroom</span>
                 </Link>
               </li>
+              <li>
+                <Link to="friends"
+                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                >
+                  <FontAwesomeIcon icon={faPeopleGroup} />
+                  <span className="flex-1 ms-3 whitespace-nowrap">Friends</span>
+                </Link>
+              </li>
               <li className="sign-out-list">
-                <button onClick={handleLogout} className="logout-btn">
+                <a onClick={handleLogout}>
                   <FontAwesomeIcon icon={faArrowRightFromBracket} />
                   Log Out
-                </button>
+                </a>
               </li>
             </ul>
           </div>

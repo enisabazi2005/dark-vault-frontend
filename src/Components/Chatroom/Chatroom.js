@@ -68,20 +68,16 @@ const Chatroom = () => {
       if (!selectedUser || !selectedUser.request_id) return;
   
       try {
-        const response = await api.get(
-          `/dark-user/${selectedUser.request_id}/get-friends`
-        );
-  
+        const response = await api.get(`/dark-user/${selectedUser.request_id}/get-friends`);
         setSelectedUserFriends(response.data);
-        console.log(response.data, 'Selected user friends count: ', response.data.friends_count);
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
   
     fetchSelectedUserFriends();
-  }, [selectedUser, selectedUserFriends]);
-
+  }, [selectedUser?.request_id]); 
+  
   const handleProfileClick = (user) => {
     setSelectedUser(user);
     setIsProfileClicked(true);
@@ -353,6 +349,18 @@ const Chatroom = () => {
 
   const handleSelectUser = (user, isFriendSelection = false) => {
     setSelectedUser(user);
+
+    const isBlockedByUser = blockedBy.some(blocked => blocked.id === user.id); // Use `user.id` directly
+    console.log(isBlockedByUser);
+    
+    if (isBlockedByUser) {
+      setErrorMessage("User blocked you");
+      setFriend(false); 
+    } else {
+      setErrorMessage("");
+      setFriend(isFriend(user.request_id));
+    }
+  
 
     if (isFriendSelection) {
       setIsOpen(true);

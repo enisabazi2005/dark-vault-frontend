@@ -90,8 +90,12 @@
 }
 
 .sign-out-list {
-  padding: 200px 0 0 0;
+  cursor: pointer;
 }
+.sign-out-list button:hover {
+  background-color: #e2e6ea;
+}
+
 .logout-btn {
   padding: 10px;
   display: flex;

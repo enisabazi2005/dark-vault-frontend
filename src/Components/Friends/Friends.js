@@ -1,0 +1,128 @@
+import React, { useEffect, useState } from "react";
+import "../Friends/Friends.css";
+import api from "../../api";
+import { STORAGE_URL } from "../../api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLockOpen, faUnlock, faTrash } from "@fortawesome/free-solid-svg-icons";
+
+const Friends = () => {
+  const [friends, setFriends] = useState([]);
+  const [blockedUsers, setBlockedUsers] = useState([]);
+  const [loadingUnblock, setLoadingUnblock] = useState({});
+  const [loadingUnfriend, setLoadingUnfriend] = useState({}); // Track unfriend state
+
+  const requestId = localStorage.getItem("request_id");
+  const defaultBlankPhotoUrl =
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+
+  useEffect(() => {
+    if (!requestId) return;
+
+    const fetchFriends = async () => {
+      try {
+        const response = await api.get(`/friend-request/${requestId}/friends`);
+        setFriends(response.data ?? []);
+      } catch (error) {
+        console.error("Error fetching friends:", error);
+        setFriends([]);
+      }
+    };
+
+    const fetchBlockedUsers = async () => {
+      try {
+        const response = await api.get("/blocked-users");
+        setBlockedUsers(response.data ?? []);
+      } catch (error) {
+        console.error("Error fetching blocked users:", error);
+        setBlockedUsers([]);
+      }
+    };
+
+    fetchFriends();
+    fetchBlockedUsers();
+  }, [requestId]);
+
+  const handleUnblock = async (blockedRequestId) => {
+    setLoadingUnblock((prev) => ({ ...prev, [blockedRequestId]: true }));
+    try {
+      await api.post(`/unblock-user/${blockedRequestId}`);
+      setBlockedUsers((prev) => prev.filter((user) => user.request_id !== blockedRequestId));
+    } catch (error) {
+      console.error("Error unblocking user:", error);
+    } finally {
+      setLoadingUnblock((prev) => ({ ...prev, [blockedRequestId]: false }));
+    }
+  };
+
+  const handleUnfriend = async (friendRequestId) => {
+    setLoadingUnfriend((prev) => ({ ...prev, [friendRequestId]: true }));
+    try {
+      await api.post(`/remove-friend/${friendRequestId}`);
+      setFriends((prev) => prev.filter((friend) => friend.request_id !== friendRequestId));
+    } catch (error) {
+      console.error("Error removing friend:", error);
+    } finally {
+      setLoadingUnfriend((prev) => ({ ...prev, [friendRequestId]: false }));
+    }
+  };
+
+  return (
+    <div className="flex-friends">
+      <div className="flex-friends-div">
+        <h6>Total friends: {friends.length > 0 ? friends.length : 0}</h6>
+        <h2 className="text-xl font-semibold">Friends</h2>
+        {friends.length > 0 ? (
+          <ul className="user-list">
+            {friends.map((friend) => (
+              <li key={friend.id} className="user-item">
+                <img
+                  src={friend.picture ? `${STORAGE_URL}/${friend.picture}` : defaultBlankPhotoUrl}
+                  alt={friend.name}
+                  className="user-avatar"
+                />
+                <span>{friend.name}</span>
+                <div className="unblock-div">
+                  <button className="unfriend-btn" onClick={() => handleUnfriend(friend.request_id)}>
+                    <FontAwesomeIcon icon={loadingUnfriend[friend.request_id] ? faUnlock : faTrash} />
+                  </button>
+                  <p>Remove friend</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No friends found.</p>
+        )}
+      </div>
+
+      <div className="flex-friends-div">
+        <h6>Total Blocked: {blockedUsers.length > 0 ? blockedUsers.length : 0}</h6>
+        <h2 className="text-xl font-semibold">Blocked</h2>
+        {blockedUsers.length > 0 ? (
+          <ul className="user-list">
+            {blockedUsers.map((user) => (
+              <li key={user.id} className="user-item">
+                <img
+                  src={user.picture ? `${STORAGE_URL}/${user.picture}` : defaultBlankPhotoUrl}
+                  alt={user.name}
+                  className="user-avatar"
+                />
+                <span>{user.name}</span>
+                <div className="unblock-div">
+                  <button className="unblock-btn" onClick={() => handleUnblock(user.request_id)}>
+                    <FontAwesomeIcon icon={loadingUnblock[user.request_id] ? faLockOpen : faUnlock} />
+                  </button>
+                  <p>Unblock</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No blocked users.</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Friends;
