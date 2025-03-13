@@ -53,12 +53,12 @@
 @media (max-width: 768px) { 
     .no-notificationCount { 
         position: relative;
-        top: -13px;
+        top: -7px;
         font-size: 10px;    
     }
     .notificationCount { 
         position: relative;
-        top: -13px;
+        top: -7px;
         font-size: 10px;
     }
 }

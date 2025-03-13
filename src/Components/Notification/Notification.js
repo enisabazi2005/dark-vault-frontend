@@ -6,11 +6,13 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../Notification/Notification.css";
 
-const Notification = ({count}) => {
+const Notification = () => {
   const [, setUnreadMessages] = useState([]);
   const [, setLoading] = useState(true);
   const [, setUser] = useState(null);
   const userId = localStorage.getItem("user_id"); 
+  const [count, setCount] = useState(0);
+
 
   useEffect(() => {
     if (!userId) return;
@@ -39,21 +41,21 @@ const Notification = ({count}) => {
     fetchUser();
   }, [userId]); 
 
-  const fetchUnreadMessages = async () => {
-    try {
-      const response = await api.get("/get-unread-messages");
-      setUnreadMessages(response.data);
-      console.log("📩 Fetched unread messages:", response.data);
-    } catch (error) {
-      console.error("Error fetching unread messages:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    if (!userId) return; 
+    if (!userId) return;
 
+    const fetchUnreadMessages = async () => {
+      try {
+        const response = await api.get("/get-unread-messages");
+        setUnreadMessages(response.data);
+        setCount(response.data.length); 
+
+      } catch (error) {
+        console.error("Error fetching unread messages:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchUnreadMessages(); 
 
     const pusher = new Pusher(PUSHER_APP_KEY, {
@@ -69,17 +71,19 @@ const Notification = ({count}) => {
           const newMessages = data.notifications.filter(
             (message) => !prevMessages.some((prev) => prev.id === message.id)
           );
-          return [...newMessages, ...prevMessages]; 
+          return [...newMessages, ...prevMessages];
         });
+        setCount((prevCount) => prevCount + data.notifications.length);
+
       }
     });
-    
+
     return () => {
       channel.unbind("App\\Events\\UnreadMessagesEvent");
       pusher.unsubscribe(`unread-messages-${userId}`);
     };
   }, [userId]);
-
+  
   return (
     <div>
       <div className="notificationIconContainer">

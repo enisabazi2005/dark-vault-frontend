@@ -197,9 +197,52 @@ main {
     padding: 0;
     height: 115vh;
   }
+  .grid { 
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .notification-mobile { 
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+    border: none;
+    text-align: center;
+    padding: 5px 0;
+  }
+  .notification-mobile div { 
+    position: relative;
+    left: 2px;
+
+  }
+  .profile-mobile { 
+    text-decoration: none;
+    color: #333;
+    align-items: center;
+    font-size: 12px;
+    border: none;
+    text-align: center;
+  }
+  .css-66gjpw-MuiResponsiveChart-container>svg , .css-nfclz1-MuiGauge-container>svg{ 
+    width: 75% !important;
+    height: 75% !important;
+  }
   .grid > div { 
     max-width: 400px;
     width: 100%;
+    text-align: center;
+  }
+  .dropdown-menu { 
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    z-index: 1;
+    justify-content: space-around;
+    left: 0;
+    z-index: 1000;
+    padding: 30px;
+    background-color: white;
   }
   .profile-settings-wrapper { 
     border: none !important;

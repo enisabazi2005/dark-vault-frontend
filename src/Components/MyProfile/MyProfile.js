@@ -8,7 +8,7 @@ import Notification from "../Notification/Notification";
 import Pusher from "pusher-js";
 import { PUSHER_APP_KEY, PUSHER_CLUSTER } from "../../api";
 
-const MyProfile = () => {
+const MyProfile = ({ updateNotificationCount }) => {
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const defaultBlankPhotoUrl =
@@ -128,14 +128,14 @@ const MyProfile = () => {
       if (response) {
         setUnreadMessages([]);
         setNotificationCount(0);  
+        updateNotificationCount(0);
       }
     } catch (error) {
       console.error("Error marking notifications as read:", error);
     }
   };
 
-  const notificationToShow = notificationCount !== null ? notificationCount : unreadMessages.length;
-  console.log(notificationToShow , 'notificationToShow');
+  // const notificationToShow = notificationCount !== null ? notificationCount : unreadMessages.length;
   return (
     <div className="profile-settings-wrapper">
       <div className="profile-settings">
@@ -178,8 +178,6 @@ const MyProfile = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal */}
       {isModalOpen && (
         <div
           className="modal-overlay-status"

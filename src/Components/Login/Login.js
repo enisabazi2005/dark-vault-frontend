@@ -59,6 +59,7 @@ const Login = () => {
 
       <form onSubmit={handleSubmit} className="form">
         <input
+          className="login-inputs"
           type="email"
           name="email"
           value={formData.email}
@@ -67,6 +68,7 @@ const Login = () => {
           required
         />
         <input
+          className="login-inputs"
           type="password"
           name="password"
           value={formData.password}
