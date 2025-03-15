@@ -7,12 +7,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../Notification/Notification.css";
 
 const Notification = () => {
-  const [, setUnreadMessages] = useState([]);
+  const [unreadMessages, setUnreadMessages] = useState([]);
   const [, setLoading] = useState(true);
   const [, setUser] = useState(null);
-  const userId = localStorage.getItem("user_id"); 
+  const userId = localStorage.getItem("user_id");
   const [count, setCount] = useState(0);
-
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -39,7 +39,7 @@ const Notification = () => {
     };
 
     fetchUser();
-  }, [userId]); 
+  }, [userId]);
 
   useEffect(() => {
     if (!userId) return;
@@ -48,15 +48,15 @@ const Notification = () => {
       try {
         const response = await api.get("/get-unread-messages");
         setUnreadMessages(response.data);
-        setCount(response.data.length); 
-
+        setCount(response.data.length);
       } catch (error) {
         console.error("Error fetching unread messages:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchUnreadMessages(); 
+
+    fetchUnreadMessages();
 
     const pusher = new Pusher(PUSHER_APP_KEY, {
       cluster: PUSHER_CLUSTER,
@@ -64,7 +64,6 @@ const Notification = () => {
     });
 
     const channel = pusher.subscribe(`unread-messages-${userId}`);
-
     channel.bind("App\\Events\\UnreadMessagesEvent", (data) => {
       if (Array.isArray(data.notifications)) {
         setUnreadMessages((prevMessages) => {
@@ -74,7 +73,6 @@ const Notification = () => {
           return [...newMessages, ...prevMessages];
         });
         setCount((prevCount) => prevCount + data.notifications.length);
-
       }
     });
 
@@ -83,21 +81,80 @@ const Notification = () => {
       pusher.unsubscribe(`unread-messages-${userId}`);
     };
   }, [userId]);
-  
+
+  const handleMarkAsRead = async () => {
+    try {
+      const response = await api.post("/mark-notifications-read");
+
+      if (response) {
+        setUnreadMessages([]);
+        setCount(0);
+      }
+    } catch (error) {
+      console.error("Error marking notifications as read:", error);
+    }
+  };
+
+  const handleBellClick = () => {
+    setIsNotificationModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsNotificationModalOpen(false);
+  };
+
   return (
     <div>
-      <div className="notificationIconContainer">
-        <FontAwesomeIcon
-          icon={faBell}
-          size="2x"
-          className="bellIcon"
-        />
+      <div className="notificationIconContainer" onClick={handleBellClick}>
+        <FontAwesomeIcon icon={faBell} size="2x" className="bellIcon" />
         {count > 0 ? (
-        <span className="notificationCount">{count}</span>
-      ) : (
-        <span className="no-notificationCount">0</span>
-      )}
+          <span className="notificationCount">{count}</span>
+        ) : (
+          <span className="no-notificationCount">0</span>
+        )}
       </div>
+
+      {isNotificationModalOpen && (
+        <div className="custom-modal-overlay" onClick={handleCloseModal}>
+          <div
+            className="custom-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2>Notifications</h2>
+            {unreadMessages.length > 0 ? (
+              <ul>
+                {unreadMessages.map((message, index) => (
+                  <li key={index} className="custom-new-message">
+                    You have a message from{" "}
+                    <strong>{message.sender_name}</strong>: {message.message}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No unread messages.</p>
+            )}
+            {unreadMessages.length > 0 ? (
+              <div className="custom-mark-as-read-section">
+                <button
+                  className="custom-mark-as-read-btn"
+                  onClick={handleMarkAsRead}
+                >
+                  Mark as Read
+                </button>
+              </div>
+            ) : (
+              <div className="custom-mark-as-read-section">
+                <button className="custom-mark-as-read-btn">
+                  No Notifications
+                </button>
+              </div>
+            )}
+            <button className="custom-close-btn" onClick={handleCloseModal}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

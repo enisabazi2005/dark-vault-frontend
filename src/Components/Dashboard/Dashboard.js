@@ -25,6 +25,7 @@ import {
   faPeopleGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import Notification from "../Notification/Notification";
+import Logo from "../../assets/images/Samira_Hadid-removebg-preview.png";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -33,10 +34,8 @@ const Dashboard = () => {
   const MAX_STORAGE = 100;
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
-  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const [notificationCount, setNotificationCount] = useState(0);
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -212,6 +211,17 @@ const Dashboard = () => {
           <div className="h-full px-3 py-4 overflow-y-auto">
             <ul>
               <li>
+                <img
+                  src={Logo}
+                  alt="Logo"
+                  style={{
+                    width: "40%",
+                    height: "40%",
+                    objectFit: "cover",
+                  }}
+                />
+              </li>
+              <li>
                 <Link
                   to="/dashboard"
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -340,26 +350,6 @@ const Dashboard = () => {
           </div>
         )}
       </main>
-      {isNotificationModalOpen && (
-        <div
-          className="modal-overlay-notification"
-          onClick={() => setIsNotificationModalOpen(false)}
-        >
-          <div
-            className="modal-content-notification"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2>Notifications</h2>
-            <p>Display notifications here...</p>
-            <button
-              className="close-btn"
-              onClick={() => setIsNotificationModalOpen(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
 
       {isMobile && (
         <nav className="bottom-nav">
@@ -371,10 +361,7 @@ const Dashboard = () => {
           </Link>
           {isDropdownOpen && (
             <div ref={dropdownRef} className="dropdown-menu">
-              <Link
-                to="#"
-                onClick={() => setIsDropdownOpen(false)} 
-              >
+              <Link to="#" onClick={() => setIsDropdownOpen(false)}>
                 <FontAwesomeIcon icon={faBackward} /> Back
               </Link>
 
@@ -397,10 +384,7 @@ const Dashboard = () => {
             <FontAwesomeIcon icon={faCommentDots} /> Chat
           </Link>
 
-          <span
-            className="notification-mobile"
-            onClick={() => setIsNotificationModalOpen(true)}
-          >
+          <span className="notification-mobile">
             <Notification />
             Notification
           </span>

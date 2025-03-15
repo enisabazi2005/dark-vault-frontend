@@ -200,6 +200,18 @@
     margin: 6px 0;
     font-family: sans-serif;
   }
+
+  @media (max-width: 768px) {
+    .myProfile { 
+      display: none;
+    }
+    .profile-settings { 
+      width: auto;
+    }
+    .profile-info-col-notification { 
+      right: 50px;
+    }
+  }
   @keyframes showDropDown {
     from { 
       opacity: 0.6;

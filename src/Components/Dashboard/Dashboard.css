@@ -92,6 +92,25 @@
 .sign-out-list {
   cursor: pointer;
 }
+.sign-out-list button { 
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: #495057;
+    border: none;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    border: 1px solid #495057;
+    background-color: transparent;
+    cursor: pointer;
+}
+.sign-out-list button svg { 
+  margin: 0 20px 0 0;
+  position: relative;
+  left: 5px;
+}
 .sign-out-list button:hover {
   background-color: #e2e6ea;
 }
@@ -209,11 +228,6 @@ main {
     border: none;
     text-align: center;
     padding: 5px 0;
-  }
-  .notification-mobile div { 
-    position: relative;
-    left: 2px;
-
   }
   .profile-mobile { 
     text-decoration: none;
