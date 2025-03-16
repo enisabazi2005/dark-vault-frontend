@@ -2,11 +2,14 @@ import axios from "axios";
 
 const api = axios.create({
   // baseURL: "http://127.0.0.1:8000/api", 
-  baseURL: "http://dark-1.infinityfreeapp.com/api", 
+  // baseURL: "http://dark-1.infinityfreeapp.com/api", 
+  baseURL: "https://cors-anywhere.herokuapp.com/http://dark-1.infinityfreeapp.com/api",
   timeout: 500000, 
   headers: {
     "Accept": "application/json",
     "Content-Type": "application/json",
+    "Origin": "https://dark-vault-frontend.vercel.app", 
+    "X-Requested-With": "XMLHttpRequest", 
   },
 });
 
