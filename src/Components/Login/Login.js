@@ -29,26 +29,35 @@ const Login = () => {
         const response = await api.post("/login", formData);
         const { user, token } = response.data;
 
+        if (!user || !token) {
+            throw new Error("Invalid login response, missing user or token.");
+        }
+
+        // Store in localStorage
         localStorage.setItem("token", token);
-        localStorage.setItem("user_id", user.id); 
+        localStorage.setItem("user_id", user.id);
         localStorage.setItem("request_id", user.request_id);
 
         setSuccess("Logged in successfully!");
 
+        // Fetch user data
         const userResponse = await api.get(`/users/${user.id}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
+        // Store user data
         localStorage.setItem("user", JSON.stringify(userResponse.data));
 
+        // Wait to ensure data is stored
         setTimeout(() => {
             navigate("/dashboard");
-        }, 2000);
+        }, 500); // Reduced delay for smoother transition
     } catch (error) {
         console.error("Login failed:", error.response?.data || error);
         setError(error.response?.data?.error || "Login failed.");
     }
 };
+
 
   return (
     <div className="container-layout">
