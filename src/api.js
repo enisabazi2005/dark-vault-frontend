@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api", 
+  // baseURL: "http://127.0.0.1:8000/api", 
+  baseURL: "dark-1.infinityfreeapp.com/api",
   timeout: 500000, 
   headers: {
     "Accept": "application/json",
@@ -24,8 +25,10 @@ api.interceptors.request.use(
   }
 );
 
-export const STORAGE_URL = "http://127.0.0.1:8000/storage";
+// export const STORAGE_URL = "http://127.0.0.1:8000/storage";
+export const STORAGE_URL = "dark-1.infinityfreeapp.com/storage";
 export const PUSHER_APP_KEY = "5fa2841f32689bcde49e";
 export const PUSHER_CLUSTER = "eu";
-
+// export const PUSHER_APP_KEY = "09a125ceca70618652bd";
+// export const PUSHER_CLUSTER = "eu";
 export default api;

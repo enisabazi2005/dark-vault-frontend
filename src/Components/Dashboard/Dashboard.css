@@ -214,7 +214,7 @@ main {
   main { 
     margin: 20px;
     padding: 0;
-    height: 115vh;
+    height: 150vh;
   }
   .grid { 
     display: flex !important;
