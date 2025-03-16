@@ -24,41 +24,42 @@ const Login = () => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-
+  
     try {
-        const response = await api.post("/login", formData);
+      const response = await api.post("/login", formData);
+  
+      // Check if the response has the expected data
+      if (response) {
         const { user, token } = response.data;
-
-        if (!user || !token) {
-            throw new Error("Invalid login response, missing user or token.");
-        }
-
-        // Store in localStorage
+  
+        // Store in localStorage if response is valid
         localStorage.setItem("token", token);
         localStorage.setItem("user_id", user.id);
         localStorage.setItem("request_id", user.request_id);
-
+  
         setSuccess("Logged in successfully!");
-
+  
         // Fetch user data
         const userResponse = await api.get(`/users/${user.id}`, {
-            headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        // Store user data
+  
+        // Store user data in localStorage
         localStorage.setItem("user", JSON.stringify(userResponse.data));
-
-        // Wait to ensure data is stored
+  
+        // Wait to ensure data is stored before navigating
         setTimeout(() => {
-            navigate("/dashboard");
+          navigate("/dashboard");
         }, 500); // Reduced delay for smoother transition
+      } else {
+        throw new Error("Invalid login response, missing user or token.");
+      }
     } catch (error) {
-        console.error("Login failed:", error.response?.data || error);
-        setError(error.response?.data?.error || "Login failed.");
+      console.error("Login failed:", error.response?.data || error);
+      setError(error.response?.data?.error || "Login failed.");
     }
-};
-
-
+  };
+  
   return (
     <div className="container-layout">
       <h2>Login</h2>
