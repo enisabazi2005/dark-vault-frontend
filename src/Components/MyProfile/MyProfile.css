@@ -88,11 +88,62 @@
     border-bottom: 1px solid #ddd;
     position: relative;
   }
+  .modal-content-status li a { 
+    text-decoration: none;
+    color: black;
+  }
+  .modal-content-status li:nth-child(1)::before { 
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: rgb(24, 181, 24);
+    right: 0;
+    border-radius: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .modal-content-status li:nth-child(2)::before { 
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: rgb(208, 185, 57);
+    right: 0;
+    border-radius: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .modal-content-status li:nth-child(3)::before { 
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color:rgb(72, 75, 72);
+    right: 0;
+    border-radius: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .modal-content-status li:nth-child(4)::before { 
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color:rgb(166, 22, 29);
+    right: 0;
+    border-radius: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
   
   .modal-content-status li:last-child {
     border-bottom: none;
   }
-
+  .modal-content-status li:last-child a { 
+    text-decoration: none;
+    color: black;
+  }
   .modal-content-status .status-online::before { 
     position: absolute;
     content: " ";
@@ -200,6 +251,9 @@
     margin: 6px 0;
     font-family: sans-serif;
   }
+  .mobile-settings { 
+    display: none;
+  }
 
   @media (max-width: 768px) {
     .myProfile { 
@@ -210,6 +264,36 @@
     }
     .profile-info-col-notification { 
       right: 50px;
+    }
+    .mobile-settings { 
+      display: block;
+    }
+    .mobile-settings button { 
+      font-size: 12px;
+      color: black;
+      background: #fff;
+      border: 1px solid #ababab;
+      border-radius: 5px;
+      width: 50%;
+      padding: 10px;
+      outline: none;
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+      width: 100%;
+    }
+    .modal-content-status li:last-child { 
+      padding: 10px 0;
+    }
+    .mobile-settings button:hover { 
+      background-color: #717171;
+      color: #fff;
+      transition: .2s linear;
+    }
+    .mobile-settings button svg { 
+      margin-right: 5px;
+    }
+    .close-btn { 
+      width: 100%;
     }
   }
   @keyframes showDropDown {

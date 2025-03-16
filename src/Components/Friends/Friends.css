@@ -96,6 +96,10 @@ h6 {
 }
 
 @media (max-width: 768px) {
+
+    .unblock-div { 
+       right: 0;
+    }
     .flex-friends {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }

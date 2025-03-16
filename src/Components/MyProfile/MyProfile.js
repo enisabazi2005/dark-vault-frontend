@@ -4,6 +4,8 @@ import api from "../../api";
 import { STORAGE_URL } from "../../api";
 import { Link } from "react-router-dom";
 import Notification from "../Notification/Notification";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
 const MyProfile = ({ updateNotificationCount }) => {
   const [user, setUser] = useState(null);
@@ -61,6 +63,13 @@ const MyProfile = ({ updateNotificationCount }) => {
     } catch (error) {
       console.error("Error updating status:", error);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userId");
+    window.location.href = "/login";
   };
 
   const statusBorderColors = {
@@ -138,7 +147,7 @@ const MyProfile = ({ updateNotificationCount }) => {
                     backgroundColor:
                       selectedStatus === status
                         ? statusBorderColors[status]
-                        : "transparent",
+                        : "",
                   }}
                   onClick={() => handleStatusChange(status)}
                 >
@@ -151,6 +160,19 @@ const MyProfile = ({ updateNotificationCount }) => {
                 <Link className="settings" to="/dashboard/settings">
                   Settings
                 </Link>
+              </li>
+              <li
+               className="mobile-settings" 
+               onClick={() => setIsModalOpen(false)}>
+                <Link to="friends">Friends and Blocked friends</Link>
+              </li>
+              <li 
+              className="mobile-settings"
+              onClick={() => setIsModalOpen(false)}>
+                <button onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faArrowRightFromBracket} />
+                  Log Out
+                </button>
               </li>
             </ul>
             <button className="close-btn" onClick={() => setIsModalOpen(false)}>
