@@ -10,6 +10,7 @@ import Notes from "./Components/StoreNotes/Notes";
 import Chatroom from "./Components/Chatroom/Chatroom";
 import Settings from "./Components/Settings/Settings";
 import Friends from "./Components/Friends/Friends";
+import ResetPassword from "./Components/ResetPassword/ResetPassword"
 import "./App.css";
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ResetPassword />} />
 
           <Route path="/dashboard" element={<Dashboard />}>
             <Route path="store-password" element={<Password />} />

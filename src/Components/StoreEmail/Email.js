@@ -104,7 +104,7 @@ const StoreEmail = () => {
       {/* First Card: Store Emails Here */}
       <div className="bg-white p-4 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold">Store Emails Here</h2>
-        <p>100% safe</p>
+        <p className="text-center">100% safe</p>
       </div>
 
       {/* Second Card: Store Email Input */}
@@ -162,7 +162,7 @@ const StoreEmail = () => {
               </div>
             ))
           ) : (
-            <p>No emails stored yet.</p>
+            <p clasName="text-center">No emails stored yet.</p>
           )}
         </div>
       </div>
@@ -174,14 +174,14 @@ const StoreEmail = () => {
             <h3>Edit Email</h3>
             <input
               type="text"
-              className="save-password-button"
+              className="password-input"
               placeholder="Edit Name"
               value={editEmail.name}
               onChange={(e) => setEditEmail({ ...editEmail, name: e.target.value })}
             />
             <input
               type="email"
-              className="save-password-button"
+              className="password-input"
               placeholder="Edit Email"
               value={editEmail.email}
               onChange={(e) => setEditEmail({ ...editEmail, email: e.target.value })}
@@ -225,7 +225,7 @@ const StoreEmail = () => {
             <h3>View Email</h3>
             <p className="viewEmail">{viewEmail}</p>
             <div className="modal-actions">
-              <button className="closeModalViewEmail" onClick={closeModals}>
+              <button className="closeModalViewPassword" onClick={closeModals}>
                 Close
               </button>
             </div>

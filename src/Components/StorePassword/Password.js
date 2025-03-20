@@ -93,7 +93,7 @@ const StorePassword = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div className="bg-white p-4 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold">Store Passwords here</h2>
-        <p>100% safe</p>
+        <p className="text-center">100% safe</p>
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow-lg">
@@ -113,28 +113,30 @@ const StorePassword = () => {
           {passwords.length > 0 ? (
             passwords.map((storedPassword, index) => (
               <div key={storedPassword.id} 
-              className={`passwordItem ${selectedPasswordId === storedPassword.id ? "selected" : ""}`} 
-              id={storedPassword.id}>
-               <div className="edit-delete-buttons">
-               <button
-                  className="passwordButton"
-                  onClick={() => handleViewPassword(storedPassword.password)} 
-                >
-                  Password {index + 1}
-                </button>
-               <button
-                  className="editButton"
-                  onClick={() => handleEditPassword(storedPassword.id, storedPassword.password)}
-                >
-                  <FontAwesomeIcon icon={faEdit} />
-                </button>
-                <button
-                  className="deleteButton"
-                  onClick={() => handleDeletePassword(storedPassword.id)}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-               </div>
+                className={`passwordItem ${selectedPasswordId === storedPassword.id ? "selected" : ""}`} 
+                id={storedPassword.id}>
+                <div className="edit-delete-buttons">
+                  <button
+                    className="passwordButton"
+                    onClick={() => handleViewPassword(storedPassword.password)} 
+                  >
+                    Password {index + 1}
+                  </button>
+                  <div className="action-buttons">
+                    <button
+                      className="editButton"
+                      onClick={() => handleEditPassword(storedPassword.id, storedPassword.password)}
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      className="deleteButton"
+                      onClick={() => handleDeletePassword(storedPassword.id)}
+                    >
+                      <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                  </div>
+                </div>
               </div>
             ))
           ) : (

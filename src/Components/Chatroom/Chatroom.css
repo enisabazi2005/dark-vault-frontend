@@ -1,320 +1,280 @@
 .full-width-layout {
     width: 100%;
-  }
+    margin: 80px 0;
+}
   
-  .full-width-layout .row-layout {
-    border: 1px solid black;
+.full-width-layout .row-layout {
+    border: none;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     margin: 15px 0;
-    padding: 20px;
+    padding: 25px;
     text-align: center;
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
     width: 100%;
-    column-gap: 10px;
-    overflow: visible !important; /* FIX: Ensures dropdown isn't hidden */
-  }
-  
-  .full-width-layout .row-layout .col-50 {
+    column-gap: 20px;
+    overflow: visible !important;
+}
+
+.full-width-layout .row-layout .col-50 {
     position: relative;
     flex-basis: 50%;
-    padding: 15px;
-    /* border: 1px solid black; */
-    min-height: 150px; /* FIX: Gives space for dropdown */
-  }
-  .full-width-layout .row-layout .col-50 h2 { 
-    font-size: 22px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #3e3e3e;    
-  }
-  .full-width-layout .row-layout .col-50 h3  { 
-    font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #3e3e3e;
-  }
-  .full-width-layout .row-layout .col-50 p { 
-    font-size: 15px;
-    font-family: Arial, Helvetica, sans-serif;
-    color:#636363;
-    padding: 5px 0;
-  }
-  .full-width-layout .row-layout .col-50 ul li { 
-    font-size: 15px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #636363;
-    padding: 15px 0;
-    position: relative;
-    display: flex;
-    align-items: center;
-    column-gap: 10px;
-    justify-content: center;
-  }
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    min-height: 150px;
+}
+.full-width-layout .row-layout .col-50 ul > li { 
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  padding: 10px 0;
+  justify-content: center;
+}
 
-  .full-width-layout .row-layout .col-50 ul li .accept-friend-request-button { 
-    padding: 10px 15px;
-    font-size: 14px;
-    color: #3e3e3e;
-    width: 100px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: 500;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    cursor: pointer;
-    outline: none;
-    background: #75be9c;
-    color: #fff;
-  }
-  .full-width-layout .row-layout .col-50 ul li .accept-friend-request-button:hover { 
-    color:#75be9c;
-    background-color: transparent;
-    border: 1px solid #75be9c;
-    transition: .2s cubic-bezier(0.165, 0.84, 0.44, 1);
-  }
-  .full-width-layout .row-layout .col-50 ul li .reject-friend-request-button { 
-    padding: 10px 15px;
-    font-size: 14px;
-    color: #3e3e3e;
-    width: 100px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: 500;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    cursor: pointer;
-    outline: none;
-    background: #f2649a;
-    color: #fff;
-  }
-  .full-width-layout .row-layout .col-50 ul li .reject-friend-request-button:hover { 
-    color:#f2649a;
-    background-color: transparent;
-    border: 1px solid #f2649a;
-    transition: .2s cubic-bezier(0.165, 0.84, 0.44, 1);
-  }
-  .full-width-layout .row-layout .col-50 ul li::before { 
-    position: absolute;
-    content: "";
-    bottom: 0;
-    left: 0;
-    width: 0;
-    background-color: rgb(77, 69, 69);
-    height: 3px;
-    border-radius: 20px;
-    text-align: center;
-  }
-  .full-width-layout .row-layout .col-50 ul li:hover::before { 
-    width: 100%;
-    transition: .2s linear;
-  }
-  .full-width-layout .row-layout .col-50 ul .friend-request-name { 
-    font-size: 17px;
-  }
-  .full-width-layout .row-layout .col-50 .search-layout {
+.full-width-layout .row-layout .col-50 h2 { 
+    font-size: 24px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.full-width-layout .row-layout .col-50 h3 { 
+    font-size: 18px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #34495e;
+    margin-bottom: 10px;
+}
+
+.full-width-layout .row-layout .col-50 p { 
+    font-size: 15px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #5f6368;
+    padding: 8px 0;
+    line-height: 1.5;
+}
+
+.full-width-layout .row-layout .col-50 .search-layout {
     position: relative;
     width: 100%;
-    padding-bottom: 50px; /* FIX: Makes sure dropdown fits */
-  }
-  
-  .full-width-layout .row-layout .col-50 .search-layout input {
-    padding: 10px;
-    border-radius: 10px;
+    padding-bottom: 50px;
+}
+
+.full-width-layout .row-layout .col-50 .search-layout input {
+    padding: 12px 16px;
+    border-radius: 12px;
     outline: none;
-    border: 1px solid black;
+    border: 2px solid #e1e4e8;
     width: 100%;
-    font-size: 17px;
-    color: black;
-  }
-  
-  /* Move dropdown inside the col-50 */
-  .dropdown {
+    font-size: 16px;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.full-width-layout .row-layout .col-50 .search-layout input:focus {
+    border-color: #3498db;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.dropdown {
     width: 100%;
-    background: #ddd;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    background: white;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
     max-height: 200px;
     overflow-y: auto;
-    color: #ccc;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     z-index: 1;
-    margin-top: 5px; 
-  }
-  
-  .dropdown-item {
-    padding: 10px;
+    margin-top: 8px;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    column-gap: 10px;
-    color: #3e3e3e;
+    gap: 12px;
+    color: #2c3e50;
     font-weight: 400;
-    font-family:Arial, Helvetica, sans-serif;
-  }
-  .user-image-filter { 
-    width: 35px;
-    height: 35px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    transition: all 0.2s ease;
+}
+
+.user-image-filter { 
+    width: 40px;
+    height: 40px;
     object-fit: cover;
-    border-radius: 100%;
-  }
-  
-  .dropdown-item:hover {
-    background: #f4f4f4;
-    transition: .2s ease-in;
-  }
-  
-  .user-card {
+    border-radius: 50%;
+    border: 2px solid #e1e4e8;
+}
+
+.dropdown-item:hover {
+    background: #f8f9fa;
+    transform: translateY(-1px);
+}
+
+.user-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-  }
-  
-  /* Style for the user picture */
-  .user-picture {
+    margin-top: 15px;
+    padding: 20px;
+    border: none;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+}
+
+.user-picture {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     overflow: hidden;
-    margin-bottom: 10px;
-  }
-  
-  .user-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-  
-  /* Style for the user details */
-  .user-details {
-    text-align: center;
-  }
-  .user-details .selected-user-details { 
-    display: flex;
-    align-items: center;
-    column-gap: 10px;
-    padding: 10px 0;
-  }
-  
-  .user-details p {
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  /* Style for the add friend button */
-  .add-friend-btn {
-    padding: 10px;
-    background-color: #007bff;
+    margin-bottom: 15px;
+    border: 3px solid #e1e4e8;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.user-picture img { 
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.add-friend-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 14px;
-  }
-  
-  .add-friend-btn:hover {
-    background-color: #0056b3;
-  }
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
 
-  .chat-layout {
+.add-friend-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+}
+
+.accept-friend-request-button, .reject-friend-request-button {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.accept-friend-request-button {
+    background: linear-gradient(135deg, #75be9c, #58a97f);
+    color: white;
+    box-shadow: 0 4px 15px rgba(117, 190, 156, 0.3);
+}
+
+.reject-friend-request-button {
+    background: linear-gradient(135deg, #f2649a, #e23d78);
+    color: white;
+    box-shadow: 0 4px 15px rgba(242, 100, 154, 0.3);
+}
+
+.accept-friend-request-button:hover, .reject-friend-request-button:hover {
+    transform: translateY(-2px);
+}
+
+.chat-layout {
     display: flex;
     justify-content: center;
     margin-top: 20px;
-  }
-  
-  /* .chat-window {
+}
+
+.chat-window {
     position: absolute;
-    width: 30%;
-    height: 85%;
-    top: 35px;
-    right: 20px;
-   
-    max-width: 100%;
-    border: 1px solid #ccc;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    z-index: 101;
-  } */
-  .chat-window {
-    position: absolute;
-    top: 35px;
+    top: 120px;
     right: 20px;
     display: flex;
     flex-direction: column;
     height: 85%;
     width: 30%;
     max-width: 100%;
-    border: 1px solid #ccc;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
+    border: none;
+    padding: 20px;
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    border-radius: 16px;
     z-index: 101;
-    overflow: hidden; /* Prevent content from overflowing */
-  }
-  
-  /* .messages {   
-    display: flex;
-    flex-direction: column;
-    /* margin-bottom: 15px; */
-    /* overflow-y: auto; */
-    /* height: 500px; */
-    /* height: 425px; */
-    /* height: 300px; */
-  /* } */ 
-  .messages {   
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.messages {   
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    overflow: hidden; /* Prevent messages from overflowing */
-    /* height: 100%; */
+    overflow-y: auto;
     height: 65%;
-  }
-  
-  
-  /* .message {
-    max-width: 70%;
-    padding: 10px;
-    margin: 10px 0 0  ;
+    padding: 10px 5px;
+    scrollbar-width: thin;
+    scrollbar-color: #e1e4e8 transparent;
+}
+
+.messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background-color: #e1e4e8;
     border-radius: 10px;
-    word-wrap: break-word;
-  } */
-  .message {
+}
+
+.message {
     max-width: 70%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 6px 0;
+    border-radius: 16px;
     word-wrap: break-word;
-    white-space: normal; /* Ensure the text wraps properly */
-    display: inline-block; /* Ensure it's inline so it doesn't break below */
+    white-space: normal;
+    display: inline-block;
     position: relative;
     overflow: hidden;
     height: auto;
-  }
-  
-  .sent {
-    align-self: flex-start;
-    background-color: #d1f7c4;
-    margin-right: 10px;
-    padding: 25px 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
 
-  }
-  .just-sent { 
+.sent {
     align-self: flex-start;
     background-color: #d1f7c4;
     margin-right: 10px;
     padding: 25px 15px;
-  }
-  
-  .received {
+}
+
+.just-sent { 
+    align-self: flex-start;
+    background-color: #d1f7c4;
+    margin-right: 10px;
+    padding: 25px 15px;
+}
+
+.received {
     align-self: flex-end;
     background-color: #f1f1f1; 
     margin-left: 10px;
@@ -323,131 +283,132 @@
     padding: 25px 15px;
     word-break: break-word;
     word-wrap: break-word; 
-  }
-  .message-content , .message-content-fallback { 
+}
+
+.message-content, .message-content-fallback {
     font-size: 14px;
-    font-family: sans-serif;
-    color: rgb(13, 11, 11);
-    position: relative;
+    font-family: 'Segoe UI', sans-serif;
+    line-height: 1.5;
     margin: 0 !important;
     padding: 0 !important;
-    bottom: 10px;
-    overflow-wrap: break-word; 
-    word-wrap: break-word; 
-    white-space: normal; 
-  }
-  .message-content-fallback { 
-    bottom: 0 !important;
-  }
+    color: inherit;
+}
 
-  .message-input {
+.message-input {
     display: flex;
     flex-direction: column;
-    padding: 10px 0;
-  }
-  .display-friend-row { 
-    display: flex;
-    align-items: center;
-    column-gap: 15px;
-    justify-content: start;
-    margin: 10px 0;
-    position: relative;
-    padding: 25px 0;
-  }
-  .friend-creds { 
-    display: flex;
-    align-items: center;
-    column-gap: 10px;
+    padding: 15px 0 5px;
+    margin-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.message-input textarea {
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 2px solid #e1e4e8;
+    resize: none;
+    min-height: 60px;
+    color: #2c3e50;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.message-input textarea:focus {
+    border-color: #6862cc;
+    background: white;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(104, 98, 204, 0.1);
+}
+
+.message-input button {
+    margin-top: 10px;
+    padding: 12px;
+    background: linear-gradient(135deg, #6862cc 0%, #534d9f 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
     cursor: pointer;
-  }
-  .overshadow {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); 
-    z-index: 100; 
-    transition: opacity 0.3s ease-in-out;
-  }
-  .display-friend-row h1{
-    font-size: 18px;
-    font-family: sans-serif;
-    color: rgb(44, 40, 40);
-    font-weight: 400;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
 
-  }
-  .display-friend-image { 
-    width: 50px;
-    height: 50px;
+.message-input button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(104, 98, 204, 0.3);
+}
+
+.display-friend-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 15px;
+    padding: 0 0 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.friend-creds {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.display-friend-image {
+    width: 45px;
+    height: 45px;
     object-fit: cover;
-    border-radius: 100%;
-    border: 3px solid green;
-  }
+    border-radius: 50%;
+    border: 2px solid #6862cc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-  .personal-chat-layout { 
+.display-friend-row h1 {
+    font-size: 16px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #2c3e50;
+    font-weight: 500;
+    margin: 0;
+}
+
+.close-chat-window {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.close-chat-window button {
+    font-size: 18px;
+    background: rgba(226, 72, 72, 0.1);
+    color: #e24848;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-chat-window button:hover {
+    background: rgba(226, 72, 72, 0.15);
+    transform: translateY(-1px);
+}
+
+.personal-chat-layout { 
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     overflow-y: auto; 
-    max-height: 350px; 
+    max-height: 450px; 
     width: 100%;
     padding-right: 5px; 
     margin-bottom: 10px;
     scrollbar-color: #ffffff #e2e2e2;
     scrollbar-width: thin;
-  }
-  .close-chat-window { 
-    position: absolute;
-    right: 20px;
-    top: 20px;
-  }
-  .close-chat-window button { 
-    font-size: 20px;
-    background-color: rgb(223, 37, 37);
-    border: none;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    outline: none;
-  }
-  .close-chat-window button:hover { 
-    background-color: rgb(175, 11, 11);
-    color: #ccc;
-    transition: 0.3s ease-in;
-  }
-  textarea {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    resize: none;
-    min-height: 100px;
-    color: black;
-  }
-  .message-input  button {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .message-input button:hover {
-    background-color: #0056b3;
-  }
-  
- 
-  .messages-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow-y: scroll;
-    max-height: 400px; 
-  }
-  .modal-profile-clicked { 
+}
+
+.modal-profile-clicked { 
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -462,20 +423,23 @@
     border-radius: 10px;
     justify-content: center;
     cursor: pointer;
-  }
-  .modal-profile-clicked .modal-profile-clicked-row { 
+}
+
+.modal-profile-clicked .modal-profile-clicked-row { 
     display: flex;
     align-items: center;
     column-gap: 10px;
     justify-content: center;
-  }
-  .modal-profile-clicked .modal-profile-clicked-row h2 { 
+}
+
+.modal-profile-clicked .modal-profile-clicked-row h2 { 
     font-size: 17px;
     font-weight: 500;
     font-family: sans-serif;
     color: #fff;
-  }
-  .modal-profile-clicked .modal-profile-clicked-row button { 
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button { 
     padding: 8px 12px;
     font-size: 14px;
     background-color: #636363;
@@ -484,47 +448,29 @@
     color: #1b1b1b;
     cursor: pointer;
     font-family: sans-serif;
-  }
-  .modal-profile-clicked .modal-profile-clicked-row button:hover { 
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button:hover { 
     background-color: #3e3e3e;
     border: 1px solid #3e3e3e;
     color: #fff;
     transition: 0.25s ease-in;
-  }
+}
 
-  @media (max-width: 768px) {
-    .full-width-layout .row-layout { 
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+@media (max-width: 768px) {
+    .full-width-layout .row-layout {
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
     }
-    .full-width-layout .row-layout-friends { 
-      flex-direction: row-reverse;
+
+    .full-width-layout .row-layout .col-50 {
+        width: 100%;
+        padding: 15px;
     }
-    .full-width-layout .row-layout .col-50 .search-layout {
-      padding: 15px 0;
-      display: flex;
-      align-items: center;
-      position: relative;
+
+    .user-picture {
+        width: 100px;
+        height: 100px;
     }
-    
-    .full-width-layout .row-layout .col-50 .search-layout input {
-      padding: 10px; 
-      border: 1px solid #ccc;
-      width: 100%;
-    }
-    .user-card { 
-      margin: 0;
-    }
-    .chat-window { 
-      width: 100%;
-      right: 0;
-      height: 100%;
-      top: 0;
-    }
-    .full-width-layout .row-layout .col-50 { 
-      height: auto;
-      width: 100%;
-      min-height: 0;
-    }
-  }
+}

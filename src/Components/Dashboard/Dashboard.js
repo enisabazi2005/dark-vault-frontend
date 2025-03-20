@@ -1,16 +1,5 @@
-import { PieChart } from "@mui/x-charts";
-import {
-  useGaugeState,
-  GaugeContainer,
-  GaugeReferenceArc,
-  GaugeValueArc,
-} from "@mui/x-charts";
-import "../Dashboard/Dashboard.css";
-import "@fontsource/roboto";
-import api from "../../api";
 import React, { useEffect, useState, useRef } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import MyProfile from "../MyProfile/MyProfile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faNetworkWired,
@@ -23,9 +12,22 @@ import {
   faCommentDots,
   faArrowRightFromBracket,
   faPeopleGroup,
+  faChartPie,
+  faDatabase,
+  faShieldAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import { PieChart } from "@mui/x-charts";
+import {
+  useGaugeState,
+  GaugeContainer,
+  GaugeReferenceArc,
+  GaugeValueArc,
+} from "@mui/x-charts";
+import api from "../../api";
+import MyProfile from "../MyProfile/MyProfile";
 import Notification from "../Notification/Notification";
 import Logo from "../../assets/images/Samira_Hadid-removebg-preview.png";
+import "../Dashboard/Dashboard.css";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -36,10 +38,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
-  const handleDropdownToggle = () => {
-    setIsDropdownOpen((prev) => !prev);
-  };
+  const [data, setData] = useState([
+    { id: 0, value: 0, label: "Passwords" },
+    { id: 1, value: 0, label: "Emails" },
+    { id: 2, value: 0, label: "Private Info" },
+    { id: 3, value: 0, label: "Notes" },
+  ]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -57,13 +61,6 @@ const Dashboard = () => {
     };
   }, [isDropdownOpen]);
 
-  const handleLinkClick = () => {
-    const container = document.querySelector(".container");
-    if (container) {
-      container.scrollTo(0, 0);
-    }
-  };
-
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -71,13 +68,6 @@ const Dashboard = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  const [data, setData] = useState([
-    { id: 0, value: 0, label: "Passwords" },
-    { id: 1, value: 0, label: "Emails" },
-    { id: 2, value: 0, label: "Private Info" },
-    { id: 3, value: 0, label: "Notes" },
-  ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -169,10 +159,10 @@ const Dashboard = () => {
     };
     return (
       <g>
-        <circle cx={cx} cy={cy} r={5} fill="red" />
+        <circle cx={cx} cy={cy} r={5} fill="#3498db" />
         <path
           d={`M ${cx} ${cy} L ${target.x} ${target.y}`}
-          stroke="red"
+          stroke="#3498db"
           strokeWidth={3}
         />
       </g>
@@ -186,8 +176,6 @@ const Dashboard = () => {
     window.location.href = "/login";
   };
 
-  // const navigate = useNavigate();
-
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("user_id");
@@ -196,208 +184,189 @@ const Dashboard = () => {
       navigate("/login");
     }
   }, [navigate]);
+
   return (
-    <>
-      {/* Sidebar */}
+    <div className="dashboard-container">
       <div className="myProfile">
         <MyProfile />
       </div>
+      {/* Sidebar */}
       {!isMobile && (
-        <aside
-          id="default-sidebar"
-          className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gray-50 dark:bg-gray-800"
-          aria-label="Siderbar"
-        >
-          <div className="h-full px-3 py-4 overflow-y-auto">
-            <ul>
-              <li>
-                <img
-                  src={Logo}
-                  alt="Logo"
-                  style={{
-                    width: "40%",
-                    height: "40%",
-                    objectFit: "cover",
-                  }}
-                />
-              </li>
-              <li>
-                <Link
-                  to="/dashboard"
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  <FontAwesomeIcon icon={faNetworkWired} />
-                  <span className="ms-3">Dashboard</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="store-password"
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  <FontAwesomeIcon icon={faLock} />
-                  <span className="flex-1 ms-3 whitespace-nowrap">
-                    Store Password
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="store-email"
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  <FontAwesomeIcon icon={faSquareEnvelope} />
-                  <span className="flex-1 ms-3 whitespace-nowrap">
-                    Store Emails
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="private-info"
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  <FontAwesomeIcon icon={faCircleInfo} />
-                  <span className="flex-1 ms-3 whitespace-nowrap">
-                    Store Private Info
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="store-notes"
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  <FontAwesomeIcon icon={faNoteSticky} />
-                  <span className="flex-1 ms-3 whitespace-nowrap">
-                    Store Notes
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="chatroom"
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  <FontAwesomeIcon icon={faCommentDots} />
-                  <span className="flex-1 ms-3 whitespace-nowrap">
-                    Go to Chatroom
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="friends"
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  <FontAwesomeIcon icon={faPeopleGroup} />
-                  <span className="flex-1 ms-3 whitespace-nowrap">Friends</span>
-                </Link>
-              </li>
-              <li className="sign-out-list">
-                <button onClick={handleLogout}>
-                  <FontAwesomeIcon icon={faArrowRightFromBracket} />
-                  Log Out
-                </button>
-              </li>
-            </ul>
+        <aside className="sidebar">
+          <div className="sidebar-content">
+            <div className="sidebar-header">
+              <img src={Logo} alt="Logo" className="sidebar-logo" />
+            </div>
+            <nav className="sidebar-nav">
+              <Link to="/dashboard" className="nav-item">
+                <FontAwesomeIcon icon={faNetworkWired} />
+                <span>Dashboard</span>
+              </Link>
+              <Link to="store-password" className="nav-item">
+                <FontAwesomeIcon icon={faLock} />
+                <span>Store Password</span>
+              </Link>
+              <Link to="store-email" className="nav-item">
+                <FontAwesomeIcon icon={faSquareEnvelope} />
+                <span>Store Emails</span>
+              </Link>
+              <Link to="private-info" className="nav-item">
+                <FontAwesomeIcon icon={faCircleInfo} />
+                <span>Store Private Info</span>
+              </Link>
+              <Link to="store-notes" className="nav-item">
+                <FontAwesomeIcon icon={faNoteSticky} />
+                <span>Store Notes</span>
+              </Link>
+              <Link to="chatroom" className="nav-item">
+                <FontAwesomeIcon icon={faCommentDots} />
+                <span>Go to Chatroom</span>
+              </Link>
+              <Link to="friends" className="nav-item">
+                <FontAwesomeIcon icon={faPeopleGroup} />
+                <span>Friends</span>
+              </Link>
+            </nav>
+            <button className="logout-button" onClick={handleLogout}>
+              <FontAwesomeIcon icon={faArrowRightFromBracket} />
+              <span>Log Out</span>
+            </button>
           </div>
         </aside>
       )}
 
       {/* Main Content */}
-      <main className="ml-64 p-6 bg-gray-100 w-full">
+      <main className="main-content">
         <Outlet />
         {location.pathname === "/dashboard" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Content Boxes */}
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              {data.length === 0 || data.every((item) => item.value === 0) ? (
-                <p>Nothing is stored yet</p>
-              ) : (
-                <PieChart series={[{ data }]} width={400} height={200} />
-              )}
-            </div>
-
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <GaugeContainer
-                width={200}
-                height={200}
-                startAngle={-110}
-                endAngle={110}
-                value={(totalStored / MAX_STORAGE) * 100}
-              >
-                <GaugeReferenceArc />
-                <GaugeValueArc />
-                <GaugePointer />
-              </GaugeContainer>
-              <p>Total stored entities saved based on your storage</p>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <h2 className="text-xl font-semibold">
-                Welcome Back{" "}
-                <span>
+          <div className="dashboard-grid">
+            {/* Welcome Card */}
+            <div className="dashboard-card welcome-card">
+              <div className="card-content">
+                <h2>Welcome Back</h2>
+                <div className="user-name">
                   {user ? `${user.name} ${user.lastname}` : "Loading..."}
-                </span>
-              </h2>
-              <p>We missed your presence...</p>
+                </div>
+                <p className="welcome-message">
+                  We're glad to see you again. Your vault is secure and ready to use.
+                </p>
+              </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <h2 className="text-xl font-semibold">Store anything you want</h2>
-              <p>100% encrypted end-to-end</p>
+
+            {/* Storage Usage Card */}
+            <div className="dashboard-card storage-card">
+              <div className="card-header">
+                <FontAwesomeIcon icon={faDatabase} />
+                <h3>Storage Usage</h3>
+              </div>
+              <div className="card-content">
+                <GaugeContainer
+                  width={200}
+                  height={200}
+                  startAngle={-110}
+                  endAngle={110}
+                  value={(totalStored / MAX_STORAGE) * 100}
+                >
+                  <GaugeReferenceArc />
+                  <GaugeValueArc />
+                  <GaugePointer />
+                </GaugeContainer>
+                <p className="storage-info">
+                  {totalStored} items stored out of {MAX_STORAGE}
+                </p>
+              </div>
+            </div>
+
+            {/* Data Distribution Card */}
+            <div className="dashboard-card">
+              <div className="card-header">
+                <FontAwesomeIcon icon={faChartPie} />
+                <h3>Data Distribution</h3>
+              </div>
+              <div className="card-content">
+                {data.length === 0 || data.every((item) => item.value === 0) ? (
+                  <p className="empty-state">Nothing is stored yet</p>
+                ) : (
+                  <PieChart series={[{ data }]} width={400} height={200} />
+                )}
+              </div>
+            </div>
+
+            {/* Security Status Card */}
+            <div className="dashboard-card">
+              <div className="card-header">
+                <FontAwesomeIcon icon={faShieldAlt} />
+                <h3>Security Status</h3>
+              </div>
+              <div className="card-content">
+                <div className="security-features">
+                  <div className="feature">
+                    <FontAwesomeIcon icon={faLock} className="feature-icon" />
+                    <span>End-to-End Encryption</span>
+                  </div>
+                  <div className="feature">
+                    <FontAwesomeIcon icon={faShieldAlt} className="feature-icon" />
+                    <span>Secure Storage</span>
+                  </div>
+                  <div className="feature">
+                    <FontAwesomeIcon icon={faDatabase} className="feature-icon" />
+                    <span>Data Backup</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
       </main>
 
+      {/* Mobile Navigation */}
       {isMobile && (
         <nav className="bottom-nav">
-          <Link className="nigga" to="/dashboard" onClick={handleLinkClick}>
-            <FontAwesomeIcon icon={faNetworkWired} /> Dashboard
+          <Link to="/dashboard" className="nav-item">
+            <FontAwesomeIcon icon={faNetworkWired} />
+            <span>Dashboard</span>
           </Link>
-          <Link className="dropdown-trigger" onClick={handleDropdownToggle}>
-            <FontAwesomeIcon icon={faGrip} /> Stored
+          <div className="dropdown-container">
+            <button className="nav-item" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+              <FontAwesomeIcon icon={faGrip} />
+              <span>Stored</span>
+            </button>
+            {isDropdownOpen && (
+              <div ref={dropdownRef} className="dropdown-menu">
+                <Link to="store-password" className="dropdown-item">
+                  <FontAwesomeIcon icon={faLock} />
+                  <span>Passwords</span>
+                </Link>
+                <Link to="store-email" className="dropdown-item">
+                  <FontAwesomeIcon icon={faSquareEnvelope} />
+                  <span>Email</span>
+                </Link>
+                <Link to="private-info" className="dropdown-item">
+                  <FontAwesomeIcon icon={faCircleInfo} />
+                  <span>Private Info</span>
+                </Link>
+                <Link to="store-notes" className="dropdown-item">
+                  <FontAwesomeIcon icon={faNoteSticky} />
+                  <span>Notes</span>
+                </Link>
+              </div>
+            )}
+          </div>
+          <Link to="chatroom" className="nav-item">
+            <FontAwesomeIcon icon={faCommentDots} />
+            <span>Chat</span>
           </Link>
-          {isDropdownOpen && (
-            <div ref={dropdownRef} className="dropdown-menu">
-              <Link to="#" onClick={() => setIsDropdownOpen(false)}>
-                <FontAwesomeIcon icon={faBackward} /> Back
-              </Link>
-
-              <Link to="store-password">
-                <FontAwesomeIcon icon={faLock} /> Passwords
-              </Link>
-              <Link to="store-email">
-                <FontAwesomeIcon icon={faSquareEnvelope} /> Email
-              </Link>
-              <Link to="private-info">
-                <FontAwesomeIcon icon={faCircleInfo} /> Private Info
-              </Link>
-              <Link to="store-notes">
-                <FontAwesomeIcon icon={faNoteSticky} /> Notes
-              </Link>
-            </div>
-          )}
-
-          <Link to="chatroom" onClick={handleLinkClick}>
-            <FontAwesomeIcon icon={faCommentDots} /> Chat
-          </Link>
-
           <span className="notification-mobile">
             <Notification />
-            Notification
+            <span>Notifications</span>
           </span>
-
           <span className="profile-mobile">
-            <MyProfile />{" "}
-            {user && user.name && user.lastname
-              ? `${user.name} ${user.lastname}`
-              : ""}
+            <MyProfile />
+            <span>{user ? `${user.name} ${user.lastname}` : ""}</span>
           </span>
         </nav>
       )}
-    </>
+    </div>
   );
 };
 

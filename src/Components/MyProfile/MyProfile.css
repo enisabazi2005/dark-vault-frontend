@@ -23,6 +23,7 @@
     display: flex;
     align-items: center;
     justify-content: end;
+    
     column-gap: 10px;
     padding: 10px;
     cursor: pointer;

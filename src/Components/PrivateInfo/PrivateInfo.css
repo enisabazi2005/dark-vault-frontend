@@ -15,3 +15,16 @@
 .closeModalViewPassword-1 { 
     width: 100%;
 }
+.text-center , .text-xl  { 
+    text-align: center;
+    width:100%;
+  }
+  .handleSaveChangesButtonPrivate { 
+    background-color: rgb(60, 233, 74);
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 17px;
+    cursor: pointer;
+  }

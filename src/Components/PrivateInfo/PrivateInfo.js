@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../PrivateInfo/PrivateInfo.css";
 import api from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faXmark, faCheck, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 const PrivateInfo = () => {
   const [privateInfos, setPrivateInfos] = useState([]);
@@ -16,7 +16,7 @@ const PrivateInfo = () => {
   const [viewInfo, setViewInfo] = useState({});
   const [selectedPrivateInfoId, setSelectedPrivateInfoId] = useState(null);
 
-  const handleSelectPrivateInfo = (id) => {
+const handleSelectPrivateInfo = (id) => {
     setSelectedPrivateInfoId(id);
   };
 
@@ -102,7 +102,7 @@ const PrivateInfo = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div className="bg-white p-4 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold">Store Private Info here</h2>
-        <p>100% safe & encrypted</p>
+        <p className="text-center">100% safe & encrypted</p>
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow-lg">
@@ -225,7 +225,7 @@ const PrivateInfo = () => {
               onChange={(e) => setEditInfo({ ...editInfo, info_3: e.target.value })}
               placeholder="Edit Info 3"
             />
-            <button className="handleSaveChangesButton" onClick={handleSaveChanges}>
+            <button className="handleSaveChangesButtonPrivate" onClick={handleSaveChanges}>
               <FontAwesomeIcon icon={faCheck} />
             </button>
           </div>
@@ -237,10 +237,10 @@ const PrivateInfo = () => {
       <h3>Are you sure you want to delete this private info?</h3>
       <div className="modal-actions">
         <button className="confirmDelete" onClick={confirmDeletePrivateInfo}>
-          <FontAwesomeIcon icon={faCheck} /> Delete
+          <FontAwesomeIcon icon={faCheck} /> 
         </button>
         <button className="confirmClose" onClick={closeModals}>
-          <FontAwesomeIcon icon={faXmark} /> Cancel
+          <FontAwesomeIcon icon={faXmark} /> 
         </button>
       </div>
     </div>

@@ -1,106 +1,211 @@
 .flex-friends {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 30px;
     width: 100%;
-    padding: 20px;
+    padding: 30px;
+    margin: 80px 0;
 }
 
 .flex-friends-div {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     min-height: 200px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     position: relative;
+    overflow: hidden;
 }
+
+.flex-friends-div h2 {
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: left;
+}
+
 h6 { 
-    font-size: 12px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #333;
+    font-size: 13px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #6862cc;
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 28px;
+    right: 25px;
+    font-weight: 600;
+    background: rgba(104, 98, 204, 0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
 }
+
 .user-list {
     list-style: none;
     padding: 0;
-    margin-top: 10px;
+    margin: 0;
     width: 100%;
     position: relative;
-}
-.unblock-div { 
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    row-gap: 10px;
-    position: absolute;
-    right: 20px; 
-    top: 67%;
-    transform: translateY(-50%);
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #e1e4e8 transparent;
 }
 
-.unblock-div button { 
-    padding: 5px 10px;
-    background: #fff;
-    border: 1px solid #a2a2a2;
-    border-radius: 3px;
-    cursor: pointer;
+.user-list::-webkit-scrollbar {
+    width: 6px;
 }
-.unblock-div button:hover { 
-    background-color: #b8b8b8;
-    transition: .3s ease;
+
+.user-list::-webkit-scrollbar-track {
+    background: transparent;
 }
-.unblock-div button svg { 
-    color: #787878;
-    font-size: 15px;
-}
-.unblock-div p { 
-    position: relative;
-    bottom: 8px;
-    visibility: hidden;
-    font-size: 10px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #333;
-    font-weight: 750;
-}
-.unblock-div:hover p { 
-    visibility: visible;
-    transition: .3s ease-out;
+
+.user-list::-webkit-scrollbar-thumb {
+    background-color: #e1e4e8;
+    border-radius: 10px;
 }
 
 .user-item {
     display: flex;
     align-items: center;
-    justify-content: start;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    background: #f8f9fa;
-    margin-bottom: 5px;
-    position: relative; 
-    min-width: 250px; 
+    justify-content: flex-start;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    background: white;
+    margin-bottom: 10px;
+    position: relative;
+    min-width: 250px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .user-avatar {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
-    border: 2px solid #787878;
+    border: 2px solid #6862cc;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.user-item span {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 15px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.unblock-div { 
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.unblock-div button { 
+    padding: 8px;
+    background: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.unblock-btn {
+    background: rgba(104, 98, 204, 0.1) !important;
+}
+
+.unblock-btn svg {
+    color: #6862cc !important;
+}
+
+.unfriend-btn {
+    background: rgba(226, 72, 72, 0.1) !important;
+}
+
+.unfriend-btn svg {
+    color: #e24848 !important;
+}
+
+.unblock-div button:hover { 
+    transform: translateY(-2px);
+}
+
+.unblock-div button svg { 
+    font-size: 16px;
+}
+
+.unblock-div p { 
+    position: absolute;
+    bottom: -20px;
+    visibility: hidden;
+    font-size: 12px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #2c3e50;
+    font-weight: 500;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.unblock-div:hover p { 
+    visibility: visible;
+    transform: translateY(0);
+    transition: all 0.2s ease;
 }
 
 @media (max-width: 768px) {
-
-    .unblock-div { 
-       right: 0;
-    }
     .flex-friends {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .flex-friends-div {
+        padding: 20px;
+    }
+
+    .user-item {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    h6 {
+        font-size: 12px;
+        top: 25px;
+        right: 20px;
+    }
+
+    .unblock-div {
+        right: 10px;
+    }
+
+    .unblock-div button {
+        width: 32px;
+        height: 32px;
     }
 }
