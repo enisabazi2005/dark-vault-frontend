@@ -4,12 +4,14 @@ import api from "../../api";
 import { STORAGE_URL } from "../../api";
 import { Link } from "react-router-dom";
 import Notification from "../Notification/Notification";
+import MyProfileSkeleton from "./MyProfileSkeleton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
 const MyProfile = ({ updateNotificationCount }) => {
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
   const [selectedStatus, setSelectedStatus] = useState("online");
@@ -18,6 +20,7 @@ const MyProfile = ({ updateNotificationCount }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        setIsLoading(true);
         const token = localStorage.getItem("token");
 
         if (!userId || !token) {
@@ -35,6 +38,8 @@ const MyProfile = ({ updateNotificationCount }) => {
         setSelectedStatus(response.data.status || "Online");
       } catch (error) {
         console.error("Error fetching user:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -80,6 +85,10 @@ const MyProfile = ({ updateNotificationCount }) => {
   };
 
   const borderColor = statusBorderColors[selectedStatus] || "rgb(24, 181, 24)";
+
+  if (isLoading) {
+    return <MyProfileSkeleton />;
+  }
 
   if (!user) {
     return <div>Loading...</div>;

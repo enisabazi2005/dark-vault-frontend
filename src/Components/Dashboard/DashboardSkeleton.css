@@ -1,0 +1,126 @@
+/* Skeleton Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 25%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0.1) 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Sidebar Skeleton */
+.skeleton-logo {
+  width: 120px;
+  height: 40px;
+  margin: 0 auto;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-nav-item {
+  height: 48px;
+  margin: 8px 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-logout {
+  height: 48px;
+  margin-top: auto;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+/* Card Skeletons */
+.skeleton-title {
+  height: 24px;
+  width: 60%;
+  margin: 0 auto 16px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-name {
+  height: 32px;
+  width: 80%;
+  margin: 0 auto 24px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-message {
+  height: 16px;
+  width: 90%;
+  margin: 0 auto;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-header {
+  height: 24px;
+  width: 120px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-gauge {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-storage-info {
+  height: 20px;
+  width: 60%;
+  margin: 16px auto 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-chart {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-feature {
+  height: 48px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+  margin-bottom: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .skeleton-gauge {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .skeleton-chart {
+    height: 150px;
+  }
+} 

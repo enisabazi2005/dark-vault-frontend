@@ -1,0 +1,119 @@
+/* Skeleton Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 25%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0.1) 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Count Badge Skeleton */
+.skeleton-count {
+  width: 100px;
+  height: 25px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+  position: absolute;
+  top: 28px;
+  right: 25px;
+}
+
+/* Title Skeleton */
+.skeleton-title {
+  height: 24px;
+  width: 120px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+  margin-bottom: 25px;
+}
+
+/* Avatar Skeleton */
+.skeleton-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+/* Text Skeleton */
+.skeleton-text {
+  height: 16px;
+  width: 120px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+/* Button Skeleton */
+.skeleton-button {
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+/* Tooltip Skeleton */
+.skeleton-tooltip {
+  width: 80px;
+  height: 20px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+  position: absolute;
+  bottom: -20px;
+  right: 0;
+}
+
+/* User Item Skeleton */
+.user-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 12px;
+  background: white;
+  margin-bottom: 10px;
+  position: relative;
+  min-width: 250px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .skeleton-count {
+    width: 80px;
+    height: 20px;
+    top: 25px;
+    right: 20px;
+  }
+
+  .skeleton-avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .skeleton-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .skeleton-tooltip {
+    width: 70px;
+    height: 18px;
+  }
+} 

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import api from "../../api";
 import { PUSHER_APP_KEY, PUSHER_CLUSTER } from "../../api";
 import Pusher from "pusher-js";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../Notification/Notification.css";
+import notificationSound from "../../assets/images/notification.mp3";
 
 const Notification = () => {
   const [unreadMessages, setUnreadMessages] = useState([]);
@@ -13,6 +14,7 @@ const Notification = () => {
   const userId = localStorage.getItem("user_id");
   const [count, setCount] = useState(0);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     if (!userId) return;
@@ -73,6 +75,13 @@ const Notification = () => {
           return [...newMessages, ...prevMessages];
         });
         setCount((prevCount) => prevCount + data.notifications.length);
+        
+        // Play notification sound only when new messages arrive
+        if (data.notifications.length > 0 && audioRef.current) {
+          audioRef.current.play().catch(error => {
+            console.error("Error playing notification sound:", error);
+          });
+        }
       }
     });
 
@@ -105,6 +114,7 @@ const Notification = () => {
 
   return (
     <div>
+      <audio ref={audioRef} src={notificationSound} preload="auto" />
       <div className="notificationIconContainer" onClick={handleBellClick}>
         <FontAwesomeIcon icon={faBell} size="2x" className="bellIcon" />
         {count > 0 ? (

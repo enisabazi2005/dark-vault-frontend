@@ -4,12 +4,14 @@ import api from "../../api";
 import { STORAGE_URL } from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLockOpen, faUnlock, faTrash } from "@fortawesome/free-solid-svg-icons";
+import FriendsSkeleton from "./FriendsSkeleton";
 
 const Friends = () => {
   const [friends, setFriends] = useState([]);
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [loadingUnblock, setLoadingUnblock] = useState({});
-  const [loadingUnfriend, setLoadingUnfriend] = useState({}); // Track unfriend state
+  const [loadingUnfriend, setLoadingUnfriend] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const requestId = localStorage.getItem("request_id");
   const defaultBlankPhotoUrl =
@@ -18,28 +20,25 @@ const Friends = () => {
   useEffect(() => {
     if (!requestId) return;
 
-    const fetchFriends = async () => {
+    const fetchData = async () => {
+      setIsLoading(true);
       try {
-        const response = await api.get(`/friend-request/${requestId}/friends`);
-        setFriends(response.data ?? []);
+        const [friendsResponse, blockedResponse] = await Promise.all([
+          api.get(`/friend-request/${requestId}/friends`),
+          api.get("/blocked-users")
+        ]);
+        setFriends(friendsResponse.data ?? []);
+        setBlockedUsers(blockedResponse.data ?? []);
       } catch (error) {
-        console.error("Error fetching friends:", error);
+        console.error("Error fetching data:", error);
         setFriends([]);
-      }
-    };
-
-    const fetchBlockedUsers = async () => {
-      try {
-        const response = await api.get("/blocked-users");
-        setBlockedUsers(response.data ?? []);
-      } catch (error) {
-        console.error("Error fetching blocked users:", error);
         setBlockedUsers([]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchFriends();
-    fetchBlockedUsers();
+    fetchData();
   }, [requestId]);
 
   const handleUnblock = async (blockedRequestId) => {
@@ -65,6 +64,10 @@ const Friends = () => {
       setLoadingUnfriend((prev) => ({ ...prev, [friendRequestId]: false }));
     }
   };
+
+  if (isLoading) {
+    return <FriendsSkeleton />;
+  }
 
   return (
     <div className="flex-friends">

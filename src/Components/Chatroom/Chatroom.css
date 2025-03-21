@@ -87,38 +87,89 @@
     width: 100%;
     background: white;
     border: 1px solid #e1e4e8;
-    border-radius: 12px;
-    max-height: 200px;
+    border-radius: 16px;
+    max-height: 300px;
     overflow-y: auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
     z-index: 1;
     margin-top: 8px;
+    padding: 8px 0;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.dropdown::-webkit-scrollbar-thumb {
+    background: #6862cc;
+    border-radius: 10px;
 }
 
 .dropdown-item {
-    padding: 12px 16px;
+    padding: 12px 20px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
+    justify-content: flex-start;
+    gap: 15px;
     color: #2c3e50;
-    font-weight: 400;
+    font-weight: 500;
     font-family: 'Segoe UI', Arial, sans-serif;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
 }
 
 .user-image-filter { 
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid #e1e4e8;
+    border: 2px solid #6862cc;
+    box-shadow: 0 4px 10px rgba(104, 98, 204, 0.2);
+    transition: all 0.3s ease;
+}
+/* .user-image-filter-friends { 
+    position: relative;
+    left: 90px;
+} */
+.dropdown-item:hover {
+    background: linear-gradient(to right, rgba(104, 98, 204, 0.05), transparent);
+    transform: translateX(5px);
 }
 
-.dropdown-item:hover {
-    background: #f8f9fa;
-    transform: translateY(-1px);
+.dropdown-item:hover .user-image-filter {
+    transform: scale(1.05);
+    border-color: #534d9f;
+    box-shadow: 0 6px 15px rgba(104, 98, 204, 0.3);
+}
+
+.dropdown-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: #6862cc;
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.dropdown-item:hover::before {
+    transform: scaleY(1);
 }
 
 .user-card {
@@ -171,31 +222,91 @@
     box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
 }
 
-.accept-friend-request-button, .reject-friend-request-button {
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    border: none;
+.friend-request-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: white;
     border-radius: 12px;
-    cursor: pointer;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
-    min-width: 120px;
+    border: 1px solid rgba(104, 98, 204, 0.1);
+}
+
+.friend-request-name:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(104, 98, 204, 0.1);
+    border-color: rgba(104, 98, 204, 0.2);
+}
+
+.friend-request-name .user-image-filter {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #6862cc;
+    box-shadow: 0 2px 6px rgba(104, 98, 204, 0.2);
+}
+
+.friend-request-name span {
+    flex: 1;
+    margin: 0 15px;
+    font-size: 15px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.friend-request-name .button-group {
+    display: flex;
+    gap: 8px;
 }
 
 .accept-friend-request-button {
-    background: linear-gradient(135deg, #75be9c, #58a97f);
+    background: linear-gradient(135deg, #6862cc 0%, #534d9f 100%);
     color: white;
-    box-shadow: 0 4px 15px rgba(117, 190, 156, 0.3);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(104, 98, 204, 0.2);
 }
 
 .reject-friend-request-button {
-    background: linear-gradient(135deg, #f2649a, #e23d78);
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
     color: white;
-    box-shadow: 0 4px 15px rgba(242, 100, 154, 0.3);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(238, 82, 83, 0.2);
 }
 
-.accept-friend-request-button:hover, .reject-friend-request-button:hover {
-    transform: translateY(-2px);
+.accept-friend-request-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(104, 98, 204, 0.3);
+}
+
+.reject-friend-request-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(238, 82, 83, 0.3);
+}
+
+/* Empty state styling */
+.full-width-layout .row-layout .col-50 p {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px dashed #e1e4e8;
 }
 
 .chat-layout {
@@ -408,53 +519,129 @@
     scrollbar-width: thin;
 }
 
-.modal-profile-clicked { 
+.modal-profile-clicked {
     display: flex;
-    justify-content: space-between;
+    left: 0;
+    justify-content: center;
     align-items: center;
-    column-gap: 10px;
-    z-index: 1;
     position: absolute;
     width: 100%;
     height: 100%;
-    flex-direction: row;
-    background-color: #838383;
-    padding: 10px 30px;
-    border-radius: 10px;
-    justify-content: center;
-    cursor: pointer;
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(8px);
+    padding: 20px;
+    border-radius: 16px;
+    z-index: 1;
+    animation: modalFadeIn 0.3s ease-out;
 }
 
-.modal-profile-clicked .modal-profile-clicked-row { 
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-profile-clicked .modal-profile-clicked-row {
     display: flex;
     align-items: center;
-    column-gap: 10px;
-    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 600px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.modal-profile-clicked .modal-profile-clicked-row h2 { 
-    font-size: 17px;
-    font-weight: 500;
-    font-family: sans-serif;
-    color: #fff;
-}
-
-.modal-profile-clicked .modal-profile-clicked-row button { 
-    padding: 8px 12px;
-    font-size: 14px;
-    background-color: #636363;
-    border: 1px solid #636363;
-    border-radius: 5px;
-    color: #1b1b1b;
+.modal-profile-clicked .modal-profile-clicked-row h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: rgba(104, 98, 204, 0.1);
     cursor: pointer;
-    font-family: sans-serif;
+    transition: all 0.3s ease;
 }
 
-.modal-profile-clicked .modal-profile-clicked-row button:hover { 
-    background-color: #3e3e3e;
-    border: 1px solid #3e3e3e;
-    color: #fff;
-    transition: 0.25s ease-in;
+.modal-profile-clicked .modal-profile-clicked-row h2:hover {
+    background: rgba(104, 98, 204, 0.2);
+    transform: translateY(-1px);
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    background: rgba(104, 98, 204, 0.2);
+    border: 1px solid rgba(104, 98, 204, 0.3);
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button:hover {
+    background: rgba(104, 98, 204, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(104, 98, 204, 0.2);
+}
+
+/* Specific button styles */
+.modal-profile-clicked .modal-profile-clicked-row button.block-button {
+    background: rgba(238, 82, 83, 0.2);
+    border-color: rgba(238, 82, 83, 0.3);
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button.block-button:hover {
+    background: rgba(238, 82, 83, 0.3);
+    box-shadow: 0 4px 12px rgba(238, 82, 83, 0.2);
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button.mute-button {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button.mute-button:hover {
+    background: rgba(255, 193, 7, 0.3);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button.unfriend-button {
+    background: rgba(104, 98, 204, 0.2);
+    border-color: rgba(104, 98, 204, 0.3);
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button.unfriend-button:hover {
+    background: rgba(104, 98, 204, 0.3);
+    box-shadow: 0 4px 12px rgba(104, 98, 204, 0.2);
+}
+
+/* Active states */
+.modal-profile-clicked .modal-profile-clicked-row button.active {
+    background: rgba(104, 98, 204, 0.4);
+    border-color: rgba(104, 98, 204, 0.5);
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button.block-button.active {
+    background: rgba(238, 82, 83, 0.4);
+    border-color: rgba(238, 82, 83, 0.5);
+}
+
+.modal-profile-clicked .modal-profile-clicked-row button.mute-button.active {
+    background: rgba(255, 193, 7, 0.4);
+    border-color: rgba(255, 193, 7, 0.5);
 }
 
 @media (max-width: 768px) {
@@ -473,4 +660,98 @@
         width: 100px;
         height: 100px;
     }
+}
+
+.friends-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(104, 98, 204, 0.1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.friend-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(104, 98, 204, 0.1);
+    border-color: rgba(104, 98, 204, 0.2);
+}
+
+.friend-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: #6862cc;
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.friend-item:hover::before {
+    transform: scaleY(1);
+}
+
+.friend-item .user-image-filter {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #6862cc;
+    box-shadow: 0 2px 6px rgba(104, 98, 204, 0.2);
+    transition: all 0.3s ease;
+}
+
+.friend-item:hover .user-image-filter {
+    transform: scale(1.05);
+    border-color: #534d9f;
+    box-shadow: 0 6px 15px rgba(104, 98, 204, 0.3);
+}
+
+.friend-item span {
+    margin-left: 15px;
+    font-size: 15px;
+    color: #2c3e50;
+    font-weight: 500;
+    /* flex: 1; */
+}
+
+.friend-item::after {
+    content: '→';
+    position: absolute;
+    right: 20px;
+    color: #6862cc;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    font-size: 18px;
+}
+
+.friend-item:hover::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Empty state styling for friends list */
+.friends-list:empty + p {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px dashed #e1e4e8;
+    margin-top: 10px;
 }

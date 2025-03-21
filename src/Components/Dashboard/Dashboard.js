@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faNetworkWired,
   faGrip,
-  faBackward,
   faLock,
   faSquareEnvelope,
   faCircleInfo,
@@ -26,6 +25,8 @@ import {
 import api from "../../api";
 import MyProfile from "../MyProfile/MyProfile";
 import Notification from "../Notification/Notification";
+// import DashboardSkeleton from "./DashboardSkeleton";
+import DashboardSkeleton from "./DashboardSkeleton";
 import Logo from "../../assets/images/Samira_Hadid-removebg-preview.png";
 import "../Dashboard/Dashboard.css";
 
@@ -44,6 +45,7 @@ const Dashboard = () => {
     { id: 2, value: 0, label: "Private Info" },
     { id: 3, value: 0, label: "Notes" },
   ]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -72,12 +74,18 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [passwordsRes, emailsRes, privateInfosRes, notesRes] =
+        setIsLoading(true);
+        const [passwordsRes, emailsRes, privateInfosRes, notesRes, userRes] =
           await Promise.all([
             api.get("/store-passwords"),
             api.get("/store-emails"),
             api.get("/store-private-infos"),
             api.get("/store-notes"),
+            api.get(`/users/${localStorage.getItem("user_id")}`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }),
           ]);
 
         const passwordsCount = passwordsRes.data.length;
@@ -112,38 +120,16 @@ const Dashboard = () => {
             label: "Notes",
           },
         ]);
+
+        setUser(userRes.data);
       } catch (error) {
         console.error("Error fetching data", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userId = localStorage.getItem("user_id");
-        const token = localStorage.getItem("token");
-
-        if (!userId || !token) {
-          console.error("No user ID or token found");
-          return;
-        }
-
-        const response = await api.get(`/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setUser(response.data);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    fetchUser();
   }, []);
 
   function GaugePointer() {
@@ -184,6 +170,10 @@ const Dashboard = () => {
       navigate("/login");
     }
   }, [navigate]);
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="dashboard-container">

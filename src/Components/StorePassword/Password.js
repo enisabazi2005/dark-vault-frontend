@@ -3,6 +3,7 @@ import "../StorePassword/Password.css";
 import api from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
+import PasswordSkeleton from "./PasswordSkeleton";
 
 const StorePassword = () => {
   const [passwords, setPasswords] = useState([]);
@@ -13,14 +14,18 @@ const StorePassword = () => {
   const [deletePasswordId, setDeletePasswordId] = useState(null);
   const [viewPassword, setViewPassword] = useState("");
   const [selectedPasswordId, setSelectedPasswordId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     const fetchPasswords = async () => {
       try {
+        setIsLoading(true);
         const response = await api.get("/store-passwords");
         setPasswords(response.data);
       } catch (error) {
         console.error("Error fetching passwords", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -88,6 +93,10 @@ const StorePassword = () => {
     setViewPassword("");
     setSelectedPasswordId(null); 
   };
+
+  if (isLoading) {
+    return <PasswordSkeleton />;
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

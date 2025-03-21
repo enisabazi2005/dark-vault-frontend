@@ -1,0 +1,132 @@
+/* Skeleton Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 25%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0.1) 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Title Skeleton */
+.skeleton-title {
+  height: 24px;
+  width: 80%;
+  margin: 1.5rem auto;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+/* Input Skeleton */
+.skeleton-input {
+  height: 45px;
+  width: 100%;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+  margin-bottom: 20px;
+}
+
+/* Avatar Skeleton */
+.skeleton-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+  margin: 0 auto 15px;
+}
+
+/* Text Skeleton */
+.skeleton-text {
+  height: 16px;
+  width: 60%;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+  margin: 0 15px;
+}
+
+/* Button Skeleton */
+.skeleton-button {
+  height: 40px;
+  width: 120px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+  margin: 15px auto;
+}
+
+.skeleton-button-small {
+  height: 35px;
+  width: 80px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: shimmer 2s infinite linear;
+}
+
+.skeleton-button-group {
+  display: flex;
+  gap: 10px;
+}
+
+/* List Skeleton */
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Friend Item Skeleton */
+.friend-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Dropdown Item Skeleton */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .row-layout {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .col-50 {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .skeleton-avatar-large {
+    width: 80px;
+ 

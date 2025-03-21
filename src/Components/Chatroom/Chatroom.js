@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../Chatroom/Chatroom.css";
 import api from "../../api";
 import { STORAGE_URL } from "../../api";
+// import Pusher from "pusher-js";
 import Pusher from "pusher-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -76,7 +77,7 @@ const Chatroom = () => {
     };
   
     fetchSelectedUserFriends();
-  }, [selectedUser?.request_id]); 
+  }, [selectedUser]); 
   
   const handleProfileClick = (user) => {
     setSelectedUser(user);
@@ -133,18 +134,17 @@ const Chatroom = () => {
   };
 
   useEffect(() => {
-    if (!requestId || !selectedUser) return;
-
+    if (!selectedUser || !selectedUser.request_id) return;
+  
     const pusher = new Pusher(PUSHER_APP_KEY, {
       cluster: PUSHER_CLUSTER,
-      encrypted: true,
+      encrypted: false,
     });
     const channel = pusher.subscribe(`chatroom.${selectedUser.request_id}`);
     console.log(`Subscribed to chatroom.${selectedUser.request_id}`);
-
+  
     channel.bind("App\\Events\\NewMessage", function (data) {
       console.log("New message received:", data);
-
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -154,14 +154,15 @@ const Chatroom = () => {
           dark_users_id: data.dark_users_id,
         },
       ]);
+      console.log(messages, 'messages');
     });
-
+  
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [selectedUser, requestId]);
-
+  }, [selectedUser, messages]);
+  
   useEffect(() => {
     if (!requestId || !selectedUser) return;
 
@@ -424,53 +425,52 @@ const Chatroom = () => {
         </div>
 
         <div className="col-50">
-          {selectedUser && (
-            <div className="user-card">
-              <div className="user-picture">
-                <img
-                  src={
-                    blockedBy.some((user) => user.id === selectedUser.id) 
-                      ? defaultBlankPhotoUrl
-                      : selectedUser.picture
-                      ? `${STORAGE_URL}/${selectedUser.picture}` 
-                      : defaultBlankPhotoUrl 
-                  }
-                  alt="Profile"
-                  className="user-image"
-                />
-              </div>
-              <div className="user-details">
-                <p>
-                  {selectedUser.name} {selectedUser.lastname}
-                </p>
-                <div className="selected-user-details">
-                  <p>
-                    {isFriend(selectedUser.request_id) &&
-                      selectedUserFriends?.friends_count > 0 && (
-                        <p>{selectedUserFriends.friends_count} Friends</p>
-                      )}
-                  </p>
-                  <button
-                    className="add-friend-btn"
-                    onClick={() =>
-                      isFriend(selectedUser.request_id)
-                        ? null
-                        : sendFriendRequest(selectedUser.request_id)
-                    }
-                  >
-                    {isFriend(selectedUser.request_id)
-                      ? "Friends"
-                      : friendRequestSent
-                      ? "Friend Request Sent"
-                      : errorMessage
-                      ? errorMessage
-                      : "Add Friend"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+  {selectedUser && (
+    <div className="user-card">
+      <div className="user-picture">
+        <img
+          src={
+            blockedBy.some((user) => user.id === selectedUser.id)
+              ? defaultBlankPhotoUrl
+              : selectedUser.picture
+              ? `${STORAGE_URL}/${selectedUser.picture}`
+              : defaultBlankPhotoUrl
+          }
+          alt="Profile"
+          className="user-image"
+        />
+      </div>
+      <div className="user-details">
+        <p>
+          {selectedUser.name} {selectedUser.lastname}
+        </p>
+        <div className="selected-user-details">
+          {isFriend(selectedUser.request_id) &&
+            selectedUserFriends?.friends_count > 0 && (
+              <p>{selectedUserFriends.friends_count} Friends</p>
+            )}
+          <button
+            className="add-friend-btn"
+            onClick={() =>
+              isFriend(selectedUser.request_id)
+                ? null
+                : sendFriendRequest(selectedUser.request_id)
+            }
+          >
+            {isFriend(selectedUser.request_id)
+              ? "Friends"
+              : friendRequestSent
+              ? "Friend Request Sent"
+              : errorMessage
+              ? errorMessage
+              : "Add Friend"}
+          </button>
         </div>
+      </div>
+    </div>
+  )}
+</div>
+
       </div>
 
       <div className="row-layout row-layout-friends">
@@ -527,12 +527,12 @@ const Chatroom = () => {
           {loading ? (
             <p>Loading...</p>
           ) : friends.length > 0 ? (
-            <ul>
+            <ul className="friends-list">
               {friends.map((friend, index) => (
                 <li
                   key={index}
+                  className="friend-item"
                   onClick={() => handleSelectUser(friend, true)}
-                  style={{ cursor: "pointer" }}
                 >
                   <img
                     src={
@@ -541,9 +541,9 @@ const Chatroom = () => {
                         : `${defaultBlankPhotoUrl}`
                     }
                     alt={`${friend.name} ${friend.lastname}`}
-                    className="user-image-filter"
+                    className="user-image-filter user-image-filter-friends"
                   />
-                  {friend.name} {friend.lastname}
+                  <span>{friend.name} {friend.lastname}</span>
                 </li>
               ))}
             </ul>

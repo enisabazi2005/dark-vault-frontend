@@ -10,7 +10,6 @@
 .sidebar {
   width: 250px;
   background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
-  padding: 1rem;
   position: fixed;
   height: 100vh;
   left: 0;
@@ -153,12 +152,13 @@
 .user-name {
   font-size: 2rem;
   font-weight: bold;
-  margin: 1rem 0;
+  margin: 0;
 }
 
 .welcome-message {
   font-size: 1.1rem;
   opacity: 0.9;
+  margin: 30px 0;
 }
 
 /* Storage Card */

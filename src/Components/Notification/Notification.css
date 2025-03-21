@@ -11,7 +11,7 @@
 } */
 
 .bellIcon { 
-    color: #fff;
+    color: #fefefe9e;
 }
 
 .notificationCount { 
@@ -36,7 +36,7 @@
     position: absolute;
     top: 0px;
     right: 0px;
-    background: #e1e4e8;
+    background: #8d8d8dd6;
     color: white;
     border-radius: 50%;
     width: 20px;

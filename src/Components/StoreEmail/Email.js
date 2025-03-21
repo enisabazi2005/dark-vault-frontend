@@ -3,6 +3,7 @@ import "../StoreEmail/Email.css";
 import api from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
+import EmailSkeleton from "./EmailSkeleton";
 
 const StoreEmail = () => {
   const [emails, setEmails] = useState([]);
@@ -14,13 +15,17 @@ const StoreEmail = () => {
   const [deleteEmailId, setDeleteEmailId] = useState(null);
   const [viewEmail, setViewEmail] = useState("");
   const [selectedEmailId, setSelectedEmailId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchEmails = async () => {
     try {
+      setIsLoading(true);
       const response = await api.get("/store-emails");
       setEmails(response.data);
     } catch (error) {
       console.error("Error fetching emails", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -97,6 +102,10 @@ const StoreEmail = () => {
     const maskedUsername = username.charAt(0) + '**' + username.charAt(username.length - 1);
     return `${maskedUsername}@${domain}`;
   };
+
+  if (isLoading) {
+    return <EmailSkeleton />;
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
