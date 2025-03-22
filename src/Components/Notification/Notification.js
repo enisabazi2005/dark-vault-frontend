@@ -5,7 +5,7 @@ import Pusher from "pusher-js";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../Notification/Notification.css";
-import notificationSound from "../../assets/images/notification.mp3";
+import notificationSound from "../../assets/images/message-sent.wav";
 
 const Notification = () => {
   const [unreadMessages, setUnreadMessages] = useState([]);
@@ -15,6 +15,7 @@ const Notification = () => {
   const [count, setCount] = useState(0);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const audioRef = useRef(null);
+  const previousCountRef = useRef(0);
 
   useEffect(() => {
     if (!userId) return;
@@ -51,6 +52,7 @@ const Notification = () => {
         const response = await api.get("/get-unread-messages");
         setUnreadMessages(response.data);
         setCount(response.data.length);
+        previousCountRef.current = response.data.length;
       } catch (error) {
         console.error("Error fetching unread messages:", error);
       } finally {
@@ -74,13 +76,17 @@ const Notification = () => {
           );
           return [...newMessages, ...prevMessages];
         });
-        setCount((prevCount) => prevCount + data.notifications.length);
         
-        // Play notification sound only when new messages arrive
-        if (data.notifications.length > 0 && audioRef.current) {
+        const newCount = count + data.notifications.length;
+        setCount(newCount);
+        
+        // Play sound only when new messages arrive and count increases
+        if (data.notifications.length > 0 && newCount > previousCountRef.current && audioRef.current) {
+          audioRef.current.currentTime = 0; // Reset audio to start
           audioRef.current.play().catch(error => {
             console.error("Error playing notification sound:", error);
           });
+          previousCountRef.current = newCount;
         }
       }
     });
@@ -89,7 +95,7 @@ const Notification = () => {
       channel.unbind("App\\Events\\UnreadMessagesEvent");
       pusher.unsubscribe(`unread-messages-${userId}`);
     };
-  }, [userId]);
+  }, [userId, count]);
 
   const handleMarkAsRead = async () => {
     try {

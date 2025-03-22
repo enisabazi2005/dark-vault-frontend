@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../Chatroom/Chatroom.css";
 import api from "../../api";
 import { STORAGE_URL } from "../../api";
@@ -10,6 +10,7 @@ import { PUSHER_APP_KEY, PUSHER_CLUSTER } from "../../api";
 import Muted from "../Muted/Muted";
 import Unfriend from "../Unfriend/Unfriend";
 import Blocked from "../Blocked/Blocked";
+import MessageSent from "../../assets/images/message-sent.wav";
 
 const Chatroom = () => {
   const [users, setUsers] = useState([]);
@@ -37,6 +38,7 @@ const Chatroom = () => {
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [blockedBy, setBlockedBy] = useState([]);
+  const messageSentAudioRef = useRef(null);
 
   useEffect(() => {
     const getBlockedByUsers = async () => {
@@ -126,6 +128,15 @@ const Chatroom = () => {
         },
       ]);
       setMessage("");
+      
+      // Play the message sent sound
+      if (messageSentAudioRef.current) {
+        messageSentAudioRef.current.currentTime = 0;
+        messageSentAudioRef.current.play().catch(error => {
+          console.error("Error playing message sent sound:", error);
+        });
+      }
+      
       console.log(response, "this is response");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -386,8 +397,16 @@ const Chatroom = () => {
     (a, b) => new Date(a.created_at) - new Date(b.created_at)
   );
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Prevent new line
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="full-width-layout">
+      <audio ref={messageSentAudioRef} src={MessageSent} preload="auto" />
       <div className="row-layout">
         <div className="col-50">
           <h2 className="text-xl font-semibold">Add a friend...</h2>
@@ -541,7 +560,7 @@ const Chatroom = () => {
                         : `${defaultBlankPhotoUrl}`
                     }
                     alt={`${friend.name} ${friend.lastname}`}
-                    className="user-image-filter user-image-filter-friends"
+                    className="user-image-filter"
                   />
                   <span>{friend.name} {friend.lastname}</span>
                 </li>
@@ -613,10 +632,8 @@ const Chatroom = () => {
                 {messages.length > 0 ? (
                   sortedMessages.map((msg, index) => {
                     const userRequestId = localStorage.getItem("request_id");
-
                     const isSent = msg.sender_id === userRequestId;
                     const isReceived = selectedUser.request_id;
-
                     const messageContent = msg.message;
 
                     return (
@@ -635,17 +652,29 @@ const Chatroom = () => {
                     );
                   })
                 ) : (
-                  <p className="message-content-fallback">No messages yet</p>
+                  <div className="message-content-fallback">
+                    <p>No messages yet</p>
+                    <span>Start a conversation with {selectedUser.name}</span>
+                  </div>
                 )}
               </div>
             </div>
 
             <div className="message-input">
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Type your message..."
-              />
+              {messages.length > 0 ? (
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type your message..."
+                />
+              ) : (
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Say hi to your friend"
+                />
+              )}
               <button onClick={handleSendMessage}>Send</button>
             </div>
           </div>
