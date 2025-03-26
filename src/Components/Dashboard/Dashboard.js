@@ -216,6 +216,10 @@ const Dashboard = () => {
                 <FontAwesomeIcon icon={faPeopleGroup} />
                 <span>Friends</span>
               </Link>
+              <Link to="groups" className="nav-item">
+                <FontAwesomeIcon icon={faPeopleGroup} />
+                <span>Groups</span>
+              </Link>
             </nav>
             <button className="logout-button" onClick={handleLogout}>
               <FontAwesomeIcon icon={faArrowRightFromBracket} />

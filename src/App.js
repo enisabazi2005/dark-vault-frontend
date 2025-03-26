@@ -10,8 +10,10 @@ import Notes from "./Components/StoreNotes/Notes";
 import Chatroom from "./Components/Chatroom/Chatroom";
 import Settings from "./Components/Settings/Settings";
 import Friends from "./Components/Friends/Friends";
-import ResetPassword from "./Components/ResetPassword/ResetPassword"
+import ResetPassword from "./Components/ResetPassword/ResetPassword";
+import Groups from "./Components/Groups/Groups";
 import "./App.css";
+import { StoreProvider } from "./Store/store";
 
 const App = () => {
   useEffect(() => {
@@ -22,6 +24,8 @@ const App = () => {
 
   return (
     <div className="container">
+          <StoreProvider>
+
       <Router>
         <Routes>
           <Route path="/register" element={<Register />} />
@@ -36,9 +40,12 @@ const App = () => {
             <Route path="chatroom" element={<Chatroom />} />
             <Route path="settings" element={<Settings />}></Route>
             <Route path="friends" element={<Friends />}></Route>
+            <Route path="groups" element={<Groups />}></Route>
           </Route>
         </Routes>
       </Router>
+      </StoreProvider>
+
     </div>
   );
 };

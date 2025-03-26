@@ -27,36 +27,46 @@ const Login = () => {
   
     try {
       const response = await api.post("/login", formData);
-  
-      // Check if the response has the expected data
-      if (response) {
-        const { user, token } = response.data;
-  
-        // Store in localStorage if response is valid
-        localStorage.setItem("token", token);
-        localStorage.setItem("user_id", user.id);
-        localStorage.setItem("request_id", user.request_id);
-  
-        setSuccess("Logged in successfully!");
-  
-        // Fetch user data
-        const userResponse = await api.get(`/users/${user.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
-        // Store user data in localStorage
-        localStorage.setItem("user", JSON.stringify(userResponse.data));
-  
-        // Wait to ensure data is stored before navigating
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 500); // Reduced delay for smoother transition
-      } else {
-        throw new Error("Invalid login response, missing user or token.");
+      console.log("Login API Response:", response.data); // Debugging response
+    
+      if (!response || !response.data) {
+        throw new Error("Invalid response from the server.");
       }
+    
+      const { user, token } = response.data;
+    
+      if (!user || !token) {
+        throw new Error("User or token missing in response.");
+      }
+    
+      console.log("User Data:", user); // Debugging
+      console.log("Token:", token);
+    
+      // Store user & token
+      localStorage.setItem("token", token);
+      localStorage.setItem("user_id", user.id);
+      localStorage.setItem("request_id", user.request_id);
+    
+      setSuccess("Logged in successfully!");
+    
+      // Fetch user data
+      const userResponse = await api.get(`/users/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    
+      if (!userResponse || !userResponse.data) {
+        throw new Error("Invalid user data response.");
+      }
+    
+      localStorage.setItem("user", JSON.stringify(userResponse.data));
+    
+      // Wait to ensure data is stored before navigating
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 500);
     } catch (error) {
       console.error("Login failed:", error.response?.data || error);
-      setError(error.response?.data?.error || "Login failed.");
+      setError(error.response?.data?.error || error.message || "Login failed.");
     }
   };
   
