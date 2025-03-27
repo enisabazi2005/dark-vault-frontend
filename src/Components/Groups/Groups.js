@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import api from "../../api"; 
+import api from "../../api";
 import { useStore } from "../../Store/store";
 import { STORAGE_URL } from "../../api";
 import "./Groups.css";
@@ -19,14 +19,14 @@ const Groups = () => {
     const [showMembersModal, setShowMembersModal] = useState(false);
     const [groupMembers, setGroupMembers] = useState([]);
     const [acceptedGroups, setAcceptedGroups] = useState([]);
-    
+
     const defaultBlankPhotoUrl =
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
     const fetchGroups = useCallback(async () => {
         try {
             const response = await api.get(`/groups?request_id=${myProfile.request_id}`);
-            setGroups(response.data); 
+            setGroups(response.data);
         } catch (error) {
             console.error("Error fetching admin groups:", error);
         }
@@ -74,7 +74,7 @@ const Groups = () => {
 
             setGroups(groups.map(g => g.id === editingGroup.id ? response.data.group : g));
 
-            setEditingGroup(null); 
+            setEditingGroup(null);
         } catch (error) {
             console.error("Error updating group:", error);
         }
@@ -93,9 +93,9 @@ const Groups = () => {
                 users_invited: invitedUsers,
             });
 
-            setGroups([response.data.group, ...groups]); 
-            setNewGroupTitle(""); 
-            setInvitedUsers([]); 
+            setGroups([response.data.group, ...groups]);
+            setNewGroupTitle("");
+            setInvitedUsers([]);
         } catch (error) {
             console.error("Error creating group:", error);
         }
@@ -117,19 +117,24 @@ const Groups = () => {
 
     const handleInviteSubmit = async () => {
         if (!selectedGroup || invitedUsers.length === 0) return;
-
+    
         try {
-            await api.post(`/groups/${selectedGroup.id}/invite`, {
-                users_invited: invitedUsers
-            });
+            await Promise.all(invitedUsers.map(async (userId) => {
+                await api.post(`/groups/invite`, {
+                    group_id: selectedGroup.id,
+                    user_id: userId
+                });
+            }));
+    
             setShowInviteModal(false);
             setInvitedUsers([]);
             setSelectedGroup(null);
-            fetchGroups();
+            fetchGroups(); 
         } catch (error) {
             console.error("Error inviting users:", error);
         }
     };
+    
 
     const handleInviteResponse = async (groupId, accepted) => {
         try {
@@ -167,8 +172,7 @@ const Groups = () => {
 
     const handleShowMembers = async (group) => {
         try {
-            // Add your API call here to fetch group members
-            // For now, we'll use the users_in_group array
+
             setGroupMembers(group.users_in_group);
             setShowMembersModal(true);
         } catch (error) {
@@ -176,18 +180,78 @@ const Groups = () => {
         }
     };
 
+    console.log(handleShowMembers);
+
+
     const renderChat = () => {
         if (!activeChat) return null;
+
+        const isAdmin = myProfile.id === activeChat.admin_id; 
 
         return (
             <>
                 <div className="chat-overlay" onClick={handleCloseChat} />
                 <div className="chat-container">
-                    <div className="chat-header" onClick={() => handleShowMembers(activeChat)}>
+                    <div className="chat-header">
                         <h2>{activeChat.title}</h2>
                         <button className="chat-close-btn" onClick={handleCloseChat}>×</button>
                     </div>
-                    <div className="-messages">
+                    <div className="chat-members-section">
+                        <div className="chat-members-header">
+                            <h3>Members</h3>
+                        </div>
+                        <div className="chat-members-list">
+                            {activeChat.users_in_group?.map(memberId => {
+                                const isMyProfile = memberId === myProfile.id;
+                                const member = isMyProfile ? myProfile : friends.find(f => f.id === memberId);
+                                if (!member) return null; 
+
+                                const getStatus = (member) => {
+                                    if (member.online) return { text: "Online", color: "green" };
+                                    if (member.do_not_disturb) return { text: "Do Not Disturb", color: "red" };
+                                    if (member.away) return { text: "Away", color: "orange" };
+                                    return { text: "Offline", color: "gray" };
+                                };
+
+                                const status = getStatus(member);
+
+                                return (
+                                    <div key={memberId} className="chat-member-item">
+                                        <img
+                                            src={member.picture ? `${STORAGE_URL}/${member.picture}` : defaultBlankPhotoUrl}
+                                            alt={`${member.name} ${member.lastname}`}
+                                            className="chat-member-avatar"
+                                        />
+                                        <span className="chat-member-name">
+                                            {member.name} {member.lastname}  {isMyProfile ? "(You)" : ""}
+                                        </span>
+                                        <span className="chat-member-status" style={{ color: status.color }}>
+                                            ● {status.text}
+                                        </span>
+                                        {isAdmin && !isMyProfile && (
+                                            <div className="admin-controls">
+                                                <button
+                                                    className="admin-btn remove-btn"
+                                                    onClick={() => handleRemoveUser(memberId)}
+                                                    title="Remove member"
+                                                >
+                                                    <i className="fas fa-trash-alt"></i>
+                                                </button>
+                                                <button
+                                                    className="admin-btn promote-btn"
+                                                    onClick={() => handlePromoteUser(memberId)}
+                                                    title="Promote to admin"
+                                                >
+                                                    <i className="fas fa-check"></i>
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <div className="chat-messages">
                     </div>
                     <div className="chat-input-container">
                         <textarea
@@ -204,6 +268,34 @@ const Groups = () => {
                 </div>
             </>
         );
+    };
+
+    const handleRemoveUser = async (userId) => {
+        if (!activeChat) return; 
+    
+        try {
+            const response = await api.patch(`/groups/${activeChat.id}/remove-user`, {
+                user_id: userId
+            });
+    
+            console.log(`User ${userId} removed successfully`, response.data);
+    
+            setActiveChat((prevChat) => ({
+                ...prevChat,
+                users_in_group: prevChat.users_in_group.filter((id) => id !== userId)
+            }));
+    
+            fetchGroups();
+            fetchAcceptedGroups();
+            
+        } catch (error) {
+            console.error("Error removing user:", error.response?.data || error.message);
+        }
+    };
+    
+    const handlePromoteUser = (userId) => {
+        console.log(`Promoting user with ID: ${userId} to Semi-Admin`);
+        // Needs to implement new api here
     };
 
     const renderGroupMembersModal = () => {
@@ -273,75 +365,63 @@ const Groups = () => {
         </ul>
     );
 
-    const renderCreateGroup = () => (
-        <div className="create-group">
-            <h2>Create a New Group</h2>
-            <input
-                type="text"
-                placeholder="Group Title"
-                value={newGroupTitle}
-                onChange={(e) => setNewGroupTitle(e.target.value)}
-            />
-            <div className="friends-selection-box">
-                <h3>Invite Friends</h3>
-                <div className="friends-list">
-                    {friends.map(friend => (
-                        <div key={friend.id} className="friend-item">
-                            <img
-                                src={
-                                    friend.picture
-                                        ? `${STORAGE_URL}/${friend.picture}`
-                                        : defaultBlankPhotoUrl
-                                }
-                                alt={`${friend.first_name} ${friend.last_name}`}
-                                className="friend-avatar"
-                            />
-                            <span>{friend.first_name} {friend.last_name}</span>
-                            <button
-                                onClick={() => handleFriendSelection(friend.id)}
-                                className={invitedUsers.includes(friend.id) ? "selected" : ""}
-                            >
-                                {invitedUsers.includes(friend.id) ? "Remove" : "Invite"}
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <button onClick={handleCreateGroup}>Create Group</button>
-        </div>
-    );
 
     const renderInviteModal = () => (
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className="dark-vault-group-modal-overlay">
+            <div className="dark-vault-group-modal-content">
                 <h2>Invite Friends to {selectedGroup?.title}</h2>
-                <div className="friends-list">
-                    {friends.map(friend => (
-                        <div key={friend.id} className="friend-item">
-                            <img
-                                src={
-                                    friend.picture
-                                        ? `${STORAGE_URL}/${friend.picture}` 
-                                        : defaultBlankPhotoUrl
-                                }
-                                alt={`${friend.first_name} ${friend.last_name}`}
-                                className="friend-avatar"
-                            />
-                            <span>{friend.first_name} {friend.last_name}</span>
-                            <button
-                                onClick={() => handleFriendSelection(friend.id)}
-                                className={invitedUsers.includes(friend.id) ? "selected" : ""}
-                            >
-                                {invitedUsers.includes(friend.id) ? "Remove" : "Invite"}
-                            </button>
-                        </div>
-                    ))}
+                <div className="dark-vault-group-friends-selection-box">
+                    <h3>Invite Friends</h3>
+                    <div className="dark-vault-group-friends-list">
+                        {friends.map(friend => {
+                            const isMember = selectedGroup?.users_in_group?.includes(friend.id);
+                            const isInvited = selectedGroup?.users_invited?.includes(friend.id);
+                            
+                            return (
+                                <div key={friend.id} className="dark-vault-group-friend-item">
+                                    <img
+                                        src={
+                                            friend.picture
+                                                ? `${STORAGE_URL}/${friend.picture}`
+                                                : defaultBlankPhotoUrl
+                                        }
+                                        alt={`${friend.first_name} ${friend.last_name}`}
+                                        className="dark-vault-group-friend-avatar"
+                                    />
+                                    <span className="dark-vault-group-friend-name">{friend.name} {friend.lastname}</span>
+                                    {isMember ? (
+                                        <div className="dark-vault-group-status-icon member">
+                                            <i className="fas fa-check"></i>
+                                        </div>
+                                    ) : isInvited ? (
+                                        <div className="dark-vault-group-loading-spinner"></div>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleFriendSelection(friend.id)}
+                                            className={`dark-vault-group-friend-invite-btn ${invitedUsers.includes(friend.id) ? "selected" : ""}`}
+                                        >
+                                            Invite
+                                        </button>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
-                <div className="modal-actions">
-                    <button onClick={handleInviteSubmit} disabled={invitedUsers.length === 0}>
+                <div className="dark-vault-group-modal-actions">
+                    <button
+                        onClick={handleInviteSubmit}
+                        disabled={invitedUsers.length === 0}
+                        className="dark-vault-group-submit-btn"
+                    >
                         Send Invites
                     </button>
-                    <button onClick={() => setShowInviteModal(false)}>Cancel</button>
+                    <button
+                        onClick={() => setShowInviteModal(false)}
+                        className="dark-vault-group-cancel-btn"
+                    >
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
@@ -358,6 +438,15 @@ const Groups = () => {
             );
         }
 
+        const adminName = pendingInvites.map((invite) => {
+            const admin = invite.invited_by;
+
+            if (myProfile.id === admin) {
+                return myProfile.name;
+            }
+            const friend = friends.find(f => f.id === admin);
+            return friend ? friend.name : "test";
+        });
         return (
             <div className="pending-invites-section">
                 <div className="pending-invites-grid">
@@ -365,17 +454,18 @@ const Groups = () => {
                         <div key={invite.code} className="pending-invite-card">
                             <div className="invite-info">
                                 <h3>Group Code: {invite.code}</h3>
-                                <p>Invited by: {invite.invited_by}</p>
-                                <p>Members: {Array.isArray(invite.users_in_group) ? invite.users_in_group.length : 0}</p>
+                                <p>Group Name: <strong>{invite.group_name}</strong></p>
+                                <p>Invited by: <strong>{adminName}</strong></p>
+                                <p>Members: <strong>{Array.isArray(invite.users_in_group) ? invite.users_in_group.length : 0}</strong></p>
                             </div>
                             <div className="invite-actions">
-                                <button 
+                                <button
                                     className="accept-btn"
                                     onClick={() => handleInviteResponse(invite.group_id, true)}
                                 >
                                     Accept
                                 </button>
-                                <button 
+                                <button
                                     className="decline-btn"
                                     onClick={() => handleInviteResponse(invite.group_id, false)}
                                 >
@@ -388,11 +478,10 @@ const Groups = () => {
             </div>
         );
     };
-
     return (
         <div className="group-container">
             <h1>My Groups</h1>
-            
+
             <div className="my-groups-section">
                 <h2>My Groups</h2>
                 {groups.length === 0 ? (
@@ -428,7 +517,7 @@ const Groups = () => {
                     <h3>Invite Friends</h3>
                     <div className="friends-list">
                         {friends.map(friend => (
-                            <div key={friend.id} className="friend-item">
+                            <div key={friend.id} className="group-friend-item">
                                 <img
                                     src={
                                         friend.picture
@@ -438,7 +527,7 @@ const Groups = () => {
                                     alt={`${friend.first_name} ${friend.last_name}`}
                                     className="friend-avatar"
                                 />
-                                <span>{friend.first_name} {friend.last_name}</span>
+                                <span className="niger">{friend.name} {friend.lastname}</span>
                                 <button
                                     onClick={() => handleFriendSelection(friend.id)}
                                     className={invitedUsers.includes(friend.id) ? "selected" : ""}
