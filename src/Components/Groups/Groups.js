@@ -19,6 +19,7 @@ const Groups = () => {
     const [showMembersModal, setShowMembersModal] = useState(false);
     const [groupMembers, setGroupMembers] = useState([]);
     const [acceptedGroups, setAcceptedGroups] = useState([]);
+    const [isGroupModalClosed, setIsGroupModalClosed] = useState(false);
 
     const defaultBlankPhotoUrl =
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
@@ -152,11 +153,16 @@ const Groups = () => {
     const handleOpenChat = (group) => {
         setActiveChat(group);
         setChatMessage("");
+        setIsGroupModalClosed(true);
+        fetchGroups();
+        fetchAcceptedGroups();
     };
+    
 
     const handleCloseChat = () => {
         setActiveChat(null);
         setChatMessage("");
+        setIsGroupModalClosed(false);
     };
 
     const handleSendMessage = async () => {
@@ -182,12 +188,11 @@ const Groups = () => {
 
     console.log(handleShowMembers);
 
-
     const renderChat = () => {
         if (!activeChat) return null;
-
-        const isAdmin = myProfile.id === activeChat.admin_id; 
-
+    
+        const isAdmin = myProfile.id === activeChat.admin_id;
+    
         return (
             <>
                 <div className="chat-overlay" onClick={handleCloseChat} />
@@ -202,33 +207,30 @@ const Groups = () => {
                         </div>
                         <div className="chat-members-list">
                             {activeChat.users_in_group?.map(memberId => {
+                                const member = memberId === myProfile.id ? myProfile : friends.find(f => f.id === memberId);
+                                if (!member) return null;
+    
                                 const isMyProfile = memberId === myProfile.id;
-                                const member = isMyProfile ? myProfile : friends.find(f => f.id === memberId);
-                                if (!member) return null; 
-
-                                const getStatus = (member) => {
-                                    if (member.online) return { text: "Online", color: "green" };
-                                    if (member.do_not_disturb) return { text: "Do Not Disturb", color: "red" };
-                                    if (member.away) return { text: "Away", color: "orange" };
-                                    return { text: "Offline", color: "gray" };
-                                };
-
-                                const status = getStatus(member);
-
+                                const isAdminMember = memberId === activeChat.admin_id;
+                                const isSemiAdminMember = memberId === activeChat.semi_admin_id; 
+                                console.log(isAdminMember, 'isAdminMember', isSemiAdminMember, 'isSemiAdminMember')
+    
                                 return (
-                                    <div key={memberId} className="chat-member-item">
+                                    <div key={memberId} className={`chat-member-item ${isAdminMember ? 'admin-member' : ''} ${isSemiAdminMember ? 'semi-admin-member' : ''}`}>
                                         <img
                                             src={member.picture ? `${STORAGE_URL}/${member.picture}` : defaultBlankPhotoUrl}
                                             alt={`${member.name} ${member.lastname}`}
                                             className="chat-member-avatar"
                                         />
-                                        <span className="chat-member-name">
-                                            {member.name} {member.lastname}  {isMyProfile ? "(You)" : ""}
-                                        </span>
-                                        <span className="chat-member-status" style={{ color: status.color }}>
-                                            ● {status.text}
-                                        </span>
-                                        {isAdmin && !isMyProfile && (
+                                        <div className="chat-member-info">
+                                            <span className="chat-member-name">
+                                                {member.name} {member.lastname} {isMyProfile ? "(You)" : ""}
+                                            </span>
+                                            <span className={`chat-member-status ${isAdminMember ? 'admin-status' : ''} ${isSemiAdminMember ? 'semi-admin-status' : ''}`}>
+                                                {isAdminMember ? "Admin" : (isSemiAdminMember ? "Semi-Admin" : (member.online ? "Online" : "Offline"))}
+                                            </span>
+                                        </div>
+                                        {isAdmin && !isMyProfile && !isAdminMember && (
                                             <div className="admin-controls">
                                                 <button
                                                     className="admin-btn remove-btn"
@@ -237,13 +239,23 @@ const Groups = () => {
                                                 >
                                                     <i className="fas fa-trash-alt"></i>
                                                 </button>
-                                                <button
-                                                    className="admin-btn promote-btn"
-                                                    onClick={() => handlePromoteUser(memberId)}
-                                                    title="Promote to admin"
-                                                >
-                                                    <i className="fas fa-check"></i>
-                                                </button>
+                                                {isSemiAdminMember ? (
+                                                    <button
+                                                        className="admin-btn demote-btn"
+                                                        onClick={() => handleDemoteUser(memberId)}
+                                                        title="Remove Semi-Admin role"
+                                                    >
+                                                        <i className="fas fa-arrow-down"></i>
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        className="admin-btn promote-btn"
+                                                        onClick={() => handlePromoteUser(memberId)}
+                                                        title="Promote to Semi-Admin"
+                                                    >
+                                                        <i className="fas fa-check"></i>
+                                                    </button>
+                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -293,10 +305,35 @@ const Groups = () => {
         }
     };
     
-    const handlePromoteUser = (userId) => {
-        console.log(`Promoting user with ID: ${userId} to Semi-Admin`);
-        // Needs to implement new api here
+    const handlePromoteUser = async (userId) => {
+        if (!activeChat) return;
+    
+        try {
+            const response = await api.post(`/group/${activeChat.id}/promote`, {
+                user_id: userId
+            });
+    
+            setActiveChat((prevChat) => ({
+                ...prevChat,
+                semi_admin_id: userId
+            }));
+    
+            if(!isGroupModalClosed) { 
+                fetchGroups();
+                fetchAcceptedGroups();
+            } 
+            fetchGroups();
+            fetchAcceptedGroups();
+    
+        } catch (error) {
+            console.error("Error promoting user:", error.response?.data || error.message);
+        }
     };
+
+
+    const handleDemoteUser = async (userId) => {
+        console.log('Demoting this user', userId);
+    }
 
     const renderGroupMembersModal = () => {
         if (!showMembersModal) return null;

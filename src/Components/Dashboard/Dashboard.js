@@ -14,6 +14,7 @@ import {
   faChartPie,
   faDatabase,
   faShieldAlt,
+  faUserGroup
 } from "@fortawesome/free-solid-svg-icons";
 import { PieChart } from "@mui/x-charts";
 import {
@@ -213,7 +214,7 @@ const Dashboard = () => {
                 <span>Go to Chatroom</span>
               </Link>
               <Link to="friends" className="nav-item">
-                <FontAwesomeIcon icon={faPeopleGroup} />
+                <FontAwesomeIcon icon={faUserGroup} />
                 <span>Friends</span>
               </Link>
               <Link to="groups" className="nav-item">

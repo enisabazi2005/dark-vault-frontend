@@ -475,12 +475,12 @@
 .chat-members-section {
     background: #f8f9fa;
     border-bottom: 1px solid #e9ecef;
-    max-height: 120px;
+    max-height: 200px;
     overflow: hidden;
 }
 
 .chat-members-header {
-    padding: 8px 15px;
+    padding: 12px 15px;
     border-bottom: 1px solid #e9ecef;
 }
 
@@ -492,19 +492,19 @@
 }
 
 .chat-members-list {
-    padding: 8px;
+    padding: 12px;
     overflow-y: auto;
-    max-height: 80px;
+    max-height: 150px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .chat-member-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
+    gap: 10px;
+    padding: 8px 12px;
     background: white;
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -513,19 +513,45 @@
 }
 
 .chat-member-avatar {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     object-fit: cover;
 }
 
+.chat-member-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+}
+
 .chat-member-name {
-    font-size: 12px;
+    font-size: 13px;
     color: #2c3e50;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex: 1;
+}
+
+.chat-member-status {
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.05);
+    color: #6c757d;
+    width: fit-content;
+}
+
+.chat-member-status.admin-status {
+    background: rgba(74, 144, 226, 0.1);
+    color: #4a90e2;
+    font-weight: 500;
+}
+
+.chat-member-item.admin-member {
+    background: rgba(74, 144, 226, 0.05);
+    border: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .chat-messages {
@@ -916,6 +942,15 @@
     width: 24px;
     height: 24px;
     transition: all 0.2s ease;
+}
+.demote-btn { 
+    padding: 0 !important;
+    background-color: white !important;
+    color: #e0ff56 !important;
+}
+.demote-btn.remove-btn:hover { 
+    background: rgba(220, 53, 69, 0.1);
+    transform: scale(1.1);    
 }
 
 .admin-btn.remove-btn {
