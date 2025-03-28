@@ -36,7 +36,7 @@ const Login = () => {
         throw new Error("Invalid response from the server.");
       }
   
-      const { user, token, message, is_verified } = response.data;
+      const { user, token, is_verified } = response.data;
   
       if (!user) {
         throw new Error("User data missing in response.");

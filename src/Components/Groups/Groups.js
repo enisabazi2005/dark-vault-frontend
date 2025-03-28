@@ -312,7 +312,7 @@ const Groups = () => {
             const response = await api.post(`/group/${activeChat.id}/promote`, {
                 user_id: userId
             });
-    
+            console.log(response, 'response');
             setActiveChat((prevChat) => ({
                 ...prevChat,
                 semi_admin_id: userId
