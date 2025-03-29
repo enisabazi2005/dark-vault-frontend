@@ -379,6 +379,7 @@
     background-color: #d1f7c4;
     margin-right: 10px;
     padding: 25px 15px;
+    /* padding: 25px 15px 50px 15px; */
 }
 
 .just-sent { 
@@ -386,6 +387,7 @@
     background-color: #d1f7c4;
     margin-right: 10px;
     padding: 25px 15px;
+    /* padding: 25px 15px 50px 15px; */
 }
 
 .received {
@@ -395,6 +397,7 @@
     display: inline-block;
     max-width: 70%;
     padding: 25px 15px;
+    /* padding: 25px 15px 50px 15px; */
     word-break: break-word;
     word-wrap: break-word; 
 }
@@ -806,4 +809,31 @@
   50% {
     transform: translateY(-10px);
   }
+}
+
+.message-time {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.message-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.checkmarks {
+    color: #4CAF50;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.message-time {
+    font-size: 11px;
+    color: #94a3b8;
+    font-family: 'Segoe UI', sans-serif;
 }

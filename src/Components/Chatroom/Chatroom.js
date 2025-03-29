@@ -125,6 +125,7 @@ const Chatroom = () => {
           sender_id: requestId,
           reciever_id: selectedUser.request_id,
           dark_users_id: userId,
+          message_sent_at: response.data.data.message_sent_at
         },
       ]);
       setMessage("");
@@ -163,6 +164,7 @@ const Chatroom = () => {
           sender_id: data.message.sender_id,
           reciever_id: data.message.reciever_id,
           dark_users_id: data.dark_users_id,
+          message_sent_at: data.message.message_sent_at
         },
       ]);
       console.log(messages, 'messages');
@@ -190,6 +192,7 @@ const Chatroom = () => {
             sender_id: message.sender_id,
             reciever_id: message.reciever_id,
             dark_users_id: message.dark_users_id,
+            message_sent_at: message.message_sent_at
           });
         });
 
@@ -635,7 +638,8 @@ const Chatroom = () => {
                     const isSent = msg.sender_id === userRequestId;
                     const isReceived = selectedUser.request_id;
                     const messageContent = msg.message;
-
+                    console.log(msg, 'msg');
+                    
                     return (
                       <div
                         key={index}
@@ -648,6 +652,12 @@ const Chatroom = () => {
                         }`}
                       >
                         <p className="message-content">{messageContent}</p>
+                        <div className="message-status">
+                          {isSent && <span className="checkmarks">✓✓</span>}
+                          {msg.message_sent_at && (
+                            <p className="message-time">{new Date(msg.message_sent_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</p>
+                          )}
+                        </div>
                       </div>
                     );
                   })
