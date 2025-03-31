@@ -12,6 +12,7 @@ import Settings from "./Components/Settings/Settings";
 import Friends from "./Components/Friends/Friends";
 import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import Groups from "./Components/Groups/Groups";
+import Payout from "./Components/Payout/Payout";
 import "./App.css";
 import { StoreProvider } from "./Store/store";
 
@@ -42,6 +43,8 @@ const App = () => {
             <Route path="friends" element={<Friends />}></Route>
             <Route path="groups" element={<Groups />}></Route>
           </Route>
+
+          <Route path="/payout" element={<Payout />} />
         </Routes>
       </Router>
       </StoreProvider>

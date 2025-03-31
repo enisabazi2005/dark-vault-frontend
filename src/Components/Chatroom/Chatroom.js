@@ -5,11 +5,12 @@ import { STORAGE_URL } from "../../api";
 // import Pusher from "pusher-js";
 import Pusher from "pusher-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faXmark , faEllipsisVertical} from "@fortawesome/free-solid-svg-icons";
 import { PUSHER_APP_KEY, PUSHER_CLUSTER } from "../../api";
 import Muted from "../Muted/Muted";
 import Unfriend from "../Unfriend/Unfriend";
 import Blocked from "../Blocked/Blocked";
+import BackgroundChange from "../BackgroundChange/BackgroundChange";
 import MessageSent from "../../assets/images/message-sent.wav";
 
 const Chatroom = () => {
@@ -39,6 +40,8 @@ const Chatroom = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [blockedBy, setBlockedBy] = useState([]);
   const messageSentAudioRef = useRef(null);
+  const [isBackgroundModalOpen, setIsBackgroundModalOpen] = useState(false);
+  const [chatBackground, setChatBackground] = useState(null);
 
   useEffect(() => {
     const getBlockedByUsers = async () => {
@@ -407,6 +410,25 @@ const Chatroom = () => {
     }
   };
 
+  useEffect(() => {
+    fetchBackground();
+  }, []);
+
+  const fetchBackground = async () => {
+    try {
+      const response = await api.get('/background');
+      if (response.data && response.data.option) {
+        setChatBackground(response.data.option);
+      }
+    } catch (error) {
+      console.error('Error fetching background:', error);
+    }
+  };
+
+  const handleBackgroundChange = (newBackground) => {
+    setChatBackground(newBackground);
+  };
+
   return (
     <div className="full-width-layout">
       <audio ref={messageSentAudioRef} src={MessageSent} preload="auto" />
@@ -579,7 +601,7 @@ const Chatroom = () => {
       )}
       {isOpen && selectedUser && messages && (
         <div className="chat-layout">
-          <div className="chat-window">
+          <div className={`chat-window ${chatBackground || ''}`}>
             <div className="messages">
               <div className="display-friend-row">
                 <div
@@ -629,6 +651,9 @@ const Chatroom = () => {
                   <button onClick={handleCloseChat}>
                     <FontAwesomeIcon icon={faXmark} />
                   </button>
+                </div>
+                <div className="settings-background-change" onClick={() => setIsBackgroundModalOpen(true)}>
+                  <FontAwesomeIcon icon={faEllipsisVertical} />
                 </div>
               </div>
               <div className="personal-chat-layout">
@@ -690,6 +715,11 @@ const Chatroom = () => {
           </div>
         </div>
       )}
+      <BackgroundChange
+        isOpen={isBackgroundModalOpen}
+        onClose={() => setIsBackgroundModalOpen(false)}
+        onBackgroundChange={handleBackgroundChange}
+      />
     </div>
   );
 };
