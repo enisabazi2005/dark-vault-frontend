@@ -14,6 +14,15 @@ const Settings = ({ onClose }) => {
     picture: null,
   });
   const [user, setUser] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleClose = () => {
+    if (typeof onClose === 'function') {
+      onClose();
+    } else {
+      console.error('onClose prop is not a function');
+    }
+  };
 
   const fetchUser = async () => {
     try {
@@ -32,7 +41,6 @@ const Settings = ({ onClose }) => {
       });
 
       setUser(response.data);
-      // Populate the form data with user info
       setFormData((prevData) => ({
         ...prevData,
         name: response.data.name,
@@ -46,25 +54,19 @@ const Settings = ({ onClose }) => {
     }
   };
 
-  // Call fetchUser when component mounts
   useEffect(() => {
     fetchUser();
   }, []);
 
-  const [successMessage, setSuccessMessage] = useState("");
-
-  // Handle Input Changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle Image Upload
   const handleImageUpload = (e) => {
     setFormData({ ...formData, picture: e.target.files[0] });
   };
 
-  // Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -88,8 +90,9 @@ const Settings = ({ onClose }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay" onClick={handleClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close-button" onClick={handleClose}>×</button>
         <h2>Edit Profile</h2>
 
         {successMessage && (
@@ -97,117 +100,131 @@ const Settings = ({ onClose }) => {
         )}
 
         <form onSubmit={handleSubmit} className="settings-form">
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="name">Name</label>
-              <input
-                className="update-settings-input"
-                type="text"
-                name="name"
-                placeholder={user ? user.name : "Name"} 
-                onChange={handleChange}
-              />
+          <div className="form-section">
+            <h3 className="form-section-title">Personal Information</h3>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="name">First Name</label>
+                <input
+                  className="update-settings-input"
+                  type="text"
+                  name="name"
+                  placeholder={user ? user.name : "Enter your first name"}
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="lastname">Last Name</label>
+                <input
+                  className="update-settings-input"
+                  type="text"
+                  name="lastname"
+                  placeholder={user ? user.lastname : "Enter your last name"}
+                  value={formData.lastname}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="lastname">Last Name</label>
-              <input
-                className="update-settings-input"
-                type="text"
-                name="lastname"
-                placeholder={user ? user.lastname : "Last Name"} 
-                onChange={handleChange}
-              />
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <input
+                  className="update-settings-input"
+                  type="email"
+                  name="email"
+                  placeholder={user ? user.email : "Enter your email"}
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="gender">Gender</label>
+                <select
+                  className="update-settings-input"
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="birthdate">Birth Date</label>
+                <input
+                  className="update-settings-input"
+                  type="date"
+                  name="birthdate"
+                  value={formData.birthdate}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="picture">Profile Picture</label>
+                <input
+                  className="update-settings-input"
+                  type="file"
+                  name="picture"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                className="update-settings-input"
-                type="email"
-                name="email"
-                placeholder={user ? user.email : "Email"} 
-                onChange={handleChange}
-              />
+          <div className="form-section">
+            <h3 className="form-section-title">Security</h3>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="current_password">Current Password</label>
+                <input
+                  className="update-settings-input"
+                  type="password"
+                  name="current_password"
+                  placeholder="Enter your current password"
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">New Password</label>
+                <input
+                  className="update-settings-input"
+                  type="password"
+                  name="password"
+                  placeholder="Enter your new password"
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="gender">Gender</label>
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-              >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="password_confirmation">Confirm New Password</label>
+                <input
+                  className="update-settings-input"
+                  type="password"
+                  name="password_confirmation"
+                  placeholder="Confirm your new password"
+                  onChange={handleChange}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="form-row form-row-password">
-            <div className="form-group">
-              <label htmlFor="current_password">Current Password</label>
-              <input
-                className="update-settings-input"
-                type="password"
-                name="current_password"
-                placeholder="Current Password"
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password">New Password</label>
-              <input
-                className="update-settings-input"
-                type="password"
-                name="password"
-                placeholder="New Password"
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password_confirmation">
-                Confirm New Password
-              </label>
-              <input
-                className="update-settings-input"
-                type="password"
-                name="password_confirmation"
-                placeholder="Confirm New Password"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="birthdate">Birthdate</label>
-              <input
-                className="update-settings-input"
-                type="date"
-                name="birthdate"
-                value={formData.birthdate}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="picture">Profile Picture</label>
-              <input
-                className="update-settings-input"
-                type="file"
-                name="picture"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-            </div>
-          </div>
-
-          <button className="save-changes-button" type="submit">Save Changes</button>
+          <button className="save-changes-button" type="submit">
+            Save Changes
+          </button>
         </form>
       </div>
     </div>

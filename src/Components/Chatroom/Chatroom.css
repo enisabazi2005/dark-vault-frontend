@@ -875,10 +875,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #666;
   text-align: center;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   position: absolute;
   bottom: 200px;
@@ -887,6 +886,7 @@
   width: 80%;
   max-width: 400px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
 }
 
 .message-content-fallback::before {
@@ -894,6 +894,7 @@
   font-size: 3rem;
   margin-bottom: 1rem;
   animation: bounce 2s infinite;
+  padding: 30px 0 0 0;
 }
 
 .message-content-fallback p {
@@ -905,17 +906,64 @@
 
 .message-content-fallback span {
   font-size: 0.9rem;
-  color: #888;
+  color: #666;
   margin-top: 0.5rem;
+  padding: 20px;
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+/* Theme-specific message content fallback styles */
+.chat-window.purple_white .message-content-fallback {
+  background: rgba(104, 98, 204, 0.1);
+}
+
+.chat-window.purple_white .message-content-fallback p,
+.chat-window.purple_white .message-content-fallback span {
+  color: #2c3e50;
+}
+
+.chat-window.blue_white .message-content-fallback {
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.chat-window.blue_white .message-content-fallback p,
+.chat-window.blue_white .message-content-fallback span {
+  color: #2c3e50;
+}
+
+.chat-window.green_black .message-content-fallback {
+  background: rgba(46, 204, 113, 0.1);
+}
+
+.chat-window.green_black .message-content-fallback p,
+.chat-window.green_black .message-content-fallback span {
+  color: #ffffff;
+}
+
+.chat-window.red_black .message-content-fallback {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.chat-window.red_black .message-content-fallback p,
+.chat-window.red_black .message-content-fallback span {
+  color: #ffffff;
+}
+
+.chat-window.gray_black .message-content-fallback {
+  background: rgba(149, 165, 166, 0.1);
+}
+
+.chat-window.gray_black .message-content-fallback p,
+.chat-window.gray_black .message-content-fallback span {
+  color: #ffffff;
+}
+
+.chat-window.premium .message-content-fallback {
+  background: rgba(241, 196, 15, 0.1);
+}
+
+.chat-window.premium .message-content-fallback p,
+.chat-window.premium .message-content-fallback span {
+  color: #2c3e50;
 }
 
 .message-time {
@@ -1075,4 +1123,110 @@
 
 .chat-window.premium .settings-background-change:hover svg {
     color: #f39c12;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  margin-bottom: 20px;
+}
+
+.selected-user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.user-info p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.user-info span {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.add-friend-btn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #6862cc 0%, #534d9f 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(104, 98, 204, 0.2);
+  min-width: 150px;
+}
+
+.add-friend-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(104, 98, 204, 0.3);
+}
+
+.add-friend-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Theme-specific user details styles */
+.chat-window.purple_white .user-details {
+  background: rgba(104, 98, 204, 0.1);
+}
+
+.chat-window.blue_white .user-details {
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.chat-window.green_black .user-details {
+  background: rgba(46, 204, 113, 0.1);
+}
+
+.chat-window.green_black .user-info p,
+.chat-window.green_black .user-info span {
+  color: #ffffff;
+}
+
+.chat-window.red_black .user-details {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.chat-window.red_black .user-info p,
+.chat-window.red_black .user-info span {
+  color: #ffffff;
+}
+
+.chat-window.gray_black .user-details {
+  background: rgba(149, 165, 166, 0.1);
+}
+
+.chat-window.gray_black .user-info p,
+.chat-window.gray_black .user-info span {
+  color: #ffffff;
+}
+
+.chat-window.premium .user-details {
+  background: rgba(241, 196, 15, 0.1);
 }

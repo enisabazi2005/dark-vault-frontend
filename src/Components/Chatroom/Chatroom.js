@@ -485,14 +485,13 @@ const Chatroom = () => {
         />
       </div>
       <div className="user-details">
-        <p>
-          {selectedUser.name} {selectedUser.lastname}
-        </p>
         <div className="selected-user-details">
-          {isFriend(selectedUser.request_id) &&
-            selectedUserFriends?.friends_count > 0 && (
-              <p>{selectedUserFriends.friends_count} Friends</p>
+          <div className="user-info">
+            <p>{selectedUser.name} {selectedUser.lastname}</p>
+            {isFriend(selectedUser.request_id) && selectedUserFriends?.friends_count > 0 && (
+              <span>{selectedUserFriends.friends_count} Friends</span>
             )}
+          </div>
           <button
             className="add-friend-btn"
             onClick={() =>

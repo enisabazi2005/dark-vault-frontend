@@ -7,10 +7,12 @@ import Notification from "../Notification/Notification";
 import MyProfileSkeleton from "./MyProfileSkeleton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import Settings from "../Settings/Settings";
 
 const MyProfile = ({ updateNotificationCount }) => {
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
@@ -165,10 +167,13 @@ const MyProfile = ({ updateNotificationCount }) => {
                     .replace(/\b\w/g, (char) => char.toUpperCase())}
                 </li>
               ))}
-              <li onClick={() => setIsModalOpen(false)}>
-                <Link className="settings" to="/dashboard/settings">
-                  Settings
-                </Link>
+              <li
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsSettingsOpen(true);
+                }}
+              >
+                Settings
               </li>
               <li
                className="mobile-settings" 
@@ -190,6 +195,8 @@ const MyProfile = ({ updateNotificationCount }) => {
           </div>
         </div>
       )}
+
+      {isSettingsOpen && <Settings onClose={() => setIsSettingsOpen(false)} />}
     </div>
   );
 };
