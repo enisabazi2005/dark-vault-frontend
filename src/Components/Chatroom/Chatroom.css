@@ -477,7 +477,7 @@
     align-self: flex-start;
     background-color: #d1f7c4;
     margin-right: 10px;
-    padding: 25px 15px;
+    padding: 25px 15px 60px 25px;
     /* padding: 25px 15px 50px 15px; */
 }
 
@@ -485,7 +485,7 @@
     align-self: flex-start;
     background-color: #d1f7c4;
     margin-right: 10px;
-    padding: 25px 15px;
+    padding: 25px 15px 60px 25px;
     /* padding: 25px 15px 50px 15px; */
 }
 
@@ -495,7 +495,7 @@
     margin-left: 10px;
     display: inline-block;
     max-width: 70%;
-    padding: 25px 15px;
+    padding: 25px 15px 60px 25px;
     /* padding: 25px 15px 50px 15px; */
     word-break: break-word;
     word-wrap: break-word; 
@@ -1230,3 +1230,56 @@
 .chat-window.premium .user-details {
   background: rgba(241, 196, 15, 0.1);
 }
+
+.emoji-reactions {
+    position: absolute;
+    display: flex;
+    gap: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    background: white;
+    padding: 4px 8px;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  .emoji-reactions span {
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .reaction-bar {
+    display: flex;
+    gap: 6px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+  }
+  .received .reaction-display { 
+    left: 0 !important;
+    right: inherit !important;
+  }
+  .received .message-status { 
+    margin: 0 0 0 40px;
+  }
+  .sent .message-status { 
+    margin: 0 40px 0 0;
+  }
+  .reaction-display {
+    background-color: #f1f1f1;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #333;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+  
+  .reaction-display:hover {
+    background-color: #e0e0e0;
+    cursor: default;
+  }
+  

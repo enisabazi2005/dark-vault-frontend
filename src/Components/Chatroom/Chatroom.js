@@ -5,7 +5,7 @@ import { STORAGE_URL } from "../../api";
 // import Pusher from "pusher-js";
 import Pusher from "pusher-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark , faEllipsisVertical} from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { PUSHER_APP_KEY, PUSHER_CLUSTER } from "../../api";
 import Muted from "../Muted/Muted";
 import Unfriend from "../Unfriend/Unfriend";
@@ -42,12 +42,47 @@ const Chatroom = () => {
   const messageSentAudioRef = useRef(null);
   const [isBackgroundModalOpen, setIsBackgroundModalOpen] = useState(false);
   const [chatBackground, setChatBackground] = useState(null);
+  const [hoveredMsg, setHoveredMsg] = useState(null);
+  const [groupedReactions, setGroupedReactions] = useState({});
+
+
+  const handleReact = async (messageId, emojiKeyword) => {
+    const darkUserId = localStorage.getItem("user_id");
+    console.log(messageId, emojiKeyword, 'post request for react');
+    try {
+      const response = await api.post(`/message/${messageId}/react`, {
+        reaction_type: emojiKeyword,
+        reacted_by: darkUserId,
+        dark_users_id: darkUserId,
+      });
+      console.log("Reacted successfully:", response.data);
+
+      // 🔄 Refresh reactions after reacting
+      const updatedReactions = await api.get('/reactions/grouped');
+      setGroupedReactions(updatedReactions.data);
+    } catch (error) {
+      console.error("Failed to send reaction:", error.response?.data || error);
+    }
+  };
+
+
+
+
+  useEffect(() => {
+    async function fetchGroupedReactions() {
+      const res = await api.get('/reactions/grouped');
+      setGroupedReactions(res.data);
+    }
+    fetchGroupedReactions();
+  }, []);
+
+
 
   useEffect(() => {
     const getBlockedByUsers = async () => {
       try {
         const response = await api.get("/blocked-by");
-        setBlockedBy(response.data); 
+        setBlockedBy(response.data);
         console.log(response.data, "response.data");
       } catch (error) {
         console.error("Error fetching the blocked by users", error);
@@ -72,7 +107,7 @@ const Chatroom = () => {
   useEffect(() => {
     const fetchSelectedUserFriends = async () => {
       if (!selectedUser || !selectedUser.request_id) return;
-  
+
       try {
         const response = await api.get(`/dark-user/${selectedUser.request_id}/get-friends`);
         setSelectedUserFriends(response.data);
@@ -80,10 +115,10 @@ const Chatroom = () => {
         console.error("Error fetching data", error);
       }
     };
-  
+
     fetchSelectedUserFriends();
-  }, [selectedUser]); 
-  
+  }, [selectedUser]);
+
   const handleProfileClick = (user) => {
     setSelectedUser(user);
     setIsProfileClicked(true);
@@ -124,6 +159,7 @@ const Chatroom = () => {
       setMessages((prevMessages) => [
         ...prevMessages,
         {
+          id: message.id, // ✅ from Pusher event
           message: message,
           sender_id: requestId,
           reciever_id: selectedUser.request_id,
@@ -132,7 +168,7 @@ const Chatroom = () => {
         },
       ]);
       setMessage("");
-      
+
       // Play the message sent sound
       if (messageSentAudioRef.current) {
         messageSentAudioRef.current.currentTime = 0;
@@ -140,7 +176,7 @@ const Chatroom = () => {
           console.error("Error playing message sent sound:", error);
         });
       }
-      
+
       console.log(response, "this is response");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -150,14 +186,14 @@ const Chatroom = () => {
 
   useEffect(() => {
     if (!selectedUser || !selectedUser.request_id) return;
-  
+
     const pusher = new Pusher(PUSHER_APP_KEY, {
       cluster: PUSHER_CLUSTER,
       encrypted: false,
     });
     const channel = pusher.subscribe(`chatroom.${selectedUser.request_id}`);
     console.log(`Subscribed to chatroom.${selectedUser.request_id}`);
-  
+
     channel.bind("App\\Events\\NewMessage", function (data) {
       console.log("New message received:", data);
       setMessages((prevMessages) => [
@@ -172,13 +208,13 @@ const Chatroom = () => {
       ]);
       console.log(messages, 'messages');
     });
-  
+
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
   }, [selectedUser, messages]);
-  
+
   useEffect(() => {
     if (!requestId || !selectedUser) return;
 
@@ -191,6 +227,7 @@ const Chatroom = () => {
 
         response.data.forEach((message) => {
           messages.push({
+            id: message.id,
             message: message.message,
             sender_id: message.sender_id,
             reciever_id: message.reciever_id,
@@ -216,7 +253,7 @@ const Chatroom = () => {
     recieverRequestId,
     userId,
     blockedUsers,
-  ]); 
+  ]);
 
   useEffect(() => {
     if (!requestId) {
@@ -352,11 +389,11 @@ const Chatroom = () => {
 
     const blockedUserIds = Array.isArray(blockedUsers)
       ? blockedUsers.map((user) => user.id)
-      : []; 
+      : [];
     const filtered = users.filter((user) => {
       return (
         user.request_id !== currentUserRequestId &&
-        !blockedUserIds.includes(user.id) && 
+        !blockedUserIds.includes(user.id) &&
         (user.name?.toLowerCase().includes(value) ||
           user.lastname?.toLowerCase().includes(value))
       );
@@ -370,15 +407,15 @@ const Chatroom = () => {
 
     const isBlockedByUser = blockedBy.some(blocked => blocked.id === user.id); // Use `user.id` directly
     console.log(isBlockedByUser);
-    
+
     if (isBlockedByUser) {
       setErrorMessage("User blocked you");
-      setFriend(false); 
+      setFriend(false);
     } else {
       setErrorMessage("");
       setFriend(isFriend(user.request_id));
     }
-  
+
 
     if (isFriendSelection) {
       setIsOpen(true);
@@ -429,6 +466,15 @@ const Chatroom = () => {
     setChatBackground(newBackground);
   };
 
+  const emojiMap = {
+    heart: "❤️",
+    laugh: "😂",
+    thumbs_up: "👍",
+    fire: "🔥",
+    sad: "😢",
+    // Add more if needed
+  };
+
   return (
     <div className="full-width-layout">
       <audio ref={messageSentAudioRef} src={MessageSent} preload="auto" />
@@ -469,50 +515,50 @@ const Chatroom = () => {
         </div>
 
         <div className="col-50">
-  {selectedUser && (
-    <div className="user-card">
-      <div className="user-picture">
-        <img
-          src={
-            blockedBy.some((user) => user.id === selectedUser.id)
-              ? defaultBlankPhotoUrl
-              : selectedUser.picture
-              ? `${STORAGE_URL}/${selectedUser.picture}`
-              : defaultBlankPhotoUrl
-          }
-          alt="Profile"
-          className="user-image"
-        />
-      </div>
-      <div className="user-details">
-        <div className="selected-user-details">
-          <div className="user-info">
-            <p>{selectedUser.name} {selectedUser.lastname}</p>
-            {isFriend(selectedUser.request_id) && selectedUserFriends?.friends_count > 0 && (
-              <span>{selectedUserFriends.friends_count} Friends</span>
-            )}
-          </div>
-          <button
-            className="add-friend-btn"
-            onClick={() =>
-              isFriend(selectedUser.request_id)
-                ? null
-                : sendFriendRequest(selectedUser.request_id)
-            }
-          >
-            {isFriend(selectedUser.request_id)
-              ? "Friends"
-              : friendRequestSent
-              ? "Friend Request Sent"
-              : errorMessage
-              ? errorMessage
-              : "Add Friend"}
-          </button>
+          {selectedUser && (
+            <div className="user-card">
+              <div className="user-picture">
+                <img
+                  src={
+                    blockedBy.some((user) => user.id === selectedUser.id)
+                      ? defaultBlankPhotoUrl
+                      : selectedUser.picture
+                        ? `${STORAGE_URL}/${selectedUser.picture}`
+                        : defaultBlankPhotoUrl
+                  }
+                  alt="Profile"
+                  className="user-image"
+                />
+              </div>
+              <div className="user-details">
+                <div className="selected-user-details">
+                  <div className="user-info">
+                    <p>{selectedUser.name} {selectedUser.lastname}</p>
+                    {isFriend(selectedUser.request_id) && selectedUserFriends?.friends_count > 0 && (
+                      <span>{selectedUserFriends.friends_count} Friends</span>
+                    )}
+                  </div>
+                  <button
+                    className="add-friend-btn"
+                    onClick={() =>
+                      isFriend(selectedUser.request_id)
+                        ? null
+                        : sendFriendRequest(selectedUser.request_id)
+                    }
+                  >
+                    {isFriend(selectedUser.request_id)
+                      ? "Friends"
+                      : friendRequestSent
+                        ? "Friend Request Sent"
+                        : errorMessage
+                          ? errorMessage
+                          : "Add Friend"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    </div>
-  )}
-</div>
 
       </div>
 
@@ -662,20 +708,61 @@ const Chatroom = () => {
                     const isSent = msg.sender_id === userRequestId;
                     const isReceived = selectedUser.request_id;
                     const messageContent = msg.message;
-                    console.log(msg, 'msg');
-                    
+                    const reactions = groupedReactions[msg.id] || [];
+                    // const reactionCounts = reactions.reduce((acc, r) => {
+                    //   acc[r.reaction_type] = (acc[r.reaction_type] || 0) + 1;
+                    //   return acc;
+                    // }, {});
+
                     return (
                       <div
                         key={index}
-                        className={`message ${
-                          isSent
-                            ? "sent"
-                            : isReceived
+                        className={`message ${isSent
+                          ? "sent"
+                          : isReceived
                             ? "received"
                             : "just-sent"
-                        }`}
+                          }`}
+                        onMouseEnter={() => setHoveredMsg(index)}
+                        onMouseLeave={() => setHoveredMsg(null)}
                       >
                         <p className="message-content">{messageContent}</p>
+
+                        {reactions.length > 0 && (
+                          <div className="reaction-bar">
+                            {Object.entries(
+                              reactions.reduce((acc, r) => {
+                                acc[r.reaction_type] = (acc[r.reaction_type] || 0) + 1;
+                                return acc;
+                              }, {})
+                            ).map(([type, count], idx) => (
+                              <span key={idx} className="reaction-display">
+                                {emojiMap[type] || type} {count}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+
+                        {hoveredMsg === index && (
+                          <div className="emoji-reactions">
+                            <span onClick={() => handleReact(msg.id, "heart")}>❤️</span>
+                            <span onClick={() => handleReact(msg.id, "laugh")}>😂</span>
+                            <span onClick={() => handleReact(msg.id, "thumbs_up")}>👍</span>
+                          </div>
+
+                        )}
+
+                        {msg.reactions && msg.reactions.length > 0 && (
+                          <div className="message-reactions">
+                            {msg.reactions.map((reaction, idx) => (
+                              <span key={idx} className="reaction-display">
+                                {reaction.reaction_type}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
                         <div className="message-status">
                           {isSent && <span className="checkmarks">✓✓</span>}
                           {msg.message_sent_at && (
