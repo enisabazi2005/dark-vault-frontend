@@ -624,7 +624,6 @@
     flex-direction: column;
     align-items: flex-start;
     overflow-y: auto; 
-    max-height: 450px; 
     width: 100%;
     padding-right: 5px; 
     margin-bottom: 10px;
@@ -1234,19 +1233,26 @@
 .emoji-reactions {
     position: absolute;
     display: flex;
+    column-gap: 5px;
     gap: 5px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 0;
+    /* transform: translateY(-50%); */
     left: 0;
+    width: 100%;
     background: white;
-    padding: 4px 8px;
+    padding: 10px 8px;
     border-radius: 8px;
     box-shadow: 0 0 6px rgba(0,0,0,0.2);
     z-index: 10;
+    transition: 0.3s ease-in;
   }
   .emoji-reactions span {
     cursor: pointer;
-    font-size: 18px;
+    font-size: 14px;
+  }
+  .emoji-reactions span:hover { 
+    transform: translateY(-5px);
+    transition: 0.3s ease-in;
   }
   
   .reaction-bar {
@@ -1276,10 +1282,27 @@
     position: absolute;
     bottom: 0;
     right: 0;
+    animation: popIn 0.2s ease;
+    cursor: pointer;
+    z-index: 1000001;
+  }
+  .reaction-display span { 
+    cursor: pointer;
   }
   
   .reaction-display:hover {
     background-color: #e0e0e0;
-    cursor: default;
+    cursor: pointer;
   }
   
+
+  @keyframes popIn {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

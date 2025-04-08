@@ -46,6 +46,19 @@ const Chatroom = () => {
   const [groupedReactions, setGroupedReactions] = useState({});
 
 
+  const removeReaction = async (messageId) => { 
+    try { 
+      const response = await api.delete(`message/${messageId}/react`);
+      console.log("Reaction Deleted Successfully", response);
+
+      const updatedReactions = await api.get(`/reactions/grouped`);
+      setGroupedReactions(updatedReactions.data);
+    } catch(error) { 
+      console.log('Error fetching data', error);
+      // throw error;
+    }
+  }
+
   const handleReact = async (messageId, emojiKeyword) => {
     const darkUserId = localStorage.getItem("user_id");
     console.log(messageId, emojiKeyword, 'post request for react');
@@ -469,9 +482,10 @@ const Chatroom = () => {
   const emojiMap = {
     heart: "❤️",
     laugh: "😂",
-    thumbs_up: "👍",
-    fire: "🔥",
-    sad: "😢",
+    like: "👍",
+    curious: "🤩",
+    cry: "😢",
+    dislike: "👎",
     // Add more if needed
   };
 
@@ -736,28 +750,8 @@ const Chatroom = () => {
                                 return acc;
                               }, {})
                             ).map(([type, count], idx) => (
-                              <span key={idx} className="reaction-display">
+                              <span key={idx} className="reaction-display" onClick={() => removeReaction(msg.id)}>
                                 {emojiMap[type] || type} {count}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-
-                        {hoveredMsg === index && (
-                          <div className="emoji-reactions">
-                            <span onClick={() => handleReact(msg.id, "heart")}>❤️</span>
-                            <span onClick={() => handleReact(msg.id, "laugh")}>😂</span>
-                            <span onClick={() => handleReact(msg.id, "thumbs_up")}>👍</span>
-                          </div>
-
-                        )}
-
-                        {msg.reactions && msg.reactions.length > 0 && (
-                          <div className="message-reactions">
-                            {msg.reactions.map((reaction, idx) => (
-                              <span key={idx} className="reaction-display">
-                                {reaction.reaction_type}
                               </span>
                             ))}
                           </div>
@@ -769,9 +763,22 @@ const Chatroom = () => {
                             <p className="message-time">{new Date(msg.message_sent_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</p>
                           )}
                         </div>
+                        {hoveredMsg === index && (
+                          <div className="emoji-reactions">
+                            <span onClick={() => handleReact(msg.id, "heart")}>❤️</span>
+                            <span onClick={() => handleReact(msg.id, "like")}>👍</span>
+                            <span onClick={() => handleReact(msg.id, "laugh")}>😂</span>
+                            <span onClick={() => handleReact(msg.id, "cry")}>😢</span>
+                            <span onClick={() => handleReact(msg.id, "curious")}>🤩</span>
+                            <span onClick={() => handleReact(msg.id, "dislike")}>👎</span>
+                          </div>
+
+                        )}
                       </div>
                     );
+                    
                   })
+                  
                 ) : (
                   <div className="message-content-fallback">
                     <p>No messages yet</p>
