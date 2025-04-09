@@ -477,7 +477,7 @@
     align-self: flex-start;
     background-color: #d1f7c4;
     margin-right: 10px;
-    padding: 25px 15px 60px 25px;
+    /* padding: 25px 15px 60px 25px; */
     /* padding: 25px 15px 50px 15px; */
 }
 
@@ -485,7 +485,7 @@
     align-self: flex-start;
     background-color: #d1f7c4;
     margin-right: 10px;
-    padding: 25px 15px 60px 25px;
+    /* padding: 25px 15px 60px 25px; */
     /* padding: 25px 15px 50px 15px; */
 }
 
@@ -495,7 +495,7 @@
     margin-left: 10px;
     display: inline-block;
     max-width: 70%;
-    padding: 25px 15px 60px 25px;
+    /* padding: 25px 15px 60px 25px; */
     /* padding: 25px 15px 50px 15px; */
     word-break: break-word;
     word-wrap: break-word; 

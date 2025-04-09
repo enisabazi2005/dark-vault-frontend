@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import "./ResetPassword.css";
@@ -6,13 +6,45 @@ import "./ResetPassword.css";
 const ResetPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [verificationCode, setVerificationCode] = useState(["", "", "", "", "", ""]);
+  const [verificationCode, setVerificationCode] = useState([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isAutoVerified, setIsAutoVerified] = useState(false);
+
+  const checkVerificationStatus = async () => {
+    try {
+      const response = await api.get(
+        `/check-verification-status?email=${email}`
+      );
+      if (response.data.verified) {
+        setIsAutoVerified(true);
+        setCurrentStep(3);
+        setSuccess(
+          "Your email has been automatically verified. Please set your new password."
+        );
+      }
+    } catch (error) {
+      // Silently fail - manual verification still available
+    }
+  };
+
+  useEffect(() => {
+    if (currentStep === 2 && email) {
+      const interval = setInterval(checkVerificationStatus, 5000); 
+      return () => clearInterval(interval);
+    }
+  }, [currentStep, email]);
 
   const handleSendCode = async () => {
     try {
@@ -20,9 +52,13 @@ const ResetPassword = () => {
       setError("");
       await api.post("/forgot-password", { email });
       setCurrentStep(2);
-      setSuccess("Verification code sent to your email. Please check your spam folder if you don't see it.");
+      setSuccess(
+        "Code sent to your email. Check spam if needed."
+      );
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to send verification code");
+      setError(
+        error.response?.data?.message || "Failed to send verification code"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +108,11 @@ const ResetPassword = () => {
     try {
       setIsLoading(true);
       setError("");
-      await api.post("/reset-password", { email, password, password_confirmation: passwordConfirmation });
+      await api.post("/reset-password", {
+        email,
+        password,
+        password_confirmation: passwordConfirmation,
+      });
       setSuccess("Password reset successfully! Redirecting to login...");
       setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
@@ -86,7 +126,7 @@ const ResetPassword = () => {
     <div className="reset-password-container">
       <div className="reset-password-card">
         <h2>Reset Password</h2>
-        
+
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
 
@@ -102,7 +142,7 @@ const ResetPassword = () => {
                 disabled={isLoading}
               />
             </div>
-            <button 
+            <button
               onClick={handleSendCode}
               disabled={isLoading || !email}
               className="submit-button"
@@ -112,8 +152,13 @@ const ResetPassword = () => {
           </div>
         )}
 
-        {currentStep === 2 && (
+        {currentStep === 2 && !isAutoVerified && (
           <div className="step-content">
+            <p className="verification-note">
+              We've sent a 6-digit code to your email. You can either click the
+              link that has been sent!
+            </p>
+
             <div className="verification-code-container">
               <label>Enter Verification Code</label>
               <div className="code-inputs">
@@ -130,7 +175,7 @@ const ResetPassword = () => {
                 ))}
               </div>
             </div>
-            <button 
+            <button
               onClick={handleVerifyCode}
               disabled={isLoading || verificationCode.join("").length !== 6}
               className="submit-button"
@@ -171,7 +216,7 @@ const ResetPassword = () => {
                 disabled={isLoading}
               />
             </div>
-            <button 
+            <button
               onClick={handleResetPassword}
               disabled={isLoading || !password || !passwordConfirmation}
               className="submit-button"

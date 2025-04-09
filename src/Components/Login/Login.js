@@ -50,6 +50,9 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(user));
   
       // Store verification status in localStorage
+      document.cookie = `user_id=${user.id}; path=/;`;
+
+      
       localStorage.setItem("is_verified", is_verified);
   
       // If token exists and verified, navigate to dashboard
