@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import "./ResetPassword.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -21,6 +23,8 @@ const ResetPassword = () => {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAutoVerified, setIsAutoVerified] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
 
   const checkVerificationStatus = async () => {
     try {
@@ -198,23 +202,39 @@ const ResetPassword = () => {
             </div>
             <div className="input-group">
               <label>New Password</label>
-              <input
-                type="password"
+             <div className="password-check">
+             <input
+                type={showPassword1 ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter new password"
                 disabled={isLoading}
               />
+               <button 
+              className="show-password-btn show-password-btn-2"
+              type="button"
+              onClick={() => setShowPassword1((prev) => !prev)} >
+                {showPassword1 ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon icon={faEyeSlash} />}
+              </button>
+             </div>
             </div>
             <div className="input-group">
               <label>Confirm Password</label>
+              <div className="password-check">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={passwordConfirmation}
                 onChange={(e) => setPasswordConfirmation(e.target.value)}
                 placeholder="Confirm new password"
                 disabled={isLoading}
               />
+              <button 
+              className="show-password-btn show-password-btn-2"
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)} >
+                {showPassword ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon icon={faEyeSlash} />}
+              </button>
+              </div>
             </div>
             <button
               onClick={handleResetPassword}

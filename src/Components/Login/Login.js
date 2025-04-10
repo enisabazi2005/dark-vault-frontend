@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api"; 
 import OtpVerificationModal from "./OtpVerificationModal";
 import "../Login/Login.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +16,7 @@ const Login = () => {
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate(); 
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -99,15 +102,24 @@ const Login = () => {
           placeholder="E-mail"
           required
         />
-        <input
+       <div className="password-check">
+       <input
           className="login-inputs"
-          type="password"
+          type={showPassword ? "text" : "password"} 
           name="password"
           value={formData.password}
           onChange={handleChange}
           placeholder="Password"
           required
         />
+         <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)} 
+            className="show-password-btn"
+          >
+            {showPassword ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon icon={faEyeSlash} />}
+          </button>
+        </div>
         <div className="sphereBlack"></div>
         <div className="sphere"></div>
         <button type="submit" className="registerButton">
