@@ -4,7 +4,7 @@ import api from "../../api";
 import OtpVerificationModal from "./OtpVerificationModal";
 import "../Login/Login.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEyeSlash, faEye, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ const Login = () => {
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate(); 
   const [showPassword, setShowPassword] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,25 +48,24 @@ const Login = () => {
   
       console.log("User Data:", user);
   
-      // Store user data regardless of verification status
       localStorage.setItem("user_id", user.id);
       localStorage.setItem("request_id", user.request_id);
       localStorage.setItem("user", JSON.stringify(user));
   
-      // Store verification status in localStorage
       document.cookie = `user_id=${user.id}; path=/;`;
-
-      
       localStorage.setItem("is_verified", is_verified);
   
-      // If token exists and verified, navigate to dashboard
       if (token && is_verified) {
         localStorage.setItem("token", token);
-        navigate("/dashboard");
+        setShowSuccessModal(true);
+        
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          navigate("/dashboard");
+        }, 3000);
         return;
       }
   
-      // If no token or not verified, show OTP modal
       setUserId(user.id);
       setShowOtpModal(true);
   
@@ -75,14 +75,14 @@ const Login = () => {
     }
   };
   
-
   const handleOtpVerificationSuccess = (token) => {
     setShowOtpModal(false);
-    setSuccess("Logged in successfully!");
+    setShowSuccessModal(true);
     
     setTimeout(() => {
+      setShowSuccessModal(false);
       navigate("/dashboard");
-    }, 500);
+    }, 3000);
   };
   
   return (
@@ -92,7 +92,7 @@ const Login = () => {
       {success && <p className="success">{success}</p>}
       {error && <p className="error">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={handleSubmit} className={`form ${showSuccessModal ? 'register-container-blur' : ''}`}>
         <input
           className="login-inputs"
           type="email"
@@ -102,17 +102,17 @@ const Login = () => {
           placeholder="E-mail"
           required
         />
-       <div className="password-check">
-       <input
-          className="login-inputs"
-          type={showPassword ? "text" : "password"} 
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          required
-        />
-         <button
+        <div className="password-check">
+          <input
+            className="login-inputs"
+            type={showPassword ? "text" : "password"} 
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            required
+          />
+          <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)} 
             className="show-password-btn"
@@ -137,6 +137,23 @@ const Login = () => {
           Don't have an account? <a href="/register">Click here</a>
         </p>
       </div>
+
+      {showSuccessModal && (
+        <>
+          <div className="modal-overlay"></div>
+          <div className="success-modal">
+            <div className="success-icon">
+              <FontAwesomeIcon icon={faCheck} />
+            </div>
+            <div className="success-title">Login Successful!</div>
+            <div className="success-message">You will be redirected to your dashboard.</div>
+            <div className="success-redirect">Redirecting in a few seconds...</div>
+            <div className="success-progress">
+              <div className="success-progress-bar"></div>
+            </div>
+          </div>
+        </>
+      )}
 
       <OtpVerificationModal
         isOpen={showOtpModal}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import "./ResetPassword.css";
@@ -26,7 +26,23 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword1, setShowPassword1] = useState(false);
 
-  const checkVerificationStatus = async () => {
+  // const checkVerificationStatus = async () => {
+  //   try {
+  //     const response = await api.get(
+  //       `/check-verification-status?email=${email}`
+  //     );
+  //     if (response.data.verified) {
+  //       setIsAutoVerified(true);
+  //       setCurrentStep(3);
+  //       setSuccess(
+  //         "Your email has been automatically verified. Please set your new password."
+  //       );
+  //     }
+  //   } catch (error) {
+  //     // Silently fail - manual verification still available
+  //   }
+  // };
+  const checkVerificationStatus = useCallback(async () => {
     try {
       const response = await api.get(
         `/check-verification-status?email=${email}`
@@ -39,16 +55,17 @@ const ResetPassword = () => {
         );
       }
     } catch (error) {
-      // Silently fail - manual verification still available
+      console.log(error , 'Error catched at password verification');
     }
-  };
+  }, [email]); 
+
 
   useEffect(() => {
     if (currentStep === 2 && email) {
       const interval = setInterval(checkVerificationStatus, 5000); 
       return () => clearInterval(interval);
     }
-  }, [currentStep, email]);
+  }, [currentStep, email, checkVerificationStatus]);
 
   const handleSendCode = async () => {
     try {
