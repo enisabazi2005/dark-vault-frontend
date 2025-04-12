@@ -26,13 +26,12 @@
 }
 
 .sidebar-header {
-  padding: 1rem;
   text-align: center;
   margin-bottom: 2rem;
 }
 
 .sidebar-logo {
-  width: 120px;
+  width: 100px;
   height: auto;
   filter: brightness(0) invert(1);
 }

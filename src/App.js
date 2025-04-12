@@ -13,6 +13,7 @@ import Friends from "./Components/Friends/Friends";
 import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import Groups from "./Components/Groups/Groups";
 import Payout from "./Components/Payout/Payout";
+import Bot from "./Components/Bot/Bot";
 import "./App.css";
 import { StoreProvider } from "./Store/store";
 
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/forgot-password" element={<ResetPassword />} />
 
           <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="bot" element={<Bot />}></Route>
             <Route path="store-password" element={<Password />} />
             <Route path="store-email" element={<Email />} />
             <Route path="private-info" element={<PrivateInfo />} />

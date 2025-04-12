@@ -26,7 +26,7 @@ import {
 import api from "../../api";
 import MyProfile from "../MyProfile/MyProfile";
 import Notification from "../Notification/Notification";
-// import DashboardSkeleton from "./DashboardSkeleton";
+import Bot from "../Bot/Bot";
 import DashboardSkeleton from "./DashboardSkeleton";
 import Logo from "../../assets/images/Samira_Hadid-removebg-preview.png";
 import "../Dashboard/Dashboard.css";
@@ -235,6 +235,7 @@ const Dashboard = () => {
         <Outlet />
         {location.pathname === "/dashboard" && (
           <div className="dashboard-grid">
+            <Bot />
             {/* Welcome Card */}
             <div className="dashboard-card welcome-card">
               <div className="card-content">
