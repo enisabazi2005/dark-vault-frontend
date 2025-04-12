@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
-import api from "../../api"; 
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../api";
 import OtpVerificationModal from "./OtpVerificationModal";
 import "../Login/Login.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,9 +15,20 @@ const Login = () => {
   const [success, setSuccess] = useState(null);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [userId, setUserId] = useState(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("remember_email");
+    const savedPassword = localStorage.getItem("remember_password");
+
+    if (savedEmail && savedPassword) {
+      setFormData({ email: savedEmail, password: savedPassword });
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,60 +42,66 @@ const Login = () => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-  
+
+    if (rememberMe) {
+      localStorage.setItem("remember_email", formData.email);
+      localStorage.setItem("remember_password", formData.password);
+    } else {
+      localStorage.removeItem("remember_email");
+      localStorage.removeItem("remember_password");
+    }
     try {
       const response = await api.post("/login", formData);
       console.log("Login API Response:", response.data);
-  
+
       if (!response || !response.data) {
         throw new Error("Invalid response from the server.");
       }
-  
+
       const { user, token, is_verified } = response.data;
-  
+
       if (!user) {
         throw new Error("User data missing in response.");
       }
-  
+
       console.log("User Data:", user);
-  
+
       localStorage.setItem("user_id", user.id);
       localStorage.setItem("request_id", user.request_id);
       localStorage.setItem("user", JSON.stringify(user));
-  
+
       document.cookie = `user_id=${user.id}; path=/;`;
       localStorage.setItem("is_verified", is_verified);
-  
+
       if (token && is_verified) {
         localStorage.setItem("token", token);
         setShowSuccessModal(true);
-        
+
         setTimeout(() => {
           setShowSuccessModal(false);
           navigate("/dashboard");
         }, 3000);
         return;
       }
-  
+
       setUserId(user.id);
       setShowOtpModal(true);
-  
     } catch (error) {
       console.error("Login failed:", error.response?.data || error);
       setError(error.response?.data?.error || error.message || "Login failed.");
     }
   };
-  
+
   const handleOtpVerificationSuccess = (token) => {
     setShowOtpModal(false);
     setShowSuccessModal(true);
-    
+
     setTimeout(() => {
       setShowSuccessModal(false);
       navigate("/dashboard");
     }, 3000);
   };
-  
+
   return (
     <div className="container-layout">
       <h2>Login</h2>
@@ -92,7 +109,10 @@ const Login = () => {
       {success && <p className="success">{success}</p>}
       {error && <p className="error">{error}</p>}
 
-      <form onSubmit={handleSubmit} className={`form ${showSuccessModal ? 'register-container-blur' : ''}`}>
+      <form
+        onSubmit={handleSubmit}
+        className={`form ${showSuccessModal ? "register-container-blur" : ""}`}
+      >
         <input
           className="login-inputs"
           type="email"
@@ -105,7 +125,7 @@ const Login = () => {
         <div className="password-check">
           <input
             className="login-inputs"
-            type={showPassword ? "text" : "password"} 
+            type={showPassword ? "text" : "password"}
             name="password"
             value={formData.password}
             onChange={handleChange}
@@ -114,11 +134,24 @@ const Login = () => {
           />
           <button
             type="button"
-            onClick={() => setShowPassword((prev) => !prev)} 
+            onClick={() => setShowPassword((prev) => !prev)}
             className="show-password-btn"
           >
-            {showPassword ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon icon={faEyeSlash} />}
+            {showPassword ? (
+              <FontAwesomeIcon icon={faEye} />
+            ) : (
+              <FontAwesomeIcon icon={faEyeSlash} />
+            )}
           </button>
+          <div className="remember-me">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
+            />
+            <label htmlFor="rememberMe">Remember me</label>
+          </div>
         </div>
         <div className="sphereBlack"></div>
         <div className="sphere"></div>
@@ -129,7 +162,8 @@ const Login = () => {
 
       <div className="textLink">
         <p>
-          Forgot your password? <a href="/forgot-password">Reset Password here</a>
+          Forgot your password?{" "}
+          <a href="/forgot-password">Reset Password here</a>
         </p>
       </div>
       <div className="textLink">
@@ -146,8 +180,12 @@ const Login = () => {
               <FontAwesomeIcon icon={faCheck} />
             </div>
             <div className="success-title">Login Successful!</div>
-            <div className="success-message">You will be redirected to your dashboard.</div>
-            <div className="success-redirect">Redirecting in a few seconds...</div>
+            <div className="success-message">
+              You will be redirected to your dashboard.
+            </div>
+            <div className="success-redirect">
+              Redirecting in a few seconds...
+            </div>
             <div className="success-progress">
               <div className="success-progress-bar"></div>
             </div>

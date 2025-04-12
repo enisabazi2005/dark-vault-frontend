@@ -163,8 +163,78 @@
     pointer-events: none;
     opacity: 0.85;
   }
-  
 
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 15px 0 25px 0;
+    font-size: 14px;
+    color: #34495e;
+    font-family: 'Segoe UI', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .remember-me:hover {
+    color: #2c3e50;
+  }
+  
+  .remember-me input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e1e4e8;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+  
+  .remember-me input[type="checkbox"]:checked {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+  }
+  
+  .remember-me input[type="checkbox"]:hover {
+    border-color: #bdc3c7;
+    transform: scale(1.05);
+  }
+  
+  .remember-me input[type="checkbox"]:checked:hover {
+    border-color: #27ae60;
+  }
+  
+  .remember-me input[type="checkbox"]:focus {
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+  }
+  
+  .remember-me input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  .remember-me input[type="checkbox"]:checked::after {
+    display: block;
+  }
+  
+  .remember-me label {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease;
+  }
 @keyframes formAppear {
     from {
         opacity: 0;

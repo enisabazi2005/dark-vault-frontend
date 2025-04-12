@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import "./ResetPassword.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEyeSlash, faEye, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -26,22 +26,6 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword1, setShowPassword1] = useState(false);
 
-  // const checkVerificationStatus = async () => {
-  //   try {
-  //     const response = await api.get(
-  //       `/check-verification-status?email=${email}`
-  //     );
-  //     if (response.data.verified) {
-  //       setIsAutoVerified(true);
-  //       setCurrentStep(3);
-  //       setSuccess(
-  //         "Your email has been automatically verified. Please set your new password."
-  //       );
-  //     }
-  //   } catch (error) {
-  //     // Silently fail - manual verification still available
-  //   }
-  // };
   const checkVerificationStatus = useCallback(async () => {
     try {
       const response = await api.get(
@@ -142,10 +126,15 @@ const ResetPassword = () => {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="reset-password-container">
       <div className="reset-password-card">
+        <span className="go-back">
+          <a href="/login">
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </a>
+        </span>
         <h2>Reset Password</h2>
 
         {error && <div className="error-message">{error}</div>}
