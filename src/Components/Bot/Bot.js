@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "../../Store/store";
 import api from "../../api";
+import { STORAGE_URL } from "../../api";
 import "../Bot/Bot.css";
 import vaultbot from "../../assets/images/vaultbot.png"
 
@@ -93,7 +94,7 @@ const Bot = () => {
                                         <img 
                                             src={myProfile?.picture === null || myProfile?.picture === ''
                                                 ? defaultBlankPhotoUrl
-                                                : myProfile?.picture
+                                                : `${STORAGE_URL}/${myProfile.picture}`
                                             } 
                                             alt="User" 
                                         />
