@@ -35,7 +35,8 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const location = useLocation();
   const [totalStored, setTotalStored] = useState(0);
-  const MAX_STORAGE = 100;
+  const MAX_STORAGE = 5;
+  // const MAX_STORAGE = 100;
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -98,6 +99,7 @@ const Dashboard = () => {
           passwordsCount + emailsCount + privateInfosCount + notesCount;
         if (total === 0) return;
         setTotalStored(total);
+
 
         setData([
           {
@@ -189,23 +191,23 @@ const Dashboard = () => {
               <img src={Logo} alt="Logo" className="sidebar-logo" />
             </div>
             <nav className="sidebar-nav">
-              <Link to="/dashboard" className="nav-item">
+              <Link to="/dashboard" className="nav-item"   state={{ MAX_STORAGE, totalStored }}>
                 <FontAwesomeIcon icon={faNetworkWired} />
                 <span>Dashboard</span>
               </Link>
-              <Link to="store-password" className="nav-item">
+              <Link to="store-password" className="nav-item"   state={{ MAX_STORAGE, totalStored }}>
                 <FontAwesomeIcon icon={faLock} />
                 <span>Store Password</span>
               </Link>
-              <Link to="store-email" className="nav-item">
+              <Link to="store-email" className="nav-item"   state={{ MAX_STORAGE,totalStored }}>
                 <FontAwesomeIcon icon={faSquareEnvelope} />
                 <span>Store Emails</span>
               </Link>
-              <Link to="private-info" className="nav-item">
+              <Link to="private-info" className="nav-item"   state={{ MAX_STORAGE,totalStored }}>
                 <FontAwesomeIcon icon={faCircleInfo} />
                 <span>Store Private Info</span>
               </Link>
-              <Link to="store-notes" className="nav-item">
+              <Link to="store-notes" className="nav-item"   state={{ MAX_STORAGE,totalStored }}>
                 <FontAwesomeIcon icon={faNoteSticky} />
                 <span>Store Notes</span>
               </Link>

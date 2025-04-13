@@ -4,6 +4,8 @@ import api from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import EmailSkeleton from "./EmailSkeleton";
+import { useLocation } from "react-router-dom";
+import Storage from "../Storage/Storage";
 
 const StoreEmail = () => {
   const [emails, setEmails] = useState([]);
@@ -16,6 +18,10 @@ const StoreEmail = () => {
   const [viewEmail, setViewEmail] = useState("");
   const [selectedEmailId, setSelectedEmailId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+    const location = useLocation();
+    const MAX_STORAGE = location.state?.MAX_STORAGE || 1;
+    const totalStored = location.state?.totalStored;
+  const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
 
   const fetchEmails = async () => {
     try {
@@ -32,14 +38,24 @@ const StoreEmail = () => {
   useEffect(() => {
     fetchEmails();
   }, []);
+   useEffect(() => {
+      if (totalStored >= MAX_STORAGE) {
+        setIsStorageLimitReached(true);
+      } else {
+        setIsStorageLimitReached(false);
+      }
+    }, [totalStored, MAX_STORAGE]);
 
   const handleSaveEmail = async () => {
+    if (totalStored >= MAX_STORAGE) {
+      return;
+    }
+
     try {
       const response = await api.post("/store-email", { name, email });
       setEmails((prevEmails) => [...prevEmails, response.data]);
       setName("");
       setEmail("");
-      fetchEmails();  // Refresh the email list
     } catch (error) {
       console.error("Error saving email", error);
     }
@@ -108,6 +124,10 @@ const StoreEmail = () => {
   }
 
   return (
+    <>
+    {isStorageLimitReached && (
+        <Storage />
+      )}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
 
       {/* First Card: Store Emails Here */}
@@ -121,20 +141,26 @@ const StoreEmail = () => {
         <h2 className="text-xl font-semibold">Store Email</h2>
         <input
           type="text"
-          className="password-input password-input-2"
-          placeholder="Enter your name"
+          className={`password-input password-input-2 ${isStorageLimitReached ? 'input-disabled' : ''}`}
+          placeholder={isStorageLimitReached ? "Storage limit reached" : "Enter your name"}
           value={name}
           onChange={(e) => setName(e.target.value)}
+          disabled={isStorageLimitReached}
         />
         <input
           type="email"
-          className="password-input"
-          placeholder="Enter your email"
+          className={`password-input ${isStorageLimitReached ? 'input-disabled' : ''}`}
+          placeholder={isStorageLimitReached ? "Storage limit reached" : "Enter your email"}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={isStorageLimitReached}
         />
-        <button className="save-password-button" onClick={handleSaveEmail}>
-          Save Email
+        <button 
+          className={`save-password-button ${isStorageLimitReached ? 'button-disabled' : ''}`}
+          onClick={handleSaveEmail}
+          disabled={isStorageLimitReached}
+        >
+          {isStorageLimitReached ? 'Storage Limit Reached' : 'Save Email'}
         </button>
       </div>
 
@@ -242,6 +268,7 @@ const StoreEmail = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

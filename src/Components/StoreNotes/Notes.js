@@ -3,6 +3,8 @@ import "../StoreNotes/Notes.css";
 import api from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { useLocation } from "react-router-dom";
+import Storage from "../Storage/Storage";
 
 const Notes = () => {
   const [notes, setNotes] = useState([]);
@@ -14,6 +16,18 @@ const Notes = () => {
   const [deleteNoteId, setDeleteNoteId] = useState(null);
   const [viewNote, setViewNote] = useState("");
   const [selectedNoteId, setSelectedNoteId] = useState(null);
+  const location = useLocation();
+  const MAX_STORAGE = location.state?.MAX_STORAGE || 1;  
+  const totalStored = location.state?.totalStored || 1;
+  const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
+
+  useEffect(() => {
+    if (totalStored >= MAX_STORAGE) {
+      setIsStorageLimitReached(true);
+    } else {
+      setIsStorageLimitReached(false);
+    }
+  }, [totalStored, MAX_STORAGE]);
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -29,6 +43,10 @@ const Notes = () => {
   }, []);
 
   const handleSaveNote = async () => {
+    if (totalStored >= MAX_STORAGE) {
+      return;
+    }
+
     try {
       const response = await api.post("/store-note", { name, notes: note });
       setNotes([...notes, response.data]);
@@ -93,140 +111,150 @@ const Notes = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+    <>
+      {isStorageLimitReached && (
+        <Storage />
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+        <div className="bg-white p-4 rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold">Your Notes</h2>
+          <p>Save and manage your notes easily.</p>
+        </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold">Your Notes</h2>
-        <p>Save and manage your notes easily.</p>
-      </div>
+        <div className="bg-white p-4 rounded-lg shadow-lg">
+          <h2 className="notesHeader">Create a Note</h2>
+          <input
+            type="text"
+            className={`password-input ${isStorageLimitReached ? 'input-disabled' : ''}`}
+            placeholder={isStorageLimitReached ? "Storage limit reached" : "Enter note title"}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={isStorageLimitReached}
+          />
+          <textarea
+            className={`password-input password-input-1 ${isStorageLimitReached ? 'input-disabled' : ''}`}
+            placeholder={isStorageLimitReached ? "Storage limit reached" : "Enter your note"}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            disabled={isStorageLimitReached}
+          ></textarea>
+          <button 
+            className={`save-password-button ${isStorageLimitReached ? 'button-disabled' : ''}`}
+            onClick={handleSaveNote}
+            disabled={isStorageLimitReached}
+          >
+            {isStorageLimitReached ? 'Storage Limit Reached' : 'Save Note'}
+          </button>
+        </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="notesHeader">Create a Note</h2>
-        <input
-          type="text"
-          className="password-input"
-          placeholder="Enter note title"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <textarea
-          className="password-input password-input-1"
-          placeholder="Enter your note"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-        ></textarea>
-        <button className="save-password-button" onClick={handleSaveNote}>
-          Save Note
-        </button>
-      </div>
-
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="notesHeader">Stored Notes</h2>
-        <div className="passwordsGrid">
-          {notes.length > 0 ? (
-            notes.map((entry, index) => (
-              <div
-                key={entry.id}
-                className={`passwordItem  ${
-                  selectedNoteId === entry.id ? "selected" : ""
-                }`} // Apply selected class
-              >
-               <div className="edit-delete-buttons">
-               <button
-                  className="passwordButton"
-                  onClick={() => handleViewNote(entry.notes, entry.id)} // Pass both content and ID
+        <div className="bg-white p-4 rounded-lg shadow-lg">
+          <h2 className="notesHeader">Stored Notes</h2>
+          <div className="passwordsGrid">
+            {notes.length > 0 ? (
+              notes.map((entry, index) => (
+                <div
+                  key={entry.id}
+                  className={`passwordItem  ${
+                    selectedNoteId === entry.id ? "selected" : ""
+                  }`} // Apply selected class
                 >
-                  {entry.name}
-                </button>
+                 <div className="edit-delete-buttons">
+                 <button
+                    className="passwordButton"
+                    onClick={() => handleViewNote(entry.notes, entry.id)} // Pass both content and ID
+                  >
+                    {entry.name}
+                  </button>
+                  <button
+                    className="editButton"
+                    onClick={() =>
+                      handleEditNote(entry.id, entry.name, entry.notes)
+                    }
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                  <button
+                    className="deleteButton"
+                    onClick={() => handleDeleteNote(entry.id)}
+                  >
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                 </div>
+                </div>
+              ))
+            ) : (
+              <p>No notes stored yet.</p>
+            )}
+          </div>
+        </div>
+
+        {isModalOpen.type === "edit" && (
+          <div className="content-modal">
+            <div className="modal-content-password">
+              <h3>Edit Note</h3>
+              <input
+                type="text"
+                className="save-password-button"
+                placeholder="Edit Note Title..."
+                value={editNote.name}
+                onChange={(e) =>
+                  setEditNote({ ...editNote, name: e.target.value })
+                }
+              />
+              <textarea
+                className="save-password-button"
+                placeholder="Edit Note Content..."
+                value={editNote.notes}
+                onChange={(e) =>
+                  setEditNote({ ...editNote, notes: e.target.value })
+                }
+              ></textarea>
+              <div className="modal-actions">
                 <button
-                  className="editButton"
-                  onClick={() =>
-                    handleEditNote(entry.id, entry.name, entry.notes)
-                  }
+                  className="handleSaveChangesButton"
+                  onClick={handleSaveChanges}
                 >
-                  <FontAwesomeIcon icon={faEdit} />
+                  <FontAwesomeIcon icon={faCheck} />
                 </button>
-                <button
-                  className="deleteButton"
-                  onClick={() => handleDeleteNote(entry.id)}
-                >
+                <button className="handleCloseModalButton" onClick={closeModals}>
                   <FontAwesomeIcon icon={faXmark} />
                 </button>
-               </div>
               </div>
-            ))
-          ) : (
-            <p>No notes stored yet.</p>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
+
+        {isModalOpen.type === "delete" && (
+          <div className="content-modal">
+            <div className="modal-content-password">
+              <h3>Are you sure you want to delete this note?</h3>
+              <div className="modal-actions">
+                <button className="confirmDelete" onClick={confirmDeleteNote}>
+                  Delete
+                </button>
+                <button className="confirmClose" onClick={closeModals}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isModalOpen.type === "view" && (
+          <div className="content-modal">
+            <div className="modal-content-password">
+              <h3>View Note</h3>
+              <p className="viewNote">{viewNote}</p>
+              <div className="modal-actions">
+                <button className="closeModalViewPassword" onClick={closeModals}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      {isModalOpen.type === "edit" && (
-        <div className="content-modal">
-          <div className="modal-content-password">
-            <h3>Edit Note</h3>
-            <input
-              type="text"
-              className="save-password-button"
-              placeholder="Edit Note Title..."
-              value={editNote.name}
-              onChange={(e) =>
-                setEditNote({ ...editNote, name: e.target.value })
-              }
-            />
-            <textarea
-              className="save-password-button"
-              placeholder="Edit Note Content..."
-              value={editNote.notes}
-              onChange={(e) =>
-                setEditNote({ ...editNote, notes: e.target.value })
-              }
-            ></textarea>
-            <div className="modal-actions">
-              <button
-                className="handleSaveChangesButton"
-                onClick={handleSaveChanges}
-              >
-                <FontAwesomeIcon icon={faCheck} />
-              </button>
-              <button className="handleCloseModalButton" onClick={closeModals}>
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isModalOpen.type === "delete" && (
-        <div className="content-modal">
-          <div className="modal-content-password">
-            <h3>Are you sure you want to delete this note?</h3>
-            <div className="modal-actions">
-              <button className="confirmDelete" onClick={confirmDeleteNote}>
-                Delete
-              </button>
-              <button className="confirmClose" onClick={closeModals}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isModalOpen.type === "view" && (
-        <div className="content-modal">
-          <div className="modal-content-password">
-            <h3>View Note</h3>
-            <p className="viewNote">{viewNote}</p>
-            <div className="modal-actions">
-              <button className="closeModalViewPassword" onClick={closeModals}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

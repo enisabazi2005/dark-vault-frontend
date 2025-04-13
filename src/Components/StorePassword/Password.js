@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../StorePassword/Password.css";
+import { useLocation } from "react-router-dom";
 import api from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import PasswordSkeleton from "./PasswordSkeleton";
+import Storage from "../Storage/Storage";
 
 const StorePassword = () => {
   const [passwords, setPasswords] = useState([]);
@@ -15,7 +17,12 @@ const StorePassword = () => {
   const [viewPassword, setViewPassword] = useState("");
   const [selectedPasswordId, setSelectedPasswordId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  const MAX_STORAGE = location.state?.MAX_STORAGE || 1;  
+  const totalStored = location.state?.totalStored;
+  const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
   
+  console.log(totalStored , MAX_STORAGE);
   useEffect(() => {
     const fetchPasswords = async () => {
       try {
@@ -32,7 +39,19 @@ const StorePassword = () => {
     fetchPasswords();
   }, []);
 
+  useEffect(() => {
+    if (totalStored >= MAX_STORAGE) {
+      setIsStorageLimitReached(true);
+    } else {
+      setIsStorageLimitReached(false);
+    }
+  }, [totalStored, MAX_STORAGE]);
+
   const handleSavePassword = async () => {
+    if (totalStored >= MAX_STORAGE) {
+      return;
+    }
+
     try {
       const response = await api.post("/store-password", { password });
       setPasswords([...passwords, response.data]);
@@ -99,111 +118,123 @@ const StorePassword = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold">Store Passwords here</h2>
-        <p className="text-center">100% safe</p>
-      </div>
+    <>
+      {isStorageLimitReached && (
+        <Storage />
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-white p-4 rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold">Store Passwords here</h2>
+          <p className="text-center">100% safe</p>
+        </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="storePasswordsHeader">Store Passwords</h2>
-        <input
-          type="password"
-          placeholder="Write your password here"
-          className="password-input"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button className="save-password-button" onClick={handleSavePassword}>Save Password</button>
-      </div>
+        <div className="bg-white p-4 rounded-lg shadow-lg">
+          <h2 className="storePasswordsHeader">Store Passwords</h2>
+          <input
+            type="password"
+            placeholder={isStorageLimitReached ? "Storage limit reached" : "Write your password here"}
+            className={`password-input ${isStorageLimitReached ? 'input-disabled' : ''}`}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isStorageLimitReached}
+          />
+          <button 
+            className={`save-password-button ${isStorageLimitReached ? 'button-disabled' : ''}`}
+            onClick={handleSavePassword}
+            disabled={isStorageLimitReached}
+          >
+            {isStorageLimitReached ? 'Storage Limit Reached' : 'Save Password'}
+          </button>
+        </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="storePasswordsHeader">Stored Passwords</h2>
-        <div className="passwordsGrid">
-          {passwords.length > 0 ? (
-            passwords.map((storedPassword, index) => (
-              <div key={storedPassword.id} 
-                className={`passwordItem ${selectedPasswordId === storedPassword.id ? "selected" : ""}`} 
-                id={storedPassword.id}>
-                <div className="edit-delete-buttons">
-                  <button
-                    className="passwordButton"
-                    onClick={() => handleViewPassword(storedPassword.password)} 
-                  >
-                    Password {index + 1}
-                  </button>
-                  <div className="action-buttons">
+        <div className="bg-white p-4 rounded-lg shadow-lg">
+          <h2 className="storePasswordsHeader">Stored Passwords</h2>
+          <div className="passwordsGrid">
+            {passwords.length > 0 ? (
+              passwords.map((storedPassword, index) => (
+                <div key={storedPassword.id} 
+                  className={`passwordItem ${selectedPasswordId === storedPassword.id ? "selected" : ""}`} 
+                  id={storedPassword.id}>
+                  <div className="edit-delete-buttons">
                     <button
-                      className="editButton"
-                      onClick={() => handleEditPassword(storedPassword.id, storedPassword.password)}
+                      className="passwordButton"
+                      onClick={() => handleViewPassword(storedPassword.password)} 
                     >
-                      <FontAwesomeIcon icon={faEdit} />
+                      Password {index + 1}
                     </button>
-                    <button
-                      className="deleteButton"
-                      onClick={() => handleDeletePassword(storedPassword.id)}
-                    >
-                      <FontAwesomeIcon icon={faXmark} />
-                    </button>
+                    <div className="action-buttons">
+                      <button
+                        className="editButton"
+                        onClick={() => handleEditPassword(storedPassword.id, storedPassword.password)}
+                      >
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                      <button
+                        className="deleteButton"
+                        onClick={() => handleDeletePassword(storedPassword.id)}
+                      >
+                        <FontAwesomeIcon icon={faXmark} />
+                      </button>
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <p>No passwords stored yet.</p>
+            )}
+          </div>
+        </div>
+
+        {isModalOpen.type === "edit" && (
+          <div className="content-modal">
+            <div className="modal-content-password">
+              <h3>Edit Password</h3>
+                <input
+                  type="password"
+                  placeholder="Edit Password..."
+                  className="password-input"
+                  onChange={(e) => setEditPassword(e.target.value)}
+                />
+              <div className="modal-actions">
+               <div className="modal-actions-col">
+               <button className="handleSaveChangesButton" onClick={handleSaveChanges}>
+                  <FontAwesomeIcon icon={faCheck} />
+                </button>
+               </div>
+               <div className="modal-actions-col">
+                <button className="handleCloseModalButton" onClick={closeModals}>
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+               </div>
               </div>
-            ))
-          ) : (
-            <p>No passwords stored yet.</p>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
+
+        {isModalOpen.type === "delete" && (
+          <div className="content-modal">
+            <div className="modal-content-password">
+              <h3>Are you sure you want to delete this password?</h3>
+              <div className="modal-actions">
+                <button className="confirmDelete" onClick={confirmDeletePassword}>Delete</button>
+                <button className="confirmClose" onClick={closeModals}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isModalOpen.type === "view" && (
+          <div className="content-modal">
+            <div className="modal-content-password">
+              <h3>View Password</h3>
+              <p className="viewPassword">{viewPassword}</p>
+              <div className="modal-actions">
+                <button className="closeModalViewPassword" onClick={closeModals}>Close</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      {isModalOpen.type === "edit" && (
-        <div className="content-modal">
-          <div className="modal-content-password">
-            <h3>Edit Password</h3>
-              <input
-                type="password"
-                placeholder="Edit Password..."
-                className="password-input"
-                onChange={(e) => setEditPassword(e.target.value)}
-              />
-            <div className="modal-actions">
-             <div className="modal-actions-col">
-             <button className="handleSaveChangesButton" onClick={handleSaveChanges}>
-                <FontAwesomeIcon icon={faCheck} />
-              </button>
-             </div>
-             <div className="modal-actions-col">
-              <button className="handleCloseModalButton" onClick={closeModals}>
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-             </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isModalOpen.type === "delete" && (
-        <div className="content-modal">
-          <div className="modal-content-password">
-            <h3>Are you sure you want to delete this password?</h3>
-            <div className="modal-actions">
-              <button className="confirmDelete" onClick={confirmDeletePassword}>Delete</button>
-              <button className="confirmClose" onClick={closeModals}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isModalOpen.type === "view" && (
-        <div className="content-modal">
-          <div className="modal-content-password">
-            <h3>View Password</h3>
-            <p className="viewPassword">{viewPassword}</p>
-            <div className="modal-actions">
-              <button className="closeModalViewPassword" onClick={closeModals}>Close</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

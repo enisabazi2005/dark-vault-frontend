@@ -1,0 +1,36 @@
+.storage-limit-warning {
+    background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    position: relative;
+    top: 75px;
+    width: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: block;
+    animation: slideDown 0.5s ease-out;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.pro-text {
+    background: linear-gradient(90deg, #f1c40f 0%, #f39c12 100%);
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin: 0 5px;
+    font-weight: 700;
+    color: #2c3e50;
+    display: inline-block;
+    transform: translateY(-1px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pro-text:hover {
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
