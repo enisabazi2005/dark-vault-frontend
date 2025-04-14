@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
 import Storage from "../Storage/Storage";
+import useStorageStore from "../../Store/storageStore";
 
 const PrivateInfo = () => {
   const [privateInfos, setPrivateInfos] = useState([]);
@@ -19,10 +20,8 @@ const PrivateInfo = () => {
   const [selectedPrivateInfoId, setSelectedPrivateInfoId] = useState(null);
   const location = useLocation();
   const MAX_STORAGE = location.state?.MAX_STORAGE || 1;  
-  const totalStored = location.state?.totalStored || 1;
+  const { totalStored, updateTotalStored } = useStorageStore();
   const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
-
-  console.log(MAX_STORAGE, 'MAX_STORAGE private info');
 
   const handleSelectPrivateInfo = (id) => {
     setSelectedPrivateInfoId(id);
@@ -66,6 +65,7 @@ const PrivateInfo = () => {
       setInfo1("");
       setInfo2("");
       setInfo3("");
+      updateTotalStored(totalStored + 1);
     } catch (error) {
       console.error("Error saving private info", error);
     }

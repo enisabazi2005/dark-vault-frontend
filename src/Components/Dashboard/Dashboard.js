@@ -14,7 +14,8 @@ import {
   faChartPie,
   faDatabase,
   faShieldAlt,
-  faUserGroup
+  faUserGroup,
+  faArrowsRotate
 } from "@fortawesome/free-solid-svg-icons";
 import { PieChart } from "@mui/x-charts";
 import {
@@ -30,23 +31,26 @@ import Bot from "../Bot/Bot";
 import DashboardSkeleton from "./DashboardSkeleton";
 import Logo from "../../assets/images/Samira_Hadid-removebg-preview.png";
 import "../Dashboard/Dashboard.css";
+import useStorageStore from "../../Store/storageStore";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const location = useLocation();
-  const [totalStored, setTotalStored] = useState(0);
+  // const { totalStored, updateTotalStored } = useStorageStore();
   const MAX_STORAGE = 5;
   // const MAX_STORAGE = 100;
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const [data, setData] = useState([
-    { id: 0, value: 0, label: "Passwords" },
-    { id: 1, value: 0, label: "Emails" },
-    { id: 2, value: 0, label: "Private Info" },
-    { id: 3, value: 0, label: "Notes" },
-  ]);
+  // const [data, setData] = useState([
+  //   { id: 0, value: 0, label: "Passwords" },
+  //   { id: 1, value: 0, label: "Emails" },
+  //   { id: 2, value: 0, label: "Private Info" },
+  //   { id: 3, value: 0, label: "Notes" },
+  // ]);
+  const { totalStored, updateTotalStored, data, updateChartData } = useStorageStore();
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -98,10 +102,9 @@ const Dashboard = () => {
         const total =
           passwordsCount + emailsCount + privateInfosCount + notesCount;
         if (total === 0) return;
-        setTotalStored(total);
+        updateTotalStored(total);
 
-
-        setData([
+        updateChartData([
           {
             id: 0,
             value: (passwordsCount / total) * 100,
@@ -133,7 +136,39 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, []);
+  }, [updateTotalStored , updateChartData]);
+
+  const refreshChart = async () => {
+    try {
+      setIsLoading(true);
+      const [passwordsRes, emailsRes, privateInfosRes, notesRes] = await Promise.all([
+        api.get("/store-passwords"),
+        api.get("/store-emails"),
+        api.get("/store-private-infos"),
+        api.get("/store-notes"),
+      ]);
+  
+      const passwordsCount = passwordsRes.data.length;
+      const emailsCount = emailsRes.data.length;
+      const privateInfosCount = privateInfosRes.data.length;
+      const notesCount = notesRes.data.length;
+  
+      const total = passwordsCount + emailsCount + privateInfosCount + notesCount;
+  
+      // Update chart data based on current count
+      updateChartData([
+        { id: 0, value: (passwordsCount / total) * 100, label: "Passwords" },
+        { id: 1, value: (emailsCount / total) * 100, label: "Emails" },
+        { id: 2, value: (privateInfosCount / total) * 100, label: "Private Info" },
+        { id: 3, value: (notesCount / total) * 100, label: "Notes" },
+      ]);
+    } catch (error) {
+      console.error("Error refreshing chart data", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
 
   function GaugePointer() {
     const { valueAngle, outerRadius, cx, cy } = useGaugeState();
@@ -274,19 +309,20 @@ const Dashboard = () => {
                 </p>
               </div>
             </div>
-
-            {/* Data Distribution Card */}
             <div className="dashboard-card">
               <div className="card-header">
                 <FontAwesomeIcon icon={faChartPie} />
                 <h3>Data Distribution</h3>
               </div>
               <div className="card-content">
-                {data.length === 0 || data.every((item) => item.value === 0) ? (
+              {totalStored === 0 ? (
                   <p className="empty-state">Nothing is stored yet</p>
                 ) : (
-                  <PieChart series={[{ data }]} width={400} height={200} />
+                  <PieChart  series={[{ data }]} width={400} height={200} />
                 )}
+                 <button className="refresh-chart-button" onClick={refreshChart}>
+                    <FontAwesomeIcon icon={faArrowsRotate} />
+                </button>
               </div>
             </div>
 

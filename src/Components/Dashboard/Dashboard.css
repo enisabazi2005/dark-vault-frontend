@@ -115,7 +115,6 @@
   transform: translateY(-5px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
-
 .card-header {
   padding: 1.5rem;
   background: linear-gradient(90deg, #3498db 0%, #2c3e50 100%);
@@ -136,8 +135,45 @@
 
 .card-content {
   padding: 1.5rem;
+  position: relative;
 }
-
+.refresh-chart-button { 
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background-color: transparent;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+}
+.refresh-chart-button::before { 
+  content: "Refresh Chart";
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #6c757d;
+  position: relative;
+  top: -3px;
+  right: 10px;
+  visibility: hidden;
+}
+.refresh-chart-button:hover::before { 
+  visibility: visible;
+  transition: 0.3s linear;
+}
+.refresh-chart-button svg:hover { 
+  animation: rotateDegree 1s infinite linear;
+  transition: 0.3s ease-in;
+}
+.refresh-chart-button svg { 
+  font-size: 20px;
+}
+@keyframes rotateDegree {
+  from { 
+    transform: rotate(0deg);
+  } to { 
+    transform: rotate(360deg);
+  }
+}
 /* Welcome Card */
 .welcome-card {
   background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);

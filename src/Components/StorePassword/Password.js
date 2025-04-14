@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import PasswordSkeleton from "./PasswordSkeleton";
 import Storage from "../Storage/Storage";
+import useStorageStore from "../../Store/storageStore";
 
 const StorePassword = () => {
   const [passwords, setPasswords] = useState([]);
@@ -19,10 +20,9 @@ const StorePassword = () => {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
   const MAX_STORAGE = location.state?.MAX_STORAGE || 1;  
-  const totalStored = location.state?.totalStored;
   const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
-  
-  console.log(totalStored , MAX_STORAGE);
+  const { totalStored, updateTotalStored } = useStorageStore();
+
   useEffect(() => {
     const fetchPasswords = async () => {
       try {
@@ -56,6 +56,7 @@ const StorePassword = () => {
       const response = await api.post("/store-password", { password });
       setPasswords([...passwords, response.data]);
       setPassword("");
+      updateTotalStored(totalStored + 1);
     } catch (error) {
       console.error("Error saving password", error);
     }

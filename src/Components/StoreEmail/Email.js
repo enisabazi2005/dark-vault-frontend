@@ -6,6 +6,7 @@ import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import EmailSkeleton from "./EmailSkeleton";
 import { useLocation } from "react-router-dom";
 import Storage from "../Storage/Storage";
+import useStorageStore from "../../Store/storageStore";
 
 const StoreEmail = () => {
   const [emails, setEmails] = useState([]);
@@ -18,9 +19,9 @@ const StoreEmail = () => {
   const [viewEmail, setViewEmail] = useState("");
   const [selectedEmailId, setSelectedEmailId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-    const location = useLocation();
-    const MAX_STORAGE = location.state?.MAX_STORAGE || 1;
-    const totalStored = location.state?.totalStored;
+  const location = useLocation();
+  const MAX_STORAGE = location.state?.MAX_STORAGE || 1;
+  const { totalStored, updateTotalStored } = useStorageStore();
   const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
 
   const fetchEmails = async () => {
@@ -56,6 +57,7 @@ const StoreEmail = () => {
       setEmails((prevEmails) => [...prevEmails, response.data]);
       setName("");
       setEmail("");
+      updateTotalStored(totalStored + 1);
     } catch (error) {
       console.error("Error saving email", error);
     }
