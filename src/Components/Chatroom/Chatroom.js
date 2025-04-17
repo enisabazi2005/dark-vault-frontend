@@ -389,6 +389,38 @@ const Chatroom = () => {
       channel.unsubscribe();
     };
   }, [requestId]);
+
+  useEffect(() => {
+    if (!requestId) return;
+  
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: false,
+    });
+  
+    const channel = pusher.subscribe(`friend-accept.${requestId}`);
+    console.log(`Subscribed to friend-accept.${requestId}`);
+  
+    channel.bind('FriendRequestAccepted', (data) => {
+      console.log('✅ Friend request accepted!', data);
+  
+      const newFriend = {
+        id: data.receiver.id,
+        name: data.receiver.name,
+        lastname: data.receiver.lastname,
+        picture: data.receiver.picture || null,
+        request_id: data.receiver.request_id,
+      };
+  
+      setFriends((prev) => [...prev, newFriend]);
+    });
+  
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [requestId]);
+  
   
   const sendFriendRequest = async (userRequestId) => {
     try {
