@@ -360,6 +360,36 @@ const Chatroom = () => {
     }
   };
 
+  useEffect(() => {
+    if (!requestId) return;
+  
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: false,
+    });
+    const channel = pusher.subscribe(`friend-request.${requestId}`);
+    console.log(`Subscribed to friend-request.${requestId}`);
+  
+    channel.bind('FriendRequestSent', (data) => {
+      console.log('📩 Live friend request received!', data);
+      console.log(data);
+    
+      setPendingRequests((prev) => [
+        ...prev,
+        {
+          friend_name: data.sender.name,
+          request_friend_id: data.sender.request_id,
+          friend_picture_url: data.sender.picture || null,
+        },
+      ]);
+    });
+  
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [requestId]);
+  
   const sendFriendRequest = async (userRequestId) => {
     try {
       const response = await api.post(`/friend-request/${userRequestId}/send`, {
