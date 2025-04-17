@@ -12,6 +12,7 @@ import Unfriend from "../Unfriend/Unfriend";
 import Blocked from "../Blocked/Blocked";
 import BackgroundChange from "../BackgroundChange/BackgroundChange";
 import MessageSent from "../../assets/images/message-sent.wav";
+import { useStore } from "../../Store/store";
 
 const Chatroom = () => {
   const [users, setUsers] = useState([]);
@@ -44,7 +45,7 @@ const Chatroom = () => {
   const [chatBackground, setChatBackground] = useState(null);
   const [hoveredMsg, setHoveredMsg] = useState(null);
   const [groupedReactions, setGroupedReactions] = useState({});
-
+  const { myProfile } = useStore();
 
   const removeReaction = async (messageId) => { 
     try { 
@@ -226,7 +227,7 @@ const Chatroom = () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [selectedUser, messages]);
+  }, [selectedUser?.request_id]);
 
   useEffect(() => {
     if (!requestId || !selectedUser) return;
@@ -361,67 +362,74 @@ const Chatroom = () => {
   };
 
   useEffect(() => {
-    if (!requestId) return;
+  if (!myProfile?.request_id) return;
+
+  const pusher = new Pusher(PUSHER_APP_KEY, {
+    cluster: PUSHER_CLUSTER,
+    encrypted: false,
+  });
+
+  const channel = pusher.subscribe(`friend-request.${myProfile.request_id}`);
+  console.log(`Subscribed to friend-request.${myProfile.request_id}`);
+
+  channel.bind('FriendRequestSent', (data) => {
+    console.log('📩 Live friend request received!', data);
+
+    setPendingRequests((prev) => [
+      ...prev,
+      {
+        friend_name: data.sender.name,
+        request_friend_id: data.sender.request_id,
+        friend_picture_url: data.sender.picture || null,
+      },
+    ]);
+  });
+
+  return () => {
+    channel.unbind_all();
+    channel.unsubscribe();
+  };
+}, [myProfile?.request_id]);
+
+
+  const fetchFriends = async () => {
+    try {
+      const response = await api.get(`/friend-request/${myProfile.request_id}/friends`);
+      setFriends(response.data);
+    } catch (error) {
+      console.error("Error fetching friends:", error);
+    }
+  };
   
-    const pusher = new Pusher(PUSHER_APP_KEY, {
-      cluster: PUSHER_CLUSTER,
-      encrypted: false,
-    });
-    const channel = pusher.subscribe(`friend-request.${requestId}`);
-    console.log(`Subscribed to friend-request.${requestId}`);
-  
-    channel.bind('FriendRequestSent', (data) => {
-      console.log('📩 Live friend request received!', data);
-      console.log(data);
-    
-      setPendingRequests((prev) => [
-        ...prev,
-        {
-          friend_name: data.sender.name,
-          request_friend_id: data.sender.request_id,
-          friend_picture_url: data.sender.picture || null,
-        },
-      ]);
-    });
-  
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
-  }, [requestId]);
 
   useEffect(() => {
-    if (!requestId) return;
+    if (!myProfile?.request_id) return;
   
     const pusher = new Pusher(PUSHER_APP_KEY, {
       cluster: PUSHER_CLUSTER,
       encrypted: false,
     });
-  
-    const channel = pusher.subscribe(`friend-accept.${requestId}`);
-    console.log(`Subscribed to friend-accept.${requestId}`);
+    console.log(myProfile, 'myProfile');    
+    const channel = pusher.subscribe(`friend-accept.${myProfile.request_id}`);
+    console.log(`Subscribed to friend-accept.${myProfile.request_id}`);
   
     channel.bind('FriendRequestAccepted', (data) => {
       console.log('✅ Friend request accepted!', data);
-  
-      const newFriend = {
-        id: data.receiver.id,
-        name: data.receiver.name,
-        lastname: data.receiver.lastname,
-        picture: data.receiver.picture || null,
-        request_id: data.receiver.request_id,
-      };
-  
-      setFriends((prev) => [...prev, newFriend]);
+      fetchFriends(); 
     });
-  
+    console.log(myProfile, 'myProfile');
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [requestId]);
+  }, [myProfile?.request_id]);
   
   
+  useEffect(() => {
+    if (!myProfile?.request_id) return;
+    fetchFriends();
+  }, [myProfile]);
+
   const sendFriendRequest = async (userRequestId) => {
     try {
       const response = await api.post(`/friend-request/${userRequestId}/send`, {
