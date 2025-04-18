@@ -556,8 +556,8 @@ const Chatroom = () => {
     curious: "🤩",
     cry: "😢",
     dislike: "👎",
-    // Add more if needed
   };
+  console.log(selectedUserFriends, 'selectedUserFriends')
 
   return (
     <div className="full-width-layout">
@@ -575,7 +575,7 @@ const Chatroom = () => {
             />
           </div>
           {filteredUsers.length > 0 && (
-            <ul className="dropdown">
+            <ul className="dropdown scroll-smooth">
               {filteredUsers.map((user, index) => (
                 <li
                   key={index}
@@ -617,10 +617,11 @@ const Chatroom = () => {
               <div className="user-details">
                 <div className="selected-user-details">
                   <div className="user-info">
-                    <p>{selectedUser.name} {selectedUser.lastname}</p>
+                    <p>{selectedUser.name} {selectedUser.lastname}
                     {isFriend(selectedUser.request_id) && selectedUserFriends?.friends_count > 0 && (
                       <span>{selectedUserFriends.friends_count} Friends</span>
                     )}
+                    </p>
                   </div>
                   <button
                     className="add-friend-btn"

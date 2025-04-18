@@ -57,6 +57,9 @@
     color: #5f6368;
     padding: 8px 0;
     line-height: 1.5;
+    display: flex;
+    align-items: center;
+    column-gap: 13px;
 }
 
 .full-width-layout .row-layout .col-50 .search-layout {
@@ -88,14 +91,19 @@
     background: white;
     border: 1px solid #e1e4e8;
     border-radius: 16px;
-    max-height: 300px;
+    height: 200px; 
     overflow-y: auto;
+    overflow-x: hidden;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
     z-index: 1;
     margin-top: 8px;
     padding: 8px 0;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.scroll-smooth {
+    scroll-behavior: smooth;
 }
 
 .dropdown::-webkit-scrollbar {
