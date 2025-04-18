@@ -109,8 +109,13 @@
   padding: 1.5rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
+  position: relative;
 }
-
+.card-content-charts { 
+  position: absolute;
+  top: 50px;
+  right: 30px;
+}
 .dashboard-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
@@ -139,7 +144,7 @@
 }
 .refresh-chart-button { 
   position: absolute;
-  top: 30px;
+  top: 0;
   right: 30px;
   background-color: transparent;
   padding: 10px;
@@ -293,9 +298,9 @@
 .dropdown-item:hover {
   background-color: #f8f9fa;
 }
-.css-66gjpw-MuiResponsiveChart-container>svg { 
-  width: 60% !important;
-  height: 60% !important;
+.css-66gjpw-MuiResponsiveChart-container { 
+  width:100% !important;
+  height:100% !important;
   position: absolute;
   left: 0;
   display: flex;
