@@ -6,6 +6,7 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../Notification/Notification.css";
 import notificationSound from "../../assets/images/message-sent.wav";
+import { useStore } from "../../Store/store";
 
 const Notification = () => {
   const [unreadMessages, setUnreadMessages] = useState([]);
@@ -16,6 +17,11 @@ const Notification = () => {
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const audioRef = useRef(null);
   const previousCountRef = useRef(0);
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const { myProfile } = useStore();
+  const combinedNotifications = [...pendingRequests, ...unreadMessages].sort(
+    (a, b) => b.id - a.id
+  );
 
   useEffect(() => {
     if (!userId) return;
@@ -76,26 +82,97 @@ const Notification = () => {
           );
           return [...newMessages, ...prevMessages];
         });
-        
+
         const newCount = count + data.notifications.length;
         setCount(newCount);
-        
-        // Play sound only when new messages arrive and count increases
-        if (data.notifications.length > 0 && newCount > previousCountRef.current && audioRef.current) {
-          audioRef.current.currentTime = 0; // Reset audio to start
-          audioRef.current.play().catch(error => {
+
+        if (
+          data.notifications.length > 0 &&
+          newCount > previousCountRef.current &&
+          audioRef.current
+        ) {
+          audioRef.current.currentTime = 0; 
+          audioRef.current.play().catch((error) => {
             console.error("Error playing notification sound:", error);
           });
           previousCountRef.current = newCount;
         }
       }
     });
+    if (!myProfile) return;
+
+    const friendRequestChannel = pusher.subscribe(
+      `friend-request.${myProfile.request_id}`
+    );
+    friendRequestChannel.bind("FriendRequestSent", (data) => {
+      const newRequest = {
+        id: Date.now(),
+        type: "request",
+        friend_name: data.sender.name,
+        picture: data.sender.picture,
+      };
+
+      setPendingRequests((prev) => [...prev, newRequest]);
+      console.log(pendingRequests, "pendingRequests");
+      setCount((prev) => prev + 1);
+
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(console.error);
+      }
+    });
+    console.log(pendingRequests, "pendingRequests");
+
+    const friendAcceptChannel = pusher.subscribe(
+      `friend-accept.${myProfile.request_id}`
+    );
+    friendAcceptChannel.bind("FriendRequestAccepted", (data) => {
+      const isSender = data.sender.request_id === myProfile.request_id;
+
+      const message = isSender
+        ? `You are now friends with ${data.receiver.name}`
+        : `You accepted ${data.sender.name}'s friend request`;
+
+      const newAcceptanceNotification = {
+        id: Date.now(),
+        type: "accepted",
+        friend_name: isSender ? data.receiver.name : data.sender.name,
+        message,
+      };
+
+      setUnreadMessages((prev) => [...prev, newAcceptanceNotification]);
+
+      if (!isSender) {
+        setPendingRequests((prev) => {
+          const updated = prev.filter(
+            (req) =>
+              req.friend_name !== (data.sender.name || data.receiver.name)
+          );
+          const removedCount = prev.length - updated.length;
+          setCount((prevCount) => prevCount + 1 - removedCount);
+          return updated;
+        });
+      } else {
+        setCount((prevCount) => prevCount + 1);
+      }
+
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(console.error);
+      }
+    });
 
     return () => {
       channel.unbind("App\\Events\\UnreadMessagesEvent");
       pusher.unsubscribe(`unread-messages-${userId}`);
+
+      friendRequestChannel.unbind("FriendRequestSent");
+      pusher.unsubscribe(`friend-request.${userId}`);
+
+      friendAcceptChannel.unbind("FriendRequestAccepted");
+      pusher.unsubscribe(`friend-accept.${userId}`);
     };
-  }, [userId, count]);
+  }, [userId]);
 
   const handleMarkAsRead = async () => {
     try {
@@ -137,14 +214,32 @@ const Notification = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h2>Notifications</h2>
-            {unreadMessages.length > 0 ? (
+            {combinedNotifications.length > 0 ? (
               <ul>
-                {unreadMessages.map((message, index) => (
-                  <li key={index} className="custom-new-message">
-                    You have a message from{" "}
-                    <strong>{message.sender_name}</strong>: {message.message}
-                  </li>
-                ))}
+                {combinedNotifications.map((notification, index) => {
+                  if (notification.type === "request") {
+                    return (
+                      <li key={`notif-${index}`} className="custom-new-message">
+                        <strong>{notification.friend_name}</strong> has sent you
+                        a friend request.
+                      </li>
+                    );
+                  } else if (notification.type === "accepted") {
+                    return (
+                      <li key={`notif-${index}`} className="custom-new-message">
+                        {notification.message}
+                      </li>
+                    );
+                  } else {
+                    return (
+                      <li key={`notif-${index}`} className="custom-new-message">
+                        You have a message from{" "}
+                        <strong>{notification.sender_name}</strong>:{" "}
+                        {notification.message}
+                      </li>
+                    );
+                  }
+                })}
               </ul>
             ) : (
               <p>No unread messages.</p>
@@ -161,7 +256,7 @@ const Notification = () => {
             ) : (
               <div className="custom-mark-as-read-section">
                 <button className="custom-mark-as-read-btn">
-                  No Notifications
+                  No Unread Messages
                 </button>
               </div>
             )}

@@ -12,6 +12,7 @@ import Unfriend from "../Unfriend/Unfriend";
 import Blocked from "../Blocked/Blocked";
 import BackgroundChange from "../BackgroundChange/BackgroundChange";
 import MessageSent from "../../assets/images/message-sent.wav";
+import { useStore } from "../../Store/store";
 
 const Chatroom = () => {
   const [users, setUsers] = useState([]);
@@ -44,7 +45,7 @@ const Chatroom = () => {
   const [chatBackground, setChatBackground] = useState(null);
   const [hoveredMsg, setHoveredMsg] = useState(null);
   const [groupedReactions, setGroupedReactions] = useState({});
-
+  const { myProfile } = useStore();
 
   const removeReaction = async (messageId) => { 
     try { 
@@ -226,7 +227,7 @@ const Chatroom = () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [selectedUser, messages]);
+  }, [selectedUser?.request_id]);
 
   useEffect(() => {
     if (!requestId || !selectedUser) return;
@@ -360,6 +361,75 @@ const Chatroom = () => {
     }
   };
 
+  useEffect(() => {
+  if (!myProfile?.request_id) return;
+
+  const pusher = new Pusher(PUSHER_APP_KEY, {
+    cluster: PUSHER_CLUSTER,
+    encrypted: false,
+  });
+
+  const channel = pusher.subscribe(`friend-request.${myProfile.request_id}`);
+  console.log(`Subscribed to friend-request.${myProfile.request_id}`);
+
+  channel.bind('FriendRequestSent', (data) => {
+    console.log('📩 Live friend request received!', data);
+
+    setPendingRequests((prev) => [
+      ...prev,
+      {
+        friend_name: data.sender.name,
+        request_friend_id: data.sender.request_id,
+        friend_picture_url: data.sender.picture || null,
+      },
+    ]);
+  });
+
+  return () => {
+    channel.unbind_all();
+    channel.unsubscribe();
+  };
+}, [myProfile?.request_id]);
+
+
+  const fetchFriends = async () => {
+    try {
+      const response = await api.get(`/friend-request/${myProfile.request_id}/friends`);
+      setFriends(response.data);
+    } catch (error) {
+      console.error("Error fetching friends:", error);
+    }
+  };
+  
+
+  useEffect(() => {
+    if (!myProfile?.request_id) return;
+  
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: false,
+    });
+    console.log(myProfile, 'myProfile');    
+    const channel = pusher.subscribe(`friend-accept.${myProfile.request_id}`);
+    console.log(`Subscribed to friend-accept.${myProfile.request_id}`);
+  
+    channel.bind('FriendRequestAccepted', (data) => {
+      console.log('✅ Friend request accepted!', data);
+      fetchFriends(); 
+    });
+    console.log(myProfile, 'myProfile');
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [myProfile?.request_id]);
+  
+  
+  useEffect(() => {
+    if (!myProfile?.request_id) return;
+    fetchFriends();
+  }, [myProfile]);
+
   const sendFriendRequest = async (userRequestId) => {
     try {
       const response = await api.post(`/friend-request/${userRequestId}/send`, {
@@ -486,8 +556,8 @@ const Chatroom = () => {
     curious: "🤩",
     cry: "😢",
     dislike: "👎",
-    // Add more if needed
   };
+  console.log(selectedUserFriends, 'selectedUserFriends')
 
   return (
     <div className="full-width-layout">
@@ -505,7 +575,7 @@ const Chatroom = () => {
             />
           </div>
           {filteredUsers.length > 0 && (
-            <ul className="dropdown">
+            <ul className="dropdown scroll-smooth">
               {filteredUsers.map((user, index) => (
                 <li
                   key={index}
@@ -547,10 +617,11 @@ const Chatroom = () => {
               <div className="user-details">
                 <div className="selected-user-details">
                   <div className="user-info">
-                    <p>{selectedUser.name} {selectedUser.lastname}</p>
+                    <p>{selectedUser.name} {selectedUser.lastname}
                     {isFriend(selectedUser.request_id) && selectedUserFriends?.friends_count > 0 && (
                       <span>{selectedUserFriends.friends_count} Friends</span>
                     )}
+                    </p>
                   </div>
                   <button
                     className="add-friend-btn"

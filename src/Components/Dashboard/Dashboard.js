@@ -314,7 +314,7 @@ const Dashboard = () => {
                 <FontAwesomeIcon icon={faChartPie} />
                 <h3>Data Distribution</h3>
               </div>
-              <div className="card-content">
+              <div className="card-content card-content-charts">
               {totalStored === 0 ? (
                   <p className="empty-state">Nothing is stored yet</p>
                 ) : (
