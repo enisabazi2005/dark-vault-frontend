@@ -8,6 +8,7 @@
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     font-family: Arial, sans-serif;
+    z-index: 10001;
 }
 
 .bot-button {
@@ -38,7 +39,8 @@
 
 .chat-body {
     width: 100%;
-    height: 700px;
+    /* height: 700px; */
+    height: 550px;
     background-color: #fff;
     border-radius: 12px 12px 0 0;
     display: flex;
@@ -92,8 +94,8 @@
     flex-direction: column;
     gap: 20px;
     background-color: #f8f9fa;
-    height: 400px;
-    min-height: 400px;
+    height: 300px;
+    min-height: 300px;
     margin-bottom: 10px;
     scroll-behavior: smooth;
     
