@@ -1,10 +1,13 @@
 .dashboard-container {
   display: flex;
-  /* min-height: 175vh; */
-  min-height: 100vh;
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
   background-color: #f8f9fa;
   position: relative;
   width: 100%;
+  overflow-y: auto;
+  flex: 1;
 }
 
 /* Sidebar Styles */
@@ -12,7 +15,9 @@
   width: 250px;
   background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
   position: fixed;
-  height: 100vh;
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
   left: 0;
   top: 0;
   z-index: 1000;
@@ -368,15 +373,20 @@
   .sidebar {
     display: none;
   }
+  .dashboard-container {
+    min-height: 100vh;
+    height: auto;
+  }
   
   .main-content {
-    margin-left: 0;
+    margin: 0;
     width: 100%;
-    padding: 1rem;
+    padding: 20px;
   }
   
   .dashboard-grid {
     grid-template-columns: 1fr;
+    margin: 10px 0 100px 0;
   }
 
   .css-66gjpw-MuiResponsiveChart-container>svg,
@@ -386,6 +396,15 @@
   }
   .css-66gjpw-MuiResponsiveChart-container { 
     top: -30px;
+  }
+  .css-66gjpw-MuiResponsiveChart-container { 
+    width: 150% !important;
+    left: -40px !important;
+    padding: 10px !important;
+  }
+  .refresh-chart-button {
+    top: -10px;
+    right: -5px;
   }
 }
 

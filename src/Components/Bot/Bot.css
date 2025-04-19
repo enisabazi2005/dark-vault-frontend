@@ -96,6 +96,7 @@
     min-height: 400px;
     margin-bottom: 10px;
     scroll-behavior: smooth;
+    
 }
 
 .chat-messages-bot {
@@ -327,7 +328,10 @@
 @media (max-width: 768px) { 
     .bot-container { 
         width: 100px;
-        bottom: 10%;
+        bottom: 13%;
+    }
+    .chat-header { 
+        padding: 35px 20px;
     }
     .bot-container-mobile { 
         width: 100%;

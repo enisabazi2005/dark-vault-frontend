@@ -785,6 +785,9 @@
         padding: 15px;
         gap: 15px;
     }
+    .full-width-layout { 
+        margin: 20px 0 100px 0;
+    }
     .chat-window {
         position: fixed;
         top: 0;
