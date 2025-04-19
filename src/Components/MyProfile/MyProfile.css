@@ -301,6 +301,18 @@
     .modal-content-status li {
       padding: 14px 16px;
     }
+    .profile-mobile .profile-info-col-user-names , .profile-info-col-notification { 
+      display: none !important;
+    }
+    .profile-settings .profile-info-row { 
+      margin: 0;
+    }
+    .bellIcon { 
+      color: black !important;
+      margin-left: 20px;
+      margin-bottom: 10px;
+      font-size: 25px !important;
+    }
     .modal-content-status li:last-child {
       margin-top: 16px;
       padding: 16px;
