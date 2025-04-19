@@ -12,6 +12,7 @@ const Bot = () => {
     const [loading, setLoading] = useState(false);
     const messagesEndRef = useRef(null);
     const defaultBlankPhotoUrl = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+    const [isBotClicked , setIsBotClicked] = useState(false);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -39,7 +40,10 @@ const Bot = () => {
                 }
             ]);
         }
+        setIsBotClicked(prev => !prev);
+
     };
+    console.log(isBotClicked);
 
     const handleFaqClick = async (question) => {
         setMessages(prev => [...prev, {
@@ -70,7 +74,7 @@ const Bot = () => {
     };
 
     return (
-        <div className="bot-container">
+        <div className={`bot-container ${isBotClicked ? "bot-container-mobile" : ""}`}>
             {isClicked && (
                 <div className="chat-body">
                     <div className="chat-header">

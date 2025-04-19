@@ -19,10 +19,11 @@ const StorePassword = () => {
   const [selectedPasswordId, setSelectedPasswordId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-  const MAX_STORAGE = location.state?.MAX_STORAGE || 1;  
+  const MAX_STORAGE = location.state?.MAX_STORAGE || 5;  
   const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
   const { totalStored, updateTotalStored } = useStorageStore();
-
+  console.log(totalStored, 'totalStored')
+  console.log(MAX_STORAGE, 'MAX_STORAGE')
   useEffect(() => {
     const fetchPasswords = async () => {
       try {

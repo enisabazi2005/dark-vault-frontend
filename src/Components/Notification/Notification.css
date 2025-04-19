@@ -215,14 +215,26 @@
         max-height: 60vh;
     }
 
+    .bellIcon { 
+        color: #2c3e50 !important;
+        margin-left: 20px;
+        margin-bottom: 10px;
+        font-size: 22px !important;
+      }
+
     .notificationIconContainer { 
         position: relative;
-        left: 6px;
+        left: -8px;
+        top: 5px;
     }
-
+    .notification-mobile { 
+        position: relative;
+        display: block;
+        text-align: center;
+    }
     .notificationCount, .no-notificationCount {
         top: 0;
-        right: 15px;
+        right: 12px;
         width: 18px;
         height: 18px;
         font-size: 10px;

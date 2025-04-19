@@ -93,7 +93,7 @@ const MyProfile = ({ updateNotificationCount }) => {
   }
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <div className="profile-loading">Loading...</div>;
   }
 
   return (
@@ -116,7 +116,7 @@ const MyProfile = ({ updateNotificationCount }) => {
               alt={`${user.name} ${user.lastname}`}
               className="user-pic"
               style={{
-                border: `3px solid ${borderColor}`,
+                border: `1px solid ${borderColor}`,
               }}
             />
           </div>

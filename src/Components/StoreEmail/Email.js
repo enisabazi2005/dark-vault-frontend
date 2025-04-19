@@ -20,7 +20,7 @@ const StoreEmail = () => {
   const [selectedEmailId, setSelectedEmailId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-  const MAX_STORAGE = location.state?.MAX_STORAGE || 1;
+  const MAX_STORAGE = location.state?.MAX_STORAGE || 5;
   const { totalStored, updateTotalStored } = useStorageStore();
   const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
 

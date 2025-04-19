@@ -41,8 +41,10 @@ const Dashboard = () => {
   // const MAX_STORAGE = 100;
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [isStoredDropdownOpen, setIsStoredDropdownOpen] = useState(false);
+  const [isCommunityDropdownOpen, setIsCommunityDropdownOpen] = useState(false);
+  const storedDropdownRef = useRef(null);
+  const communityDropdownRef = useRef(null);
   // const [data, setData] = useState([
   //   { id: 0, value: 0, label: "Passwords" },
   //   { id: 1, value: 0, label: "Emails" },
@@ -50,24 +52,27 @@ const Dashboard = () => {
   //   { id: 3, value: 0, label: "Notes" },
   // ]);
   const { totalStored, updateTotalStored, data, updateChartData } = useStorageStore();
-
+  console.log(totalStored, 'totalStored')
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
+      if (storedDropdownRef.current && !storedDropdownRef.current.contains(event.target)) {
+        setIsStoredDropdownOpen(false);
+      }
+      if (communityDropdownRef.current && !communityDropdownRef.current.contains(event.target)) {
+        setIsCommunityDropdownOpen(false);
       }
     };
 
-    if (isDropdownOpen) {
+    if (isStoredDropdownOpen || isCommunityDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isDropdownOpen]);
+  }, [isStoredDropdownOpen, isCommunityDropdownOpen]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -361,42 +366,68 @@ const Dashboard = () => {
             <span>Dashboard</span>
           </Link>
           <div className="dropdown-container">
-            <button className="nav-item" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+            <button className="nav-item" onClick={() => setIsStoredDropdownOpen(!isStoredDropdownOpen)}>
               <FontAwesomeIcon icon={faGrip} />
               <span>Stored</span>
             </button>
-            {isDropdownOpen && (
-              <div ref={dropdownRef} className="dropdown-menu">
-                <Link to="store-password" className="dropdown-item">
+            {isStoredDropdownOpen && (
+              <div ref={storedDropdownRef} className="mobile-dropdown-menu">
+                <Link to="/dashboard" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
+                  <FontAwesomeIcon icon={faArrowRightFromBracket} />
+                  <span>Go back</span>
+                </Link>
+                <Link to="store-password" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
                   <FontAwesomeIcon icon={faLock} />
                   <span>Passwords</span>
                 </Link>
-                <Link to="store-email" className="dropdown-item">
+                <Link to="store-email" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
                   <FontAwesomeIcon icon={faSquareEnvelope} />
                   <span>Email</span>
                 </Link>
-                <Link to="private-info" className="dropdown-item">
-                  <FontAwesomeIcon icon={faCircleInfo} />
-                  <span>Private Info</span>
-                </Link>
-                <Link to="store-notes" className="dropdown-item">
+                <Link to="store-notes" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
                   <FontAwesomeIcon icon={faNoteSticky} />
                   <span>Notes</span>
+                </Link>
+                <Link to="private-info" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
+                  <FontAwesomeIcon icon={faCircleInfo} />
+                  <span>Private Info</span>
                 </Link>
               </div>
             )}
           </div>
-          <Link to="chatroom" className="nav-item">
-            <FontAwesomeIcon icon={faCommentDots} />
-            <span>Chat</span>
-          </Link>
+          <div className="dropdown-container">
+            <button className="nav-item" onClick={() => setIsCommunityDropdownOpen(!isCommunityDropdownOpen)}>
+              <FontAwesomeIcon icon={faPeopleGroup} />
+              <span>Community</span>
+            </button>
+            {isCommunityDropdownOpen && (
+              <div ref={communityDropdownRef} className="mobile-dropdown-menu">
+                <Link to="/dashboard" className="mobile-dropdown-item" onClick={() => setIsCommunityDropdownOpen(false)}>
+                  <FontAwesomeIcon icon={faArrowRightFromBracket} />
+                  <span>Go back</span>
+                </Link>
+                <Link to="friends" className="mobile-dropdown-item" onClick={() => setIsCommunityDropdownOpen(false)}>
+                  <FontAwesomeIcon icon={faUserGroup} />
+                  <span>Friends</span>
+                </Link>
+                <Link to="groups" className="mobile-dropdown-item" onClick={() => setIsCommunityDropdownOpen(false)}>
+                  <FontAwesomeIcon icon={faPeopleGroup} />
+                  <span>Groups</span>
+                </Link>
+                <Link to="chatroom" className="mobile-dropdown-item" onClick={() => setIsCommunityDropdownOpen(false)}>
+                  <FontAwesomeIcon icon={faCommentDots} />
+                  <span>Chatroom</span>
+                </Link>
+              </div>
+            )}
+          </div>
           <span className="notification-mobile">
             <Notification />
-            <span>Notifications</span>
+            <span className="notification-mobile-span">Alerts</span>
           </span>
           <span className="profile-mobile">
             <MyProfile />
-            <span>{user ? `${user.name} ${user.lastname}` : ""}</span>
+            <span className="profile-mobile-name">{user ? `${user.name}` : ""}</span>
           </span>
         </nav>
       )}
