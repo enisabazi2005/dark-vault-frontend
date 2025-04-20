@@ -559,7 +559,6 @@ const Chatroom = () => {
     cry: "😢",
     dislike: "👎",
   };
-  console.log(selectedUserFriends, 'selectedUserFriends')
 
   return (
     <div className="full-width-layout">

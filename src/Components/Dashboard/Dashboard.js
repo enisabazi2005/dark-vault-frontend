@@ -32,28 +32,34 @@ import DashboardSkeleton from "./DashboardSkeleton";
 import Logo from "../../assets/images/Samira_Hadid-removebg-preview.png";
 import "../Dashboard/Dashboard.css";
 import useStorageStore from "../../Store/storageStore";
+import { useStore } from "../../Store/store";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const location = useLocation();
-  // const { totalStored, updateTotalStored } = useStorageStore();
   const MAX_STORAGE = 5;
-  // const MAX_STORAGE = 100;
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
   const [isStoredDropdownOpen, setIsStoredDropdownOpen] = useState(false);
   const [isCommunityDropdownOpen, setIsCommunityDropdownOpen] = useState(false);
   const storedDropdownRef = useRef(null);
   const communityDropdownRef = useRef(null);
-  // const [data, setData] = useState([
-  //   { id: 0, value: 0, label: "Passwords" },
-  //   { id: 1, value: 0, label: "Emails" },
-  //   { id: 2, value: 0, label: "Private Info" },
-  //   { id: 3, value: 0, label: "Notes" },
-  // ]);
   const { totalStored, updateTotalStored, data, updateChartData } = useStorageStore();
-  console.log(totalStored, 'totalStored')
   const [isLoading, setIsLoading] = useState(true);
+  const { myProfile, friends } = useStore();
+  console.log(myProfile, 'myProfile');
+  console.log(friends, 'fetchFriends')
+
+  const groupBy = friends.reduce((acc, curr) => { 
+    const key = curr.lastname;
+    if(!acc[key]) { 
+      acc[key] = [];
+    }
+    acc[key].push(curr);
+
+    return acc;
+  }, {});
+  console.log(groupBy, 'groupBy');
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -231,35 +237,35 @@ const Dashboard = () => {
               <img src={Logo} alt="Logo" className="sidebar-logo" />
             </div>
             <nav className="sidebar-nav">
-              <Link to="/dashboard" className="nav-item"   state={{ MAX_STORAGE, totalStored }}>
+              <Link to="/dashboard" className={`nav-item ${location.pathname === "/dashboard" ? "active" : ""}`}  state={{ MAX_STORAGE, totalStored }}>
                 <FontAwesomeIcon icon={faNetworkWired} />
                 <span>Dashboard</span>
               </Link>
-              <Link to="store-password" className="nav-item"   state={{ MAX_STORAGE, totalStored }}>
+              <Link to="store-password" className={`nav-item ${location.pathname === "/dashboard/store-password" ? "active" : ""}`}  state={{ MAX_STORAGE, totalStored }}>
                 <FontAwesomeIcon icon={faLock} />
                 <span>Store Password</span>
               </Link>
-              <Link to="store-email" className="nav-item"   state={{ MAX_STORAGE,totalStored }}>
+              <Link to="store-email" className={`nav-item ${location.pathname === "/dashboard/store-email" ? "active" : ""}`} state={{ MAX_STORAGE,totalStored }}>
                 <FontAwesomeIcon icon={faSquareEnvelope} />
                 <span>Store Emails</span>
               </Link>
-              <Link to="private-info" className="nav-item"   state={{ MAX_STORAGE,totalStored }}>
+              <Link to="private-info" className={`nav-item ${location.pathname === "/dashboard/private-info" ? "active" : ""}`} state={{ MAX_STORAGE,totalStored }}>
                 <FontAwesomeIcon icon={faCircleInfo} />
                 <span>Store Private Info</span>
               </Link>
-              <Link to="store-notes" className="nav-item"   state={{ MAX_STORAGE,totalStored }}>
+              <Link to="store-notes" className={`nav-item ${location.pathname === "/dashboard/store-notes" ? "active" : ""}`} state={{ MAX_STORAGE,totalStored }}>
                 <FontAwesomeIcon icon={faNoteSticky} />
                 <span>Store Notes</span>
               </Link>
-              <Link to="chatroom" className="nav-item">
+              <Link to="chatroom" className={`nav-item ${location.pathname === "/dashboard/chatroom" ? "active" : ""}`}>
                 <FontAwesomeIcon icon={faCommentDots} />
                 <span>Go to Chatroom</span>
               </Link>
-              <Link to="friends" className="nav-item">
+              <Link to="friends" className={`nav-item ${location.pathname === "/dashboard/friends" ? "active" : ""}`}>
                 <FontAwesomeIcon icon={faUserGroup} />
                 <span>Friends</span>
               </Link>
-              <Link to="groups" className="nav-item">
+              <Link to="groups" className={`nav-item ${location.pathname === "/dashboard/groups" ? "active" : ""}`}>
                 <FontAwesomeIcon icon={faPeopleGroup} />
                 <span>Groups</span>
               </Link>
@@ -291,7 +297,6 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Storage Usage Card */}
             <div className="dashboard-card storage-card">
               <div className="card-header">
                 <FontAwesomeIcon icon={faDatabase} />

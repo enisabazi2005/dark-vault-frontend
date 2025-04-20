@@ -63,6 +63,11 @@
   background-color: transparent;
   cursor: pointer;
 }
+.nav-item.active {
+  background-color: #3b83f648; 
+  color: white;
+  border-radius: 8px;
+}
 .nav-item span { 
   font-size: 14px;
 }
