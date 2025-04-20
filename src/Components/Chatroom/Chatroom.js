@@ -45,7 +45,14 @@ const Chatroom = () => {
   const [chatBackground, setChatBackground] = useState(null);
   const [hoveredMsg, setHoveredMsg] = useState(null);
   const [groupedReactions, setGroupedReactions] = useState({});
-  const { myProfile } = useStore();
+  const { myProfile, friends: storeFriends } = useStore();
+  const [typingStatus , setTypingStatus] = useState('');
+
+  const findIsTyping = (id) => {
+    const friend = storeFriends.find((f) => f.id === id);
+    return friend ? friend.name : 'Unknown';
+  };
+  console.log(storeFriends, 'storeFriends')
 
   const removeReaction = async (messageId) => { 
     try { 
@@ -230,6 +237,50 @@ const Chatroom = () => {
       channel.unsubscribe();
     };
   }, [selectedUser?.request_id]);
+
+  useEffect(() => { 
+
+    if (!storeFriends || storeFriends.length === 0) return;
+
+    if(!myProfile) return;
+
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: false,
+    });
+  
+    const channel = pusher.subscribe(`chatroom.${myProfile.id}`); 
+    console.log(`Subscribed to chatroom.${myProfile.id}`);
+
+    channel.bind("user.typing", function (data) {
+      if (data.is_typing) {
+        const name = findIsTyping(Number(data.sender_id));
+        setTypingStatus(`${name} is typing...`);
+        setTimeout(() => {
+          setTypingStatus('');
+        }, 4000); 
+      } 
+    });
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };  
+  }, [myProfile?.id, storeFriends]);
+  console.log(typingStatus, 'typingStatus');
+
+  const handleTyping = async () => {
+    if(!myProfile) return;
+    try {
+      await api.post('/typing', {
+        sender_id: myProfile.id,
+        receiver_id: selectedUser.id,
+        is_typing: true,
+      });
+      console.log("writing")
+    } catch (error) {
+      console.error('Error sending typing event:', error);
+    }
+  };
 
   useEffect(() => {
     if (!requestId || !selectedUser) return;
@@ -861,17 +912,36 @@ const Chatroom = () => {
             </div>
 
             <div className="message-input">
+              <div className="typing-status">
+                {typingStatus && (
+                  <p>
+                     {typingStatus.split("").map((char, index) => (
+                      <span key={index} style={{ animationDelay: `${index * 0.1}s` }}>
+                       {char}
+                      </span>
+                      ))}
+                    </p>
+                )}
+              </div>
               {messages.length > 0 ? (
                 <textarea
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  // onChange={(e) => setMessage(e.target.value)}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    handleTyping(); // 👈 Fire typing event
+                  }}
                   onKeyPress={handleKeyPress}
                   placeholder="Type your message..."
                 />
               ) : (
                 <textarea
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  // onChange={(e) => setMessage(e.target.value)}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    handleTyping(); // 👈 Fire typing event
+                  }}
                   placeholder="Say hi to your friend"
                 />
               )}
