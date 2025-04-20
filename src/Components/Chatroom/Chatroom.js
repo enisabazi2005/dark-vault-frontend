@@ -173,16 +173,17 @@ const Chatroom = () => {
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          id: message.id, // ✅ from Pusher event
+          id: message.id, 
           message: message,
           sender_id: requestId,
           reciever_id: selectedUser.request_id,
           dark_users_id: userId,
-          message_sent_at: response.data.data.message_sent_at
+          message_sent_at: response.data.data.message_sent_at,
+          sender_name: response.data.data.sender_name, 
+          sender_lastname: response.data.data.sender_lastname, 
         },
       ]);
       setMessage("");
-
       // Play the message sent sound
       if (messageSentAudioRef.current) {
         messageSentAudioRef.current.currentTime = 0;
@@ -217,7 +218,8 @@ const Chatroom = () => {
           sender_id: data.message.sender_id,
           reciever_id: data.message.reciever_id,
           dark_users_id: data.dark_users_id,
-          message_sent_at: data.message.message_sent_at
+          message_sent_at: data.message.message_sent_at,
+          sender_name: data.message.sender_name,
         },
       ]);
       console.log(messages, 'messages');

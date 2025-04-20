@@ -209,6 +209,7 @@
         width: 90%;
         margin: 0 20px;
         padding: 20px;
+        z-index: 100003;
     }
 
     .custom-modal-content ul {
