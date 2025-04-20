@@ -82,10 +82,9 @@ const Notification = () => {
           );
           return [...newMessages, ...prevMessages];
         });
-
         const newCount = count + data.notifications.length;
         setCount(newCount);
-
+        
         if (
           data.notifications.length > 0 &&
           newCount > previousCountRef.current &&
@@ -141,7 +140,7 @@ const Notification = () => {
       };
 
       setUnreadMessages((prev) => [...prev, newAcceptanceNotification]);
-
+      console.log(unreadMessages, 'unreadMessages');
       if (!isSender) {
         setPendingRequests((prev) => {
           const updated = prev.filter(
