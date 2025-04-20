@@ -32,7 +32,6 @@ import DashboardSkeleton from "./DashboardSkeleton";
 import Logo from "../../assets/images/Samira_Hadid-removebg-preview.png";
 import "../Dashboard/Dashboard.css";
 import useStorageStore from "../../Store/storageStore";
-import { useStore } from "../../Store/store";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -46,20 +45,6 @@ const Dashboard = () => {
   const communityDropdownRef = useRef(null);
   const { totalStored, updateTotalStored, data, updateChartData } = useStorageStore();
   const [isLoading, setIsLoading] = useState(true);
-  const { myProfile, friends } = useStore();
-  console.log(myProfile, 'myProfile');
-  console.log(friends, 'fetchFriends')
-
-  const groupBy = friends.reduce((acc, curr) => { 
-    const key = curr.lastname;
-    if(!acc[key]) { 
-      acc[key] = [];
-    }
-    acc[key].push(curr);
-
-    return acc;
-  }, {});
-  console.log(groupBy, 'groupBy');
 
   useEffect(() => {
     const handleClickOutside = (event) => {
