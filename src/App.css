@@ -11,3 +11,8 @@
     height: 100vh;
     overflow-y: scroll;
 }
+@media (max-width: 768px) {
+    .container {
+        height: 90vh !important;
+    }
+}

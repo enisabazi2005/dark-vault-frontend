@@ -202,3 +202,9 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(241, 196, 15, 0.4);
 } 
+
+@media (max-width: 768px) { 
+    .background-change-modal { 
+        z-index: 10002;
+    }
+}

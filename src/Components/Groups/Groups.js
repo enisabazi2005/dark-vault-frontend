@@ -631,6 +631,19 @@ const Groups = () => {
           <div className="friends-list">
             {friends.map((friend) => (
               <div key={friend.id} className="group-friend-item">
+                {/* <img
+                  src={
+                    friend.picture
+                      ? `${STORAGE_URL}/${friend.picture}`
+                      : defaultBlankPhotoUrl
+                  }
+                  alt={`${friend.first_name} ${friend.last_name}`}
+                  className="friend-avatar"
+                />
+                <span className="niger">
+                  {friend.name} {friend.lastname}
+                </span> */}
+                <div className="group-friend-item-flex">
                 <img
                   src={
                     friend.picture
@@ -643,6 +656,7 @@ const Groups = () => {
                 <span className="niger">
                   {friend.name} {friend.lastname}
                 </span>
+                </div>
                 <button
                   onClick={() => handleFriendSelection(friend.id)}
                   className={invitedUsers.includes(friend.id) ? "selected" : ""}

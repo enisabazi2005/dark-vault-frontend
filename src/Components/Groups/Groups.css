@@ -693,34 +693,173 @@
     color: #dc3545;
     background: rgba(220, 53, 69, 0.1);
 }
+.group-friend-item-flex { 
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
+/* Responsive Grid Layout */
 @media (max-width: 768px) {
     .group-container {
         grid-template-columns: 1fr;
-        margin: 20px;
+        margin: 20px 20px 50px 20px;
+        padding: 10px 10px 50px 10px;
+        gap: 20px;
+    }
+
+    .my-groups-section,
+    .accepted-groups-section,
+    .pending-invites-section,
+    .create-group {
+        grid-column: 1;
+        width: 100%;
         padding: 15px;
     }
 
-    .group-container li {
+    .group-info {
         flex-direction: column;
         gap: 10px;
-        text-align: center;
+        align-items: center;
     }
 
     .group-actions {
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
+        width: 100%;
         gap: 8px;
     }
 
     .group-actions button,
     .group-actions .group-link {
-        flex: 0 0 calc(50% - 4px);
+        width: 100%;
+        padding: 12px;
         text-align: center;
     }
 
+    .friends-list {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .group-friend-item {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+        padding: 12px;
+    }
+    .group-friend-item-flex { 
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .group-friend-item span {
+        width: 100%;
+        text-align: center;
+        margin: 8px 0;
+    }
+
+    .group-friend-item button {
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .pending-invites-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pending-invite-card {
+        padding: 15px;
+    }
+
+    .invite-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .invite-actions button {
+        width: 100%;
+    }
+
+    .dark-vault-group-modal-content {
+        width: 95%;
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .dark-vault-group-friends-list {
+        grid-template-columns: 1fr;
+    }
+
+    .dark-vault-group-modal-actions {
+        flex-direction: column;
+    }
+
+    .dark-vault-group-submit-btn,
+    .dark-vault-group-cancel-btn {
+        width: 100%;
+    }
+
+    /* Chat container responsive adjustments */
     .chat-container {
         width: 100%;
+        height: 100vh;
+        right: 0;
+    }
+
+    .chat-members-list {
+        max-height: 200px;
+    }
+
+    .chat-member-item {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .chat-member-info {
+        width: 100%;
+        text-align: center;
+        margin: 8px 0;
+    }
+
+    .admin-controls {
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+    }
+}
+
+/* Additional responsive improvements */
+@media (max-width: 480px) {
+    .group-container {
+        margin: 20px 20px 100px 20px;
+        padding: 10px 10px 30px 10px;
+    }
+
+    .group-container h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .group-container h2 {
+        font-size: 20px;
+    }
+
+    .invite-info h3 {
+        font-size: 16px;
+    }
+
+    .chat-header h2 {
+        font-size: 16px;
+    }
+
+    .chat-input-container {
+        padding: 10px;
+    }
+
+    .chat-textarea {
+        min-height: 40px;
     }
 }
 

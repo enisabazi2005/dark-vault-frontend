@@ -19,7 +19,7 @@ const PrivateInfo = () => {
   const [viewInfo, setViewInfo] = useState({});
   const [selectedPrivateInfoId, setSelectedPrivateInfoId] = useState(null);
   const location = useLocation();
-  const MAX_STORAGE = location.state?.MAX_STORAGE || 1;  
+  const MAX_STORAGE = location.state?.MAX_STORAGE || 5;  
   const { totalStored, updateTotalStored } = useStorageStore();
   const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
 

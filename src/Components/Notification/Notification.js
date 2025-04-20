@@ -196,7 +196,7 @@ const Notification = () => {
   };
 
   return (
-    <div>
+    <div className="notification-container">
       <audio ref={audioRef} src={notificationSound} preload="auto" />
       <div className="notificationIconContainer" onClick={handleBellClick}>
         <FontAwesomeIcon icon={faBell} size="2x" className="bellIcon" />
