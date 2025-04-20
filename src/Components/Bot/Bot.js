@@ -31,6 +31,8 @@ const Bot = () => {
     ];
 
     const handleClick = () => {
+        if(!myProfile) return;
+
         setIsClicked(prev => !prev);
         if (!messages.length) {
             setMessages([
@@ -43,7 +45,6 @@ const Bot = () => {
         setIsBotClicked(prev => !prev);
 
     };
-    console.log(isBotClicked);
 
     const handleFaqClick = async (question) => {
         setMessages(prev => [...prev, {
