@@ -506,6 +506,7 @@
     color: #34495e;
     display: flex;
     flex-wrap: wrap;
+    white-space: pre-wrap;
   }
   
   .typing-status p span {
@@ -513,7 +514,6 @@
     animation: dolphinJump 1.6s ease-in-out infinite;
   }
   
-  /* Dolphin wave animation */
   @keyframes dolphinJump {
     0% {
       transform: translateY(0);
@@ -531,6 +531,7 @@
       transform: translateY(0);
     }
   }
+
 .sent {
     align-self: flex-start;
     background-color: #d1f7c4;

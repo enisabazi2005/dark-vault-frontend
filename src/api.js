@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  // baseURL: "http://127.0.0.1:8000/api", 
-  baseURL: "http://192.168.1.19:8000/api",
+  baseURL: "http://127.0.0.1:8000/api", 
+  // baseURL: "http://192.168.1.19:8000/api",
 
   // baseURL: "https://dark-1.infinityfreeapp.com/api", 
   // baseURL: "https://cors-anywhere.herokuapp.com/http://dark-1.infinityfreeapp.com/api",
@@ -30,8 +30,8 @@ api.interceptors.request.use(
   }
 );
 
-// export const STORAGE_URL = "http://127.0.0.1:8000/storage";
-export const STORAGE_URL = "http://192.168.1.19:8000/storage";
+export const STORAGE_URL = "http://127.0.0.1:8000/storage";
+// export const STORAGE_URL = "http://192.168.1.19:8000/storage";
 
 // export const STORAGE_URL = "https://dark-1.infinityfreeapp.com/storage";
 // export const STORAGE_URL = 'https://cors-anywhere.herokuapp.com/http://dark-1.infinityfreeapp.com/storage'
