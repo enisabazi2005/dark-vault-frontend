@@ -45,31 +45,33 @@ const Chatroom = () => {
   const [hoveredMsg, setHoveredMsg] = useState(null);
   const [groupedReactions, setGroupedReactions] = useState({});
   const { myProfile, friends: storeFriends } = useStore();
-  const [typingStatus , setTypingStatus] = useState('');
+  const [typingStatus, setTypingStatus] = useState("");
   const typingTimeoutRef = useRef();
+  const [lastSeenId, setLastSeenId] = useState(null);
+  const [isSeen , setIsSeen] = useState(false);
+
 
   const findIsTyping = (id) => {
     const friend = storeFriends.find((f) => f.id === id);
-    return friend ? friend.name : 'Unknown';
+    return friend ? friend.name : "Unknown";
   };
-  console.log(storeFriends, 'storeFriends')
 
-  const removeReaction = async (messageId) => { 
-    try { 
+  const removeReaction = async (messageId) => {
+    try {
       const response = await api.delete(`message/${messageId}/react`);
       console.log("Reaction Deleted Successfully", response);
 
       const updatedReactions = await api.get(`/reactions/grouped`);
       setGroupedReactions(updatedReactions.data);
-    } catch(error) { 
-      console.log('Error fetching data', error);
+    } catch (error) {
+      console.log("Error fetching data", error);
       // throw error;
     }
-  }
+  };
 
   const handleReact = async (messageId, emojiKeyword) => {
     const darkUserId = localStorage.getItem("user_id");
-    console.log(messageId, emojiKeyword, 'post request for react');
+    console.log(messageId, emojiKeyword, "post request for react");
     try {
       const response = await api.post(`/message/${messageId}/react`, {
         reaction_type: emojiKeyword,
@@ -77,7 +79,7 @@ const Chatroom = () => {
         dark_users_id: darkUserId,
       });
       console.log("Reacted successfully:", response.data);
-      const updatedReactions = await api.get('/reactions/grouped');
+      const updatedReactions = await api.get("/reactions/grouped");
       setGroupedReactions(updatedReactions.data);
     } catch (error) {
       console.error("Failed to send reaction:", error.response?.data || error);
@@ -86,7 +88,7 @@ const Chatroom = () => {
 
   useEffect(() => {
     async function fetchGroupedReactions() {
-      const res = await api.get('/reactions/grouped');
+      const res = await api.get("/reactions/grouped");
       setGroupedReactions(res.data);
     }
     fetchGroupedReactions();
@@ -123,7 +125,9 @@ const Chatroom = () => {
       if (!selectedUser || !selectedUser.request_id) return;
 
       try {
-        const response = await api.get(`/dark-user/${selectedUser.request_id}/get-friends`);
+        const response = await api.get(
+          `/dark-user/${selectedUser.request_id}/get-friends`
+        );
         setSelectedUserFriends(response.data);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -173,21 +177,22 @@ const Chatroom = () => {
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          id: message.id, 
+          id: message.id,
           message: message,
           sender_id: requestId,
           reciever_id: selectedUser.request_id,
           dark_users_id: userId,
           message_sent_at: response.data.data.message_sent_at,
-          sender_name: response.data.data.sender_name, 
-          sender_lastname: response.data.data.sender_lastname, 
+          sender_name: response.data.data.sender_name,
+          sender_lastname: response.data.data.sender_lastname,
+          is_seen: response.data.data.is_seen, //new line added
         },
       ]);
       setMessage("");
       // Play the message sent sound
       if (messageSentAudioRef.current) {
         messageSentAudioRef.current.currentTime = 0;
-        messageSentAudioRef.current.play().catch(error => {
+        messageSentAudioRef.current.play().catch((error) => {
           console.error("Error playing message sent sound:", error);
         });
       }
@@ -220,9 +225,10 @@ const Chatroom = () => {
           dark_users_id: data.dark_users_id,
           message_sent_at: data.message.message_sent_at,
           sender_name: data.message.sender_name,
+          is_seen: data.message.is_seen,
         },
       ]);
-      console.log(messages, 'messages');
+      console.log(messages, "messages");
     });
 
     return () => {
@@ -231,17 +237,17 @@ const Chatroom = () => {
     };
   }, [selectedUser?.request_id]);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (!storeFriends || storeFriends.length === 0) return;
 
-    if(!myProfile) return;
+    if (!myProfile) return;
 
     const pusher = new Pusher(PUSHER_APP_KEY, {
       cluster: PUSHER_CLUSTER,
       encrypted: false,
     });
-  
-    const channel = pusher.subscribe(`chatroom.${myProfile.id}`); 
+
+    const channel = pusher.subscribe(`chatroom.${myProfile.id}`);
     console.log(`Subscribed to chatroom.${myProfile.id}`);
 
     channel.bind("user.typing", function (data) {
@@ -249,36 +255,35 @@ const Chatroom = () => {
         const name = findIsTyping(Number(data.sender_id));
         setTypingStatus(`${name} is typing...`);
         setTimeout(() => {
-          setTypingStatus('');
-        }, 4000); 
-      } 
+          setTypingStatus("");
+        }, 4000);
+      }
     });
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
-    };  
+    };
   }, [myProfile?.id, storeFriends]);
-  console.log(typingStatus, 'typingStatus');
 
   const debouncedHandleTyping = useCallback(() => {
     if (!myProfile) return;
-  
+
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-  
+
     typingTimeoutRef.current = setTimeout(async () => {
       try {
-        await api.post('/typing', {
+        await api.post("/typing", {
           sender_id: myProfile.id,
           receiver_id: selectedUser.id,
           is_typing: true,
         });
         console.log("writing");
       } catch (error) {
-        console.error('Error sending typing event:', error);
+        console.error("Error sending typing event:", error);
       }
-    }, 1500); 
+    }, 1500);
   }, [myProfile, selectedUser]);
 
   useEffect(() => {
@@ -306,7 +311,8 @@ const Chatroom = () => {
             sender_id: message.sender_id,
             reciever_id: message.reciever_id,
             dark_users_id: message.dark_users_id,
-            message_sent_at: message.message_sent_at
+            message_sent_at: message.message_sent_at,
+            is_seen: message.is_seen,
           });
         });
 
@@ -422,73 +428,131 @@ const Chatroom = () => {
   };
 
   useEffect(() => {
-  if (!myProfile?.request_id) return;
+    if (!myProfile?.request_id) return;
+
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: false,
+    });
+
+    const channel = pusher.subscribe(`friend-request.${myProfile.request_id}`);
+    console.log(`Subscribed to friend-request.${myProfile.request_id}`);
+
+    channel.bind("FriendRequestSent", (data) => {
+      console.log("📩 Live friend request received!", data);
+
+      setPendingRequests((prev) => [
+        ...prev,
+        {
+          friend_name: data.sender.name,
+          request_friend_id: data.sender.request_id,
+          friend_picture_url: data.sender.picture || null,
+        },
+      ]);
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [myProfile?.request_id]);
+
+  const fetchFriends = async () => {
+    try {
+      const response = await api.get(
+        `/friend-request/${myProfile.request_id}/friends`
+      );
+      setFriends(response.data);
+    } catch (error) {
+      console.error("Error fetching friends:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!myProfile?.request_id) return;
+
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: false,
+    });
+    console.log(myProfile, "myProfile");
+    const channel = pusher.subscribe(`friend-accept.${myProfile.request_id}`);
+    console.log(`Subscribed to friend-accept.${myProfile.request_id}`);
+
+    channel.bind("FriendRequestAccepted", (data) => {
+      console.log("✅ Friend request accepted!", data);
+      fetchFriends();
+    });
+    console.log(myProfile, "myProfile");
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [myProfile?.request_id]);
+
+  useEffect(() => {
+    if (!myProfile?.request_id) return;
+    fetchFriends();
+  }, [myProfile]);
+
+
+useEffect(() => {
+  if (!selectedUser?.id || !myProfile?.request_id || !isOpen) return;
+
+  const lastUnseenMessage = [...messages]
+    .reverse()
+    .find(
+      (msg) =>
+        msg.reciever_id === myProfile.request_id &&
+        msg.sender_id === selectedUser.request_id &&
+        !msg.is_seen
+    );
+
+  if (lastUnseenMessage && lastUnseenMessage.id !== lastSeenId) {
+    markLastMessageAsSeen(lastUnseenMessage.id); 
+  }
+}, [messages, selectedUser?.id, myProfile?.request_id, isOpen]);
+
+const markLastMessageAsSeen = async (messageId) => {
+  if (!messageId) return;
+
+  try {
+    const res = await api.post("/mark-as-seen", {
+      message_id: messageId,
+    });
+
+    setLastSeenId(messageId); 
+
+    setIsSeen(true);
+    
+  } catch (error) {
+    console.error("Failed to mark message as seen:", error);
+  }
+};
+
+useEffect(() => {
+  if (!myProfile?.id) return;
 
   const pusher = new Pusher(PUSHER_APP_KEY, {
     cluster: PUSHER_CLUSTER,
-    encrypted: false,
+    encrypted: true,
   });
 
-  const channel = pusher.subscribe(`friend-request.${myProfile.request_id}`);
-  console.log(`Subscribed to friend-request.${myProfile.request_id}`);
+  const channel = pusher.subscribe(`chat.${myProfile.request_id}`); 
 
-  channel.bind('FriendRequestSent', (data) => {
-    console.log('📩 Live friend request received!', data);
-
-    setPendingRequests((prev) => [
-      ...prev,
-      {
-        friend_name: data.sender.name,
-        request_friend_id: data.sender.request_id,
-        friend_picture_url: data.sender.picture || null,
-      },
-    ]);
+  channel.bind("MessageSeenEvent", (data) => {
+    console.log("👀 Message seen event received!", data);
+    if (data.message_id) {
+      setLastSeenId(data.message_id);
+      setIsSeen(true);
+    }
   });
 
   return () => {
     channel.unbind_all();
     channel.unsubscribe();
   };
-}, [myProfile?.request_id]);
-
-
-  const fetchFriends = async () => {
-    try {
-      const response = await api.get(`/friend-request/${myProfile.request_id}/friends`);
-      setFriends(response.data);
-    } catch (error) {
-      console.error("Error fetching friends:", error);
-    }
-  };
-  
-
-  useEffect(() => {
-    if (!myProfile?.request_id) return;
-  
-    const pusher = new Pusher(PUSHER_APP_KEY, {
-      cluster: PUSHER_CLUSTER,
-      encrypted: false,
-    });
-    console.log(myProfile, 'myProfile');    
-    const channel = pusher.subscribe(`friend-accept.${myProfile.request_id}`);
-    console.log(`Subscribed to friend-accept.${myProfile.request_id}`);
-  
-    channel.bind('FriendRequestAccepted', (data) => {
-      console.log('✅ Friend request accepted!', data);
-      fetchFriends(); 
-    });
-    console.log(myProfile, 'myProfile');
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
-  }, [myProfile?.request_id]);
-  
-  
-  useEffect(() => {
-    if (!myProfile?.request_id) return;
-    fetchFriends();
-  }, [myProfile]);
+}, [myProfile?.id]);
 
   const sendFriendRequest = async (userRequestId) => {
     try {
@@ -548,7 +612,7 @@ const Chatroom = () => {
   const handleSelectUser = (user, isFriendSelection = false) => {
     setSelectedUser(user);
 
-    const isBlockedByUser = blockedBy.some(blocked => blocked.id === user.id); // Use `user.id` directly
+    const isBlockedByUser = blockedBy.some((blocked) => blocked.id === user.id); // Use `user.id` directly
     console.log(isBlockedByUser);
 
     if (isBlockedByUser) {
@@ -558,7 +622,6 @@ const Chatroom = () => {
       setErrorMessage("");
       setFriend(isFriend(user.request_id));
     }
-
 
     if (isFriendSelection) {
       setIsOpen(true);
@@ -584,7 +647,7 @@ const Chatroom = () => {
   );
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault(); // Prevent new line
       handleSendMessage();
     }
@@ -596,12 +659,12 @@ const Chatroom = () => {
 
   const fetchBackground = async () => {
     try {
-      const response = await api.get('/background');
+      const response = await api.get("/background");
       if (response.data && response.data.option) {
         setChatBackground(response.data.option);
       }
     } catch (error) {
-      console.error('Error fetching background:', error);
+      console.error("Error fetching background:", error);
     }
   };
 
@@ -666,8 +729,8 @@ const Chatroom = () => {
                     blockedBy.some((user) => user.id === selectedUser.id)
                       ? defaultBlankPhotoUrl
                       : selectedUser.picture
-                        ? `${STORAGE_URL}/${selectedUser.picture}`
-                        : defaultBlankPhotoUrl
+                      ? `${STORAGE_URL}/${selectedUser.picture}`
+                      : defaultBlankPhotoUrl
                   }
                   alt="Profile"
                   className="user-image"
@@ -676,10 +739,14 @@ const Chatroom = () => {
               <div className="user-details">
                 <div className="selected-user-details">
                   <div className="user-info">
-                    <p>{selectedUser.name} {selectedUser.lastname}
-                    {isFriend(selectedUser.request_id) && selectedUserFriends?.friends_count > 0 && (
-                      <span>{selectedUserFriends.friends_count} Friends</span>
-                    )}
+                    <p>
+                      {selectedUser.name} {selectedUser.lastname}
+                      {isFriend(selectedUser.request_id) &&
+                        selectedUserFriends?.friends_count > 0 && (
+                          <span>
+                            {selectedUserFriends.friends_count} Friends
+                          </span>
+                        )}
                     </p>
                   </div>
                   <button
@@ -693,17 +760,16 @@ const Chatroom = () => {
                     {isFriend(selectedUser.request_id)
                       ? "Friends"
                       : friendRequestSent
-                        ? "Friend Request Sent"
-                        : errorMessage
-                          ? errorMessage
-                          : "Add Friend"}
+                      ? "Friend Request Sent"
+                      : errorMessage
+                      ? errorMessage
+                      : "Add Friend"}
                   </button>
                 </div>
               </div>
             </div>
           )}
         </div>
-
       </div>
 
       <div className="row-layout row-layout-friends">
@@ -776,7 +842,9 @@ const Chatroom = () => {
                     alt={`${friend.name} ${friend.lastname}`}
                     className="user-image-filter"
                   />
-                  <span>{friend.name} {friend.lastname}</span>
+                  <span>
+                    {friend.name} {friend.lastname}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -790,7 +858,7 @@ const Chatroom = () => {
       )}
       {isOpen && selectedUser && messages && (
         <div className="chat-layout">
-          <div className={`chat-window ${chatBackground || ''}`}>
+          <div className={`chat-window ${chatBackground || ""}`}>
             <div className="messages">
               <div className="display-friend-row">
                 <div
@@ -841,7 +909,10 @@ const Chatroom = () => {
                     <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
-                <div className="settings-background-change" onClick={() => setIsBackgroundModalOpen(true)}>
+                <div
+                  className="settings-background-change"
+                  onClick={() => setIsBackgroundModalOpen(true)}
+                >
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </div>
               </div>
@@ -861,12 +932,13 @@ const Chatroom = () => {
                     return (
                       <div
                         key={index}
-                        className={`message ${isSent
-                          ? "sent"
-                          : isReceived
+                        className={`message ${
+                          isSent
+                            ? "sent"
+                            : isReceived
                             ? "received"
                             : "just-sent"
-                          }`}
+                        }`}
                         onMouseEnter={() => setHoveredMsg(index)}
                         onMouseLeave={() => setHoveredMsg(null)}
                       >
@@ -876,11 +948,16 @@ const Chatroom = () => {
                           <div className="reaction-bar">
                             {Object.entries(
                               reactions.reduce((acc, r) => {
-                                acc[r.reaction_type] = (acc[r.reaction_type] || 0) + 1;
+                                acc[r.reaction_type] =
+                                  (acc[r.reaction_type] || 0) + 1;
                                 return acc;
                               }, {})
                             ).map(([type, count], idx) => (
-                              <span key={idx} className="reaction-display" onClick={() => removeReaction(msg.id)}>
+                              <span
+                                key={idx}
+                                className="reaction-display"
+                                onClick={() => removeReaction(msg.id)}
+                              >
                                 {emojiMap[type] || type} {count}
                               </span>
                             ))}
@@ -890,25 +967,43 @@ const Chatroom = () => {
                         <div className="message-status">
                           {isSent && <span className="checkmarks">✓✓</span>}
                           {msg.message_sent_at && (
-                            <p className="message-time">{new Date(msg.message_sent_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</p>
+                            <p className="message-time">
+                              {new Date(msg.message_sent_at).toLocaleTimeString(
+                                [],
+                                { hour: "numeric", minute: "2-digit" }
+                              )}
+                            </p>
                           )}
                         </div>
                         {hoveredMsg === index && (
                           <div className="emoji-reactions">
-                            <span onClick={() => handleReact(msg.id, "heart")}>❤️</span>
-                            <span onClick={() => handleReact(msg.id, "like")}>👍</span>
-                            <span onClick={() => handleReact(msg.id, "laugh")}>😂</span>
-                            <span onClick={() => handleReact(msg.id, "cry")}>😢</span>
-                            <span onClick={() => handleReact(msg.id, "curious")}>🤩</span>
-                            <span onClick={() => handleReact(msg.id, "dislike")}>👎</span>
+                            <span onClick={() => handleReact(msg.id, "heart")}>
+                              ❤️
+                            </span>
+                            <span onClick={() => handleReact(msg.id, "like")}>
+                              👍
+                            </span>
+                            <span onClick={() => handleReact(msg.id, "laugh")}>
+                              😂
+                            </span>
+                            <span onClick={() => handleReact(msg.id, "cry")}>
+                              😢
+                            </span>
+                            <span
+                              onClick={() => handleReact(msg.id, "curious")}
+                            >
+                              🤩
+                            </span>
+                            <span
+                              onClick={() => handleReact(msg.id, "dislike")}
+                            >
+                              👎
+                            </span>
                           </div>
-
                         )}
                       </div>
                     );
-                    
                   })
-                  
                 ) : (
                   <div className="message-content-fallback">
                     <p>No messages yet</p>
@@ -920,14 +1015,22 @@ const Chatroom = () => {
 
             <div className="message-input">
               <div className="typing-status">
+              {isSeen ? (
+  <div className="text-green-500 text-sm">Seen</div>
+) : (
+  <div className="text-gray-500 text-sm">Sent</div>
+)}
                 {typingStatus && (
                   <p>
-                     {typingStatus.split("").map((char, index) => (
-                      <span key={index} style={{ animationDelay: `${index * 0.1}s` }}>
-                       {char}
+                    {typingStatus.split("").map((char, index) => (
+                      <span
+                        key={index}
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        {char}
                       </span>
-                      ))}
-                    </p>
+                    ))}
+                  </p>
                 )}
               </div>
               {messages.length > 0 ? (
@@ -938,7 +1041,6 @@ const Chatroom = () => {
                     setMessage(e.target.value);
                     // handleTyping(); // 👈 Fire typing event
                     debouncedHandleTyping(); // debounce logic runs here
-
                   }}
                   onKeyPress={handleKeyPress}
                   placeholder="Type your message..."
@@ -951,7 +1053,6 @@ const Chatroom = () => {
                     setMessage(e.target.value);
                     // handleTyping(); // 👈 Fire typing event
                     debouncedHandleTyping(); // debounce logic runs here
-
                   }}
                   placeholder="Say hi to your friend"
                 />

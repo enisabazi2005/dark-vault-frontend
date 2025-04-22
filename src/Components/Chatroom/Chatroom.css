@@ -511,22 +511,31 @@
   
   .typing-status p span {
     display: inline-block;
-    animation: dolphinJump 1.6s ease-in-out infinite;
+    animation: dolphinJump 3s ease-in-out infinite; /* Increased duration for pause */
   }
   
+  /* Dolphin wave with a built-in pause at the end */
   @keyframes dolphinJump {
     0% {
       transform: translateY(0);
     }
-    25% {
+    10% {
+      transform: translateY(-3px) rotate(-2deg);
+    }
+    20% {
+      transform: translateY(2px) rotate(1deg);
+    }
+    30% {
       transform: translateY(-2px) rotate(-1deg);
     }
+    40% {
+      transform: translateY(1px) rotate(2deg);
+    }
     50% {
-      transform: translateY(0) rotate(0deg);
+      transform: translateY(0);
     }
-    75% {
-      transform: translateY(2px) rotate(4deg);
-    }
+  
+    /* 50% - 100% = pause period */
     100% {
       transform: translateY(0);
     }
