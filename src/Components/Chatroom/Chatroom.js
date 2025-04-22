@@ -511,6 +511,17 @@ const Chatroom = () => {
     }
   }, [messages, selectedUser?.id, myProfile?.request_id, isOpen]);
 
+  useEffect(() => {
+    if (!messages.length) return;
+  
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage?.is_seen) {
+      setIsSeen(true);
+    } else {
+      setIsSeen(false);
+    }
+  }, [messages]);
+
   const markLastMessageAsSeen = async (messageId) => {
     if (!messageId) return;
 
@@ -518,7 +529,7 @@ const Chatroom = () => {
       const res = await api.post("/mark-as-seen", {
         message_id: messageId,
       });
-
+      console.log(res.data);
       setLastSeenId(messageId);
 
       setIsSeen(true);
@@ -940,7 +951,11 @@ const Chatroom = () => {
                         onMouseLeave={() => setHoveredMsg(null)}
                       >
                         <p className="message-content">{messageContent}</p>
-
+                        {/* {isSeen ? (
+                          <div className="text-green-500 text-sm">Seen</div>
+                            ) : (
+                          <div className="text-gray-500 text-sm">Sent</div>
+                            )} */}
                         {reactions.length > 0 && (
                           <div className="reaction-bar">
                             {Object.entries(
@@ -960,7 +975,6 @@ const Chatroom = () => {
                             ))}
                           </div>
                         )}
-
                         <div className="message-status">
                           {isSent && <span className="checkmarks">✓✓</span>}
                           {msg.message_sent_at && (
@@ -971,7 +985,27 @@ const Chatroom = () => {
                               )}
                             </p>
                           )}
+                          {/* {index === sortedMessages.length - 1  && (
+                          isSeen ? (
+                            <div className="message-seen-status">
+                              <p className="message-seen-status-true">Seen</p>
+                            </div>
+                            ) : (
+                          <div className="message-seen-status">
+                            <p className="message-seen-status-false">Sent</p>
+                          </div>
+                            )
+                          )} */}
                         </div>
+                        <div className="message-seen-status">
+                        {index === sortedMessages.length - 1  && (
+                          isSeen ? (
+                              <p className="message-seen-status-true">Seen</p>
+                            ) : (
+                              <p className="message-seen-status-false">Sent</p>
+                            )
+                          )}
+                          </div>
                         {hoveredMsg === index && (
                           <div className="emoji-reactions">
                             <span onClick={() => handleReact(msg.id, "heart")}>
@@ -1012,11 +1046,11 @@ const Chatroom = () => {
 
             <div className="message-input">
               <div className="typing-status">
-                {isSeen ? (
+                {/* {isSeen ? (
                   <div className="text-green-500 text-sm">Seen</div>
                 ) : (
                   <div className="text-gray-500 text-sm">Sent</div>
-                )}
+                )} */}
                 {typingStatus && (
                   <p>
                     {typingStatus.split("").map((char, index) => (
