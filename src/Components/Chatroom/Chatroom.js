@@ -976,7 +976,7 @@ const Chatroom = () => {
                           </div>
                         )}
                         <div className="message-status">
-                          {isSent && <span className="checkmarks">✓✓</span>}
+                          {/* {isSent && <span className="checkmarks">✓✓</span>} */}
                           {msg.message_sent_at && (
                             <p className="message-time">
                               {new Date(msg.message_sent_at).toLocaleTimeString(
@@ -1070,8 +1070,7 @@ const Chatroom = () => {
                   // onChange={(e) => setMessage(e.target.value)}
                   onChange={(e) => {
                     setMessage(e.target.value);
-                    // handleTyping(); // 👈 Fire typing event
-                    debouncedHandleTyping(); // debounce logic runs here
+                    debouncedHandleTyping(); // 👈 this must fire on every input
                   }}
                   onKeyPress={handleKeyPress}
                   placeholder="Type your message..."

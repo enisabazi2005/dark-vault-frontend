@@ -561,9 +561,11 @@
 }
 .received .message-seen-status-true { 
     color: #17fd77;
+    text-align: end;
 }
 .sent .message-seen-status-true { 
     color: #149ffb;
+    text-align: start;
 }
 
 @keyframes fadeIn {
@@ -725,7 +727,8 @@
     align-items: flex-start;
     width: 100%;
     height: auto;
-    min-height: 100%;
+    /* height: fit-content; */
+    min-height: fit-content;
     padding-right: 5px; 
     margin-bottom: 10px;
 }
