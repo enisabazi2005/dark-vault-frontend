@@ -48,8 +48,7 @@ const Chatroom = () => {
   const [typingStatus, setTypingStatus] = useState("");
   const typingTimeoutRef = useRef();
   const [lastSeenId, setLastSeenId] = useState(null);
-  const [isSeen , setIsSeen] = useState(false);
-
+  const [isSeen, setIsSeen] = useState(false);
 
   const findIsTyping = (id) => {
     const friend = storeFriends.find((f) => f.id === id);
@@ -495,64 +494,62 @@ const Chatroom = () => {
     fetchFriends();
   }, [myProfile]);
 
+  useEffect(() => {
+    if (!selectedUser?.id || !myProfile?.request_id || !isOpen) return;
 
-useEffect(() => {
-  if (!selectedUser?.id || !myProfile?.request_id || !isOpen) return;
+    const lastUnseenMessage = [...messages]
+      .reverse()
+      .find(
+        (msg) =>
+          msg.reciever_id === myProfile.request_id &&
+          msg.sender_id === selectedUser.request_id &&
+          !msg.is_seen
+      );
 
-  const lastUnseenMessage = [...messages]
-    .reverse()
-    .find(
-      (msg) =>
-        msg.reciever_id === myProfile.request_id &&
-        msg.sender_id === selectedUser.request_id &&
-        !msg.is_seen
-    );
+    if (lastUnseenMessage && lastUnseenMessage.id !== lastSeenId) {
+      markLastMessageAsSeen(lastUnseenMessage.id);
+    }
+  }, [messages, selectedUser?.id, myProfile?.request_id, isOpen]);
 
-  if (lastUnseenMessage && lastUnseenMessage.id !== lastSeenId) {
-    markLastMessageAsSeen(lastUnseenMessage.id); 
-  }
-}, [messages, selectedUser?.id, myProfile?.request_id, isOpen]);
+  const markLastMessageAsSeen = async (messageId) => {
+    if (!messageId) return;
 
-const markLastMessageAsSeen = async (messageId) => {
-  if (!messageId) return;
+    try {
+      const res = await api.post("/mark-as-seen", {
+        message_id: messageId,
+      });
 
-  try {
-    const res = await api.post("/mark-as-seen", {
-      message_id: messageId,
+      setLastSeenId(messageId);
+
+      setIsSeen(true);
+    } catch (error) {
+      console.error("Failed to mark message as seen:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!myProfile?.id) return;
+
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: true,
     });
 
-    setLastSeenId(messageId); 
+    const channel = pusher.subscribe(`chat.${myProfile.request_id}`);
 
-    setIsSeen(true);
-    
-  } catch (error) {
-    console.error("Failed to mark message as seen:", error);
-  }
-};
+    channel.bind("MessageSeenEvent", (data) => {
+      console.log("👀 Message seen event received!", data);
+      if (data.message_id) {
+        setLastSeenId(data.message_id);
+        setIsSeen(true);
+      }
+    });
 
-useEffect(() => {
-  if (!myProfile?.id) return;
-
-  const pusher = new Pusher(PUSHER_APP_KEY, {
-    cluster: PUSHER_CLUSTER,
-    encrypted: true,
-  });
-
-  const channel = pusher.subscribe(`chat.${myProfile.request_id}`); 
-
-  channel.bind("MessageSeenEvent", (data) => {
-    console.log("👀 Message seen event received!", data);
-    if (data.message_id) {
-      setLastSeenId(data.message_id);
-      setIsSeen(true);
-    }
-  });
-
-  return () => {
-    channel.unbind_all();
-    channel.unsubscribe();
-  };
-}, [myProfile?.id]);
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [myProfile?.id]);
 
   const sendFriendRequest = async (userRequestId) => {
     try {
@@ -1015,11 +1012,11 @@ useEffect(() => {
 
             <div className="message-input">
               <div className="typing-status">
-              {isSeen ? (
-  <div className="text-green-500 text-sm">Seen</div>
-) : (
-  <div className="text-gray-500 text-sm">Sent</div>
-)}
+                {isSeen ? (
+                  <div className="text-green-500 text-sm">Seen</div>
+                ) : (
+                  <div className="text-gray-500 text-sm">Sent</div>
+                )}
                 {typingStatus && (
                   <p>
                     {typingStatus.split("").map((char, index) => (
