@@ -343,7 +343,7 @@
     display: flex;
     flex-direction: column;
     /* height: 95%; */
-    height: 65%;
+    height: 75%;
     width: 35%;
     max-width: 100%;
     border: none;
@@ -484,7 +484,8 @@
 
 .message {
     max-width: 70%;
-    padding: 12px 16px !important;
+    /* padding: 12px 16px !important; */
+    padding: 10px 16px !important;
     margin: 6px 0 !important;
     border-radius: 16px;
     word-wrap: break-word;
@@ -511,27 +512,70 @@
   
   .typing-status p span {
     display: inline-block;
-    animation: dolphinJump 1.6s ease-in-out infinite;
+    animation: dolphinJump 3s ease-in-out infinite; /* Increased duration for pause */
   }
   
+  /* Dolphin wave with a built-in pause at the end */
   @keyframes dolphinJump {
     0% {
       transform: translateY(0);
     }
-    25% {
+    10% {
+      transform: translateY(-3px) rotate(-2deg);
+    }
+    20% {
+      transform: translateY(2px) rotate(1deg);
+    }
+    30% {
       transform: translateY(-2px) rotate(-1deg);
     }
+    40% {
+      transform: translateY(1px) rotate(2deg);
+    }
     50% {
-      transform: translateY(0) rotate(0deg);
+      transform: translateY(0);
     }
-    75% {
-      transform: translateY(2px) rotate(4deg);
-    }
+  
+    /* 50% - 100% = pause period */
     100% {
       transform: translateY(0);
     }
   }
 
+.message-seen-status { 
+    position: relative;
+}
+.message-seen-status-true { 
+    font-size: 16px;
+    color: #149ffb;
+    font-weight: 600;
+    animation: fadeIn 0.4s ease-in linear;
+    transition: 0.3s ease-in;
+}
+.message-seen-status-false { 
+    font-size: 16px;
+    color: #606060;
+    font-weight: 600;
+    animation: fadeIn 0.4s ease-in linear;
+    transition: 0.3s ease-in;
+}
+.received .message-seen-status-true { 
+    color: #17fd77;
+    text-align: end;
+}
+.sent .message-seen-status-true { 
+    color: #149ffb;
+    text-align: start;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0.3;
+    }
+    to { 
+        opacity: 1;
+    }
+}
 .sent {
     align-self: flex-start;
     background-color: #d1f7c4;
@@ -683,7 +727,8 @@
     align-items: flex-start;
     width: 100%;
     height: auto;
-    min-height: 100%;
+    /* height: fit-content; */
+    min-height: fit-content;
     padding-right: 5px; 
     margin-bottom: 10px;
 }
