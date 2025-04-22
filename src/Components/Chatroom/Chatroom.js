@@ -188,6 +188,12 @@ const Chatroom = () => {
         },
       ]);
       setMessage("");
+      if(isOpen) { 
+        console.log(isOpen, 'isOpen');
+        markLastMessageAsSeen(response.data.data.message.id);
+      } else { 
+        console.log("isopen false", isOpen);
+      }
       // Play the message sent sound
       if (messageSentAudioRef.current) {
         messageSentAudioRef.current.currentTime = 0;
@@ -227,6 +233,12 @@ const Chatroom = () => {
           is_seen: data.message.is_seen,
         },
       ]);
+      if(isOpen) {
+        console.log(isOpen, "isOpen true"); 
+        markLastMessageAsSeen(data.message.id);
+      } else { 
+        console.log(isOpen, 'isOpen false');
+      }
       console.log(messages, "messages");
     });
 
@@ -515,12 +527,21 @@ const Chatroom = () => {
     if (!messages.length) return;
   
     const lastMessage = messages[messages.length - 1];
+    
+    if (!lastMessage.is_seen) {
+      console.log("Marking last message as seen:", lastMessage.id);
+      markLastMessageAsSeen(lastMessage.id);  
+    } else { 
+      console.log("Marking last message as not seen not working sadly");
+    }
+  
     if (lastMessage?.is_seen) {
       setIsSeen(true);
     } else {
       setIsSeen(false);
     }
   }, [messages]);
+  
 
   const markLastMessageAsSeen = async (messageId) => {
     if (!messageId) return;
