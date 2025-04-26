@@ -14,6 +14,7 @@ import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import Groups from "./Components/Groups/Groups";
 import Payout from "./Components/Payout/Payout";
 import Bot from "./Components/Bot/Bot";
+import RouteTransition from "./Components/RouteTransition/RouteTransition";
 import "./App.css";
 import { StoreProvider } from "./Store/store";
 
@@ -26,31 +27,31 @@ const App = () => {
 
   return (
     <div className="container">
-          <StoreProvider>
+      <StoreProvider>
+        <Router>
+          <RouteTransition>
+            <Routes>
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ResetPassword />} />
 
-      <Router>
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ResetPassword />} />
+              <Route path="/dashboard" element={<Dashboard />}>
+                <Route path="bot" element={<Bot />}></Route>
+                <Route path="store-password" element={<Password />} />
+                <Route path="store-email" element={<Email />} />
+                <Route path="private-info" element={<PrivateInfo />} />
+                <Route path="store-notes" element={<Notes />} />
+                <Route path="chatroom" element={<Chatroom />} />
+                <Route path="settings" element={<Settings />}></Route>
+                <Route path="friends" element={<Friends />}></Route>
+                <Route path="groups" element={<Groups />}></Route>
+              </Route>
 
-          <Route path="/dashboard" element={<Dashboard />}>
-            <Route path="bot" element={<Bot />}></Route>
-            <Route path="store-password" element={<Password />} />
-            <Route path="store-email" element={<Email />} />
-            <Route path="private-info" element={<PrivateInfo />} />
-            <Route path="store-notes" element={<Notes />} />
-            <Route path="chatroom" element={<Chatroom />} />
-            <Route path="settings" element={<Settings />}></Route>
-            <Route path="friends" element={<Friends />}></Route>
-            <Route path="groups" element={<Groups />}></Route>
-          </Route>
-
-          <Route path="/payout" element={<Payout />} />
-        </Routes>
-      </Router>
+              <Route path="/payout" element={<Payout />} />
+            </Routes>
+          </RouteTransition>
+        </Router>
       </StoreProvider>
-
     </div>
   );
 };
