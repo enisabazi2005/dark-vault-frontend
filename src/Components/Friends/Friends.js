@@ -86,9 +86,11 @@ const Friends = () => {
                   className="user-avatar"
                 />
                 <span>{friend.name}</span>
+                <div className="user-mute-div">
                 {usersMuted.includes(friend.id) && (
-                    <span style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
+                    <span className="user-mute-span" style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
                 )}
+                </div>
                 <div className="unblock-div">
                   <button className="unfriend-btn" onClick={() => handleUnfriend(friend.request_id)}>
                     <FontAwesomeIcon icon={loadingUnfriend[friend.request_id] ? faUnlock : faTrash} />

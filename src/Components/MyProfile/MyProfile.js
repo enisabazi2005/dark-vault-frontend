@@ -116,7 +116,7 @@ const MyProfile = ({ updateNotificationCount }) => {
               alt={`${user.name} ${user.lastname}`}
               className="user-pic"
               style={{
-                border: `1px solid ${borderColor}`,
+                border: `2px solid ${borderColor}`,
               }}
             />
           </div>

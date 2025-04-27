@@ -935,7 +935,7 @@ const Chatroom = () => {
                   )}
                   {selectedUser && <h1>{selectedUser.name}</h1>}
                   {usersMuted.includes(selectedUser.id) && (
-                       <span style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
+                       <span style={{ color: 'red' }}>🔇</span> 
                     )}
                 </div>
                 {isProfileClicked && selectedUser && (
