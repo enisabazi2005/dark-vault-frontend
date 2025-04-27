@@ -12,6 +12,7 @@ import Blocked from "../Blocked/Blocked";
 import BackgroundChange from "../BackgroundChange/BackgroundChange";
 import MessageSent from "../../assets/images/message-sent.wav";
 import { useStore } from "../../Store/store";
+import useStorageStore from "../../Store/storageStore";
 
 const Chatroom = () => {
   const [users, setUsers] = useState([]);
@@ -49,11 +50,32 @@ const Chatroom = () => {
   const typingTimeoutRef = useRef();
   const [lastSeenId, setLastSeenId] = useState(null);
   const [isSeen, setIsSeen] = useState(false);
+  const { usersMuted, updateUsersMuted } = useStorageStore();
 
   const findIsTyping = (id) => {
     const friend = storeFriends.find((f) => f.id === id);
     return friend ? friend.name : "Unknown";
   };
+
+  useEffect(() => {
+    const fetchMutedUsers = async () => {
+      try {
+        const response = await api.get("/muted-users", {
+          params: {
+            dark_users_id: userId,
+          },
+        });
+        if (response.status === 200) {
+          updateUsersMuted(response.data.muted_users);
+        }
+      } catch (error) {
+        console.error("Error fetching muted users:", error);
+      }
+    };
+
+    fetchMutedUsers();
+  }, [userId, updateUsersMuted]);
+
 
   const removeReaction = async (messageId) => {
     try {
@@ -641,7 +663,7 @@ const Chatroom = () => {
   const handleSelectUser = (user, isFriendSelection = false) => {
     setSelectedUser(user);
 
-    const isBlockedByUser = blockedBy.some((blocked) => blocked.id === user.id); // Use `user.id` directly
+    const isBlockedByUser = blockedBy.some((blocked) => blocked.id === user.id); 
     console.log(isBlockedByUser);
 
     if (isBlockedByUser) {
@@ -776,6 +798,9 @@ const Chatroom = () => {
                             {selectedUserFriends.friends_count} Friends
                           </span>
                         )}
+                        {usersMuted.includes(selectedUser.id) && (
+                          <span style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
+                        )}
                     </p>
                   </div>
                   <button
@@ -873,6 +898,9 @@ const Chatroom = () => {
                   />
                   <span>
                     {friend.name} {friend.lastname}
+                    {usersMuted.includes(friend.id) && (
+                       <span style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
+                    )}
                   </span>
                 </li>
               ))}
@@ -906,6 +934,9 @@ const Chatroom = () => {
                     ></img>
                   )}
                   {selectedUser && <h1>{selectedUser.name}</h1>}
+                  {usersMuted.includes(selectedUser.id) && (
+                       <span style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
+                    )}
                 </div>
                 {isProfileClicked && selectedUser && (
                   <div className="modal-profile-clicked">
