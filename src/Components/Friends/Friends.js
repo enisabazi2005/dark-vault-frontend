@@ -5,6 +5,7 @@ import { STORAGE_URL } from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLockOpen, faUnlock, faTrash } from "@fortawesome/free-solid-svg-icons";
 import FriendsSkeleton from "./FriendsSkeleton";
+import useStorageStore from "../../Store/storageStore";
 
 const Friends = () => {
   const [friends, setFriends] = useState([]);
@@ -12,6 +13,7 @@ const Friends = () => {
   const [loadingUnblock, setLoadingUnblock] = useState({});
   const [loadingUnfriend, setLoadingUnfriend] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const { usersMuted } = useStorageStore();
 
   const requestId = localStorage.getItem("request_id");
   const defaultBlankPhotoUrl =
@@ -84,6 +86,9 @@ const Friends = () => {
                   className="user-avatar"
                 />
                 <span>{friend.name}</span>
+                {usersMuted.includes(friend.id) && (
+                    <span style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
+                )}
                 <div className="unblock-div">
                   <button className="unfriend-btn" onClick={() => handleUnfriend(friend.request_id)}>
                     <FontAwesomeIcon icon={loadingUnfriend[friend.request_id] ? faUnlock : faTrash} />

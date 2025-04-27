@@ -1,9 +1,13 @@
 import React from "react";
 import api from "../../api";
+import useStorageStore from "../../Store/storageStore";
 
-const Muted = ({ selectedUserId, isMuted, onMuteToggle }) => {
+const Muted = ({ selectedUserId, onMuteToggle }) => {
 
     const userId = localStorage.getItem("user_id");
+    const { usersMuted ,addMutedUser , removeMutedUser } = useStorageStore();
+
+    const isMuted = usersMuted.includes(selectedUserId);
 
     const handleMuteToggle = async () => {
       try {
@@ -14,6 +18,12 @@ const Muted = ({ selectedUserId, isMuted, onMuteToggle }) => {
         });
         if (response.status === 200) {
           onMuteToggle(!isMuted); 
+
+          if(!isMuted) { 
+            addMutedUser(selectedUserId);
+          } else { 
+            removeMutedUser(selectedUserId);
+          }
         }
       } catch (error) {
         console.error("Error muting/unmuting user:", error);
