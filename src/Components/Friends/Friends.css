@@ -41,6 +41,31 @@ h6 {
     padding: 6px 12px;
     border-radius: 20px;
 }
+.user-mute-div { 
+    position: relative;
+    width: 200px;
+    right: 10px;
+}
+.user-mute-span { 
+    position: relative;
+    cursor: pointer;
+}
+.user-mute-span::before { 
+    content: "User is muted";
+    position: absolute;
+    width: 200px;
+    bottom: 0;
+    left: 30px;
+    font-family: sans-serif;
+    color: #373e4598;
+    font-size: 13px;
+    font-weight: 600;
+    visibility: hidden;
+}
+.user-mute-span:hover::before { 
+    visibility: visible;
+    transition: 0.3s linear ease-in;
+}
 
 .user-list {
     list-style: none;
