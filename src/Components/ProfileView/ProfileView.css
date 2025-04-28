@@ -1,0 +1,276 @@
+.profile-view-container {
+    width: 100%;
+    padding: 25px;
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+  
+  .profile-view-search-input {
+    padding: 14px 20px;
+    margin-bottom: 15px;
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #e4e7eb;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  }
+  
+  .profile-view-search-input:focus {
+    outline: none;
+    border-color: #6862cc;
+    box-shadow: 0 4px 14px rgba(104, 98, 204, 0.15);
+  }
+  
+  .profile-view-search-input::placeholder {
+    color: #a0aec0;
+    font-weight: 400;
+  }
+  
+  .profile-view-filtered-users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 12px;
+    padding-right: 10px;
+    transition: all 0.3s ease;
+    background-color: white;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.02);
+  }
+  
+  .profile-view-filtered-users-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .profile-view-filtered-users-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .profile-view-filtered-users-list::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 10px;
+  }
+  
+  .profile-view-filtered-users-list::-webkit-scrollbar-thumb:hover {
+    background: #6862cc;
+  }
+  
+  .profile-view-filtered-user-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+  }
+  
+  .profile-view-filtered-user-card:hover {
+    box-shadow: 0 4px 12px rgba(104, 98, 204, 0.12);
+    border-color: rgba(104, 98, 204, 0.2);
+  }
+  
+  .profile-view-user-image-filter {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #6862cc;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-view-user-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    column-gap: 30px;
+}
+  
+  .profile-view-user-info h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .profile-view-user-status {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 4px;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile-view-user-status.online::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  
+  .profile-view-user-status.online {
+    color: #10b981;
+    font-weight: 500;
+  }
+  
+  .profile-view-user-status.offline::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #9ca3af;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  
+  .profile-view-user-status.offline {
+    color: #9ca3af;
+  }
+  
+  .profile-view-user-status.away::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #f59e0b;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  
+  .profile-view-user-status.away {
+    color: #f59e0b;
+    font-weight: 500;
+  }
+  
+  .profile-view-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10002;
+    backdrop-filter: blur(5px);
+  }
+  
+  .profile-view-modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  .profile-view-modal-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 3px solid #6862cc;
+    box-shadow: 0 8px 16px rgba(104, 98, 204, 0.2);
+  }
+  
+  .profile-view-modal-content h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .profile-view-user-details {
+    margin-top: 20px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: left;
+  }
+  
+  .profile-view-user-details p {
+    margin: 8px 0;
+    font-family: 'Segoe UI', sans-serif;
+    color: #4b5563;
+    font-size: 14px;
+  }
+  
+  .profile-view-user-details strong {
+    color: #1f2937;
+  }
+  
+  .profile-view-close-button {
+    margin-top: 25px;
+    padding: 12px 24px;
+    background-color: #6862cc;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    font-family: 'Segoe UI', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(104, 98, 204, 0.3);
+  }
+  
+  .profile-view-close-button:hover {
+    background-color: #5751ba;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(104, 98, 204, 0.4);
+  }
+  
+  /* Empty state styling */
+  .profile-view-no-results {
+    text-align: center;
+    padding: 30px 20px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #64748b;
+    font-size: 15px;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .profile-view-container {
+      padding: 20px;
+    }
+    
+    .profile-view-search-input {
+      padding: 12px 16px;
+      font-size: 15px;
+    }
+    
+    .profile-view-filtered-users-list {
+      max-height: 250px;
+    }
+    
+    .profile-view-modal-content {
+      padding: 30px;
+      width: 95%;
+    }
+    
+    .profile-view-modal-avatar {
+      width: 100px;
+      height: 100px;
+    }
+  }

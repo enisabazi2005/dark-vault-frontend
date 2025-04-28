@@ -1,10 +1,23 @@
 .flex-friends {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 30px;
+    margin: 40px 0;
+    position: relative;
+}
+
+.profile-view-container-at-friends { 
+    width: 100%;
+    padding: 10px;
+}
+
+.friends-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 30px;
     width: 100%;
-    padding: 30px;
-    margin: 80px 0;
+    padding: 20px 0;
 }
 
 .flex-friends-div {
@@ -18,8 +31,8 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
+    margin: 10px;
 }
-
 .flex-friends-div h2 {
     color: #2c3e50;
     font-size: 24px;
@@ -181,7 +194,7 @@ h6 {
 .unblock-div p { 
     position: absolute;
     top: 60%;
-    left: 40px;
+    left: 28px;
     visibility: hidden;
     font-size: 10px;
     font-family: 'Segoe UI', sans-serif;

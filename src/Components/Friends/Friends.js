@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLockOpen, faUnlock, faTrash } from "@fortawesome/free-solid-svg-icons";
 import FriendsSkeleton from "./FriendsSkeleton";
 import useStorageStore from "../../Store/storageStore";
+import ProfileView from "../ProfileView/ProfileView";
 
 const Friends = () => {
   const [friends, setFriends] = useState([]);
@@ -73,63 +74,68 @@ const Friends = () => {
 
   return (
     <div className="flex-friends">
-      <div className="flex-friends-div">
-        <h6>Total friends: {friends.length > 0 ? friends.length : 0}</h6>
-        <h2 className="text-xl font-semibold">Friends</h2>
-        {friends.length > 0 ? (
-          <ul className="user-list">
-            {friends.map((friend) => (
-              <li key={friend.id} className="user-item">
-                <img
-                  src={friend.picture ? `${STORAGE_URL}/${friend.picture}` : defaultBlankPhotoUrl}
-                  alt={friend.name}
-                  className="user-avatar"
-                />
-                <span>{friend.name}</span>
-                <div className="user-mute-div">
-                {usersMuted.includes(friend.id) && (
-                    <span className="user-mute-span" style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
-                )}
-                </div>
-                <div className="unblock-div">
-                  <button className="unfriend-btn" onClick={() => handleUnfriend(friend.request_id)}>
-                    <FontAwesomeIcon icon={loadingUnfriend[friend.request_id] ? faUnlock : faTrash} />
-                  </button>
-                  <p>Remove friend</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No friends found.</p>
-        )}
+      <div className="profile-view-container-at-friends">
+        <ProfileView />
       </div>
+      <div className="friends-row">
+        <div className="flex-friends-div">
+          <h6>Total friends: {friends.length > 0 ? friends.length : 0}</h6>
+          <h2 className="text-xl font-semibold">Friends</h2>
+          {friends.length > 0 ? (
+            <ul className="user-list">
+              {friends.map((friend) => (
+                <li key={friend.id} className="user-item">
+                  <img
+                    src={friend.picture ? `${STORAGE_URL}/${friend.picture}` : defaultBlankPhotoUrl}
+                    alt={friend.name}
+                    className="user-avatar"
+                  />
+                  <span>{friend.name}</span>
+                  <div className="user-mute-div">
+                  {usersMuted.includes(friend.id) && (
+                      <span className="user-mute-span" style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
+                  )}
+                  </div>
+                  <div className="unblock-div">
+                    <button className="unfriend-btn" onClick={() => handleUnfriend(friend.request_id)}>
+                      <FontAwesomeIcon icon={loadingUnfriend[friend.request_id] ? faUnlock : faTrash} />
+                    </button>
+                    <p>Remove friend</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No friends found.</p>
+          )}
+        </div>
 
-      <div className="flex-friends-div">
-        <h6>Total Blocked: {blockedUsers.length > 0 ? blockedUsers.length : 0}</h6>
-        <h2 className="text-xl font-semibold">Blocked</h2>
-        {blockedUsers.length > 0 ? (
-          <ul className="user-list">
-            {blockedUsers.map((user) => (
-              <li key={user.id} className="user-item">
-                <img
-                  src={user.picture ? `${STORAGE_URL}/${user.picture}` : defaultBlankPhotoUrl}
-                  alt={user.name}
-                  className="user-avatar"
-                />
-                <span>{user.name}</span>
-                <div className="unblock-div">
-                  <button className="unblock-btn" onClick={() => handleUnblock(user.request_id)}>
-                    <FontAwesomeIcon icon={loadingUnblock[user.request_id] ? faLockOpen : faUnlock} />
-                  </button>
-                  <p>Unblock</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No blocked users.</p>
-        )}
+        <div className="flex-friends-div">
+          <h6>Total Blocked: {blockedUsers.length > 0 ? blockedUsers.length : 0}</h6>
+          <h2 className="text-xl font-semibold">Blocked</h2>
+          {blockedUsers.length > 0 ? (
+            <ul className="user-list">
+              {blockedUsers.map((user) => (
+                <li key={user.id} className="user-item">
+                  <img
+                    src={user.picture ? `${STORAGE_URL}/${user.picture}` : defaultBlankPhotoUrl}
+                    alt={user.name}
+                    className="user-avatar"
+                  />
+                  <span>{user.name}</span>
+                  <div className="unblock-div">
+                    <button className="unblock-btn" onClick={() => handleUnblock(user.request_id)}>
+                      <FontAwesomeIcon icon={loadingUnblock[user.request_id] ? faLockOpen : faUnlock} />
+                    </button>
+                    <p>Unblock</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No blocked users.</p>
+          )}
+        </div>
       </div>
     </div>
   );
