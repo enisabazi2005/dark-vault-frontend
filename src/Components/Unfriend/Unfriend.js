@@ -1,7 +1,7 @@
 import React from "react";
 import api from "../../api";
 
-const Unfriend = ({ selectedUserId, isFriend, onUnfriendToggle }) => {
+const Unfriend = ({ selectedUserId, isFriend, onUnfriendToggle, onCloseChat }) => {
 
     const handleUnfriend = async () => {
       try {
@@ -9,6 +9,7 @@ const Unfriend = ({ selectedUserId, isFriend, onUnfriendToggle }) => {
         console.log(selectedUserId, 'selectedUserId');
         if (response.status === 200) {
           onUnfriendToggle(false); 
+          onCloseChat();
         }
       } catch (error) {
         console.error("Error removing friend:", error);
