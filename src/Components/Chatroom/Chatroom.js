@@ -51,11 +51,12 @@ const Chatroom = () => {
   const [lastSeenId, setLastSeenId] = useState(null);
   const [isSeen, setIsSeen] = useState(false);
   const { usersMuted, updateUsersMuted } = useStorageStore();
+  const friendRef = useRef(friends);
 
-  const findIsTyping = (id) => {
-    const friend = storeFriends.find((f) => f.id === id);
-    return friend ? friend.name : "Unknown";
-  };
+  useEffect(() => {
+    friendRef.current = friends;
+    // console.log(friendRef, 'friendRef');
+  }, [friends]);
 
   useEffect(() => {
     const fetchMutedUsers = async () => {
@@ -270,9 +271,12 @@ const Chatroom = () => {
     };
   }, [selectedUser?.request_id]);
 
-  useEffect(() => {
-    if (!storeFriends || storeFriends.length === 0) return;
+  const findIsTyping = (id) => {
+    const friend = friends.find((f) => f.id === id);
+    return friend ? friend?.name : "Unknown";
+  };
 
+  useEffect(() => {
     if (!myProfile) return;
 
     const pusher = new Pusher(PUSHER_APP_KEY, {
@@ -281,8 +285,8 @@ const Chatroom = () => {
     });
 
     const channel = pusher.subscribe(`chatroom.${myProfile.id}`);
-    console.log(`Subscribed to chatroom.${myProfile.id}`);
-
+    // console.log(`Subscribed to chatroom.${myProfile.id}`);
+    fetchFriends();
     channel.bind("user.typing", function (data) {
       if (data.is_typing) {
         const name = findIsTyping(Number(data.sender_id));
@@ -296,7 +300,7 @@ const Chatroom = () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [myProfile?.id, storeFriends]);
+  }, [myProfile?.id, friends]);
 
   const debouncedHandleTyping = useCallback(() => {
     if (!myProfile) return;
@@ -444,7 +448,7 @@ const Chatroom = () => {
         const fetchFriends = async () => {
           try {
             const response = await api.get(
-              `/friend-request/${requestId}/friends`
+              `/friend-request/${myProfile.request_id}/friends`
             );
             setFriends(response.data);
           } catch (error) {
@@ -508,13 +512,21 @@ const Chatroom = () => {
       cluster: PUSHER_CLUSTER,
       encrypted: false,
     });
-    console.log(myProfile, "myProfile");
     const channel = pusher.subscribe(`friend-accept.${myProfile.request_id}`);
     console.log(`Subscribed to friend-accept.${myProfile.request_id}`);
 
     channel.bind("FriendRequestAccepted", (data) => {
       console.log("✅ Friend request accepted!", data);
+
       fetchFriends();
+
+      setPendingRequests((prevRequests) =>
+        prevRequests.filter(
+          (request) => request.request_friend_id !== data.receiver.request_id &&
+                       request.request_friend_id !== data.sender.request_id
+        )
+      );
+
     });
     console.log(myProfile, "myProfile");
     return () => {
@@ -549,7 +561,6 @@ const Chatroom = () => {
     if (!messages.length) return;
   
     const lastMessage = messages[messages.length - 1];
-    
     if (!lastMessage.is_seen) {
       console.log("Marking last message as seen:", lastMessage.id);
       markLastMessageAsSeen(lastMessage.id);  
@@ -563,7 +574,6 @@ const Chatroom = () => {
       setIsSeen(false);
     }
   }, [messages]);
-  
 
   const markLastMessageAsSeen = async (messageId) => {
     if (!messageId) return;
