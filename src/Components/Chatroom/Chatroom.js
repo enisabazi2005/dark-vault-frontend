@@ -683,7 +683,8 @@ const Chatroom = () => {
       setErrorMessage("");
       setFriend(isFriend(user.request_id));
     }
-
+    console.log(isFriendSelection, 'isFriendSelection')
+    console.log(user, 'user ')
     if (isFriendSelection) {
       setIsOpen(true);
     } else {
@@ -958,6 +959,7 @@ const Chatroom = () => {
                         selectedUserId={selectedUser.request_id}
                         isBlocked={isBlocked}
                         onBlockToggle={handleBlockToggle}
+                        onCloseChat={handleCloseChat}
                       />
                       <Muted
                         selectedUserId={selectedUser.id}
@@ -970,6 +972,7 @@ const Chatroom = () => {
                         selectedUserId={selectedUser.request_id}
                         isFriend={friend}
                         onUnfriendToggle={handleUnfriendToggle}
+                        onCloseChat={handleCloseChat}
                       />
                     </div>
                   </div>

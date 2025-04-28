@@ -1,13 +1,14 @@
 import React from "react";
 import api from "../../api";
 
-const Blocked = ({ selectedUserId, isBlocked, onBlockToggle }) => {
+const Blocked = ({ selectedUserId, isBlocked, onBlockToggle, onCloseChat }) => {
 
     const handleBlockToggle = async () => {
       try {
         const response = await api.post(`/block-user/${selectedUserId}`)
         if (response.status === 200) {
           onBlockToggle(!isBlocked); 
+          onCloseChat();
         }
       } catch (error) {
         console.error("Error blocking/unblocking user:", error);
