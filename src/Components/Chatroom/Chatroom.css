@@ -355,8 +355,6 @@
     transition: all 0.3s ease;
 }
 
-
-/* Theme-specific styles */
 .chat-window.purple_white {
     background: linear-gradient(to bottom, #6862cc, #ffffff);
 }
@@ -364,16 +362,37 @@
     color: #fff;
 }
 .chat-window.purple_white .sent {
-    /* background-color: rgba(104, 98, 204, 0.1); */
     background-color: rgba(203, 202, 227, 0.781);
 }
 
 .chat-window.purple_white .received {
-    /* background-color: rgba(104, 98, 204, 0.05); */
     background-color: rgba(73, 70, 142, 0.781);
     color: #fff;
 }
-
+.chat-window.chat-window.purple_white .message-input button { 
+    background: #6862cc;
+}
+.chat-window.blue_white .message-input button { 
+    background: #3498db;
+}
+.chat-window.green_black .message-input button { 
+    background: #2ecc71;
+}
+.chat-window.red_black .message-input button { 
+    background: #e74c3c;
+}
+.chat-window.gray_black .message-input button { 
+    background: #95a5a6;
+}
+.chat-window.gray_black .display-friend-image { 
+    border: 2px solid #1a1a1a;
+}
+.chat-window.purple_white .display-friend-image, .chat-window.blue_white .display-friend-image { 
+    border: 2px solid #ffffff;
+}
+.chat-window.green_black .display-friend-image, .chat-window.red_black .display-friend-image , .chat-window.gray_black  .display-friend-image { 
+    border: 2px solid #1a1a1a;
+}
 .chat-window.blue_white {
     background: linear-gradient(to bottom, #3498db, #ffffff);
 }
@@ -785,7 +804,6 @@
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
-    right: 50px;
 }
 
 .modal-profile-clicked .modal-profile-clicked-row h2:hover {
