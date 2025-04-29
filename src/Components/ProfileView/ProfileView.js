@@ -12,6 +12,7 @@ const ProfileView = () => {
   const { myProfile, friends } = useStore();
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+  const [isViewed, setIsViewed] = useState('');
 
   const isFriend = (user) => {
     return friends.some((friend) => friend.request_id === user.request_id);
@@ -37,7 +38,7 @@ const ProfileView = () => {
     fetchUsers();
   }, []);
 
-  console.log(selectedUser, "selectedUser");
+//   console.log(selectedUser, "selectedUser");
 
   const getUserStatus = (user) => {
     if (user.online === 1) return "online";
@@ -90,8 +91,19 @@ const ProfileView = () => {
     debouncedHandleSearch(value);
   };
 
-  const handleSelectUser = (user) => {
+  const handleSelectUser = async (user) => {
     setSelectedUser(user);
+    try { 
+        const response = await api.post('/profile-viewed', {
+            viewed_user_id: user.id,
+        });
+        setIsViewed(response.data);
+
+    } catch(error) { 
+        console.error(error , 'error');
+        throw error;
+    }
+
   };
 
   const handleCloseModal = () => {

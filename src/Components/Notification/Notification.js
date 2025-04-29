@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../Notification/Notification.css";
 import notificationSound from "../../assets/images/message-sent.wav";
 import { useStore } from "../../Store/store";
+import { MpRounded } from "@mui/icons-material";
 
 const Notification = () => {
   const [unreadMessages, setUnreadMessages] = useState([]);
@@ -84,13 +85,13 @@ const Notification = () => {
         });
         const newCount = count + data.notifications.length;
         setCount(newCount);
-        
+
         if (
           data.notifications.length > 0 &&
           newCount > previousCountRef.current &&
           audioRef.current
         ) {
-          audioRef.current.currentTime = 0; 
+          audioRef.current.currentTime = 0;
           audioRef.current.play().catch((error) => {
             console.error("Error playing notification sound:", error);
           });
@@ -140,7 +141,7 @@ const Notification = () => {
       };
 
       setUnreadMessages((prev) => [...prev, newAcceptanceNotification]);
-      console.log(unreadMessages, 'unreadMessages');
+      console.log(unreadMessages, "unreadMessages");
       if (!isSender) {
         setPendingRequests((prev) => {
           const updated = prev.filter(
@@ -161,7 +162,27 @@ const Notification = () => {
       }
     });
 
+    const profileViewChannel = pusher.subscribe(`profile-viewed.${userId}`);
+    profileViewChannel.bind("ProfileViewed", (data) => {
+      const newNotification = {
+        id: Date.now(),
+        type: "profile-viewed",
+        viewer_name: data.viewerName,
+      };
+
+      setUnreadMessages((prev) => [newNotification, ...prev]);
+      setCount((prevCount) => prevCount + 1);
+
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(console.error);
+      }
+    });
+
     return () => {
+      profileViewChannel.unbind("ProfileViewed");
+      pusher.unsubscribe(`private-profile-viewed.${userId}`);
+
       channel.unbind("App\\Events\\UnreadMessagesEvent");
       pusher.unsubscribe(`unread-messages-${userId}`);
 
@@ -213,36 +234,38 @@ const Notification = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h2>Notifications</h2>
-            {combinedNotifications.length > 0 ? (
-              <ul>
-                {combinedNotifications.map((notification, index) => {
-                  if (notification.type === "request") {
-                    return (
-                      <li key={`notif-${index}`} className="custom-new-message">
-                        <strong>{notification.friend_name}</strong> has sent you
-                        a friend request.
-                      </li>
-                    );
-                  } else if (notification.type === "accepted") {
-                    return (
-                      <li key={`notif-${index}`} className="custom-new-message">
-                        {notification.message}
-                      </li>
-                    );
-                  } else {
-                    return (
-                      <li key={`notif-${index}`} className="custom-new-message">
-                        You have a message from{" "}
-                        <strong>{notification.sender_name}</strong>:{" "}
-                        {notification.message}
-                      </li>
-                    );
-                  }
-                })}
-              </ul>
-            ) : (
-              <p>No unread messages.</p>
-            )}
+            {combinedNotifications.map((notification, index) => {
+              if (notification.type === "request") {
+                return (
+                  <li key={`notif-${index}`} className="custom-new-message">
+                    <strong>{notification.friend_name}</strong> has sent you a
+                    friend request.
+                  </li>
+                );
+              } else if (notification.type === "accepted") {
+                return (
+                  <li key={`notif-${index}`} className="custom-new-message">
+                    {notification.message}
+                  </li>
+                );
+              } else if (notification.type === "profile-viewed") {
+                return (
+                  <li key={`notif-${index}`} className="custom-new-message">
+                    <strong>{notification.viewer_name}</strong> has viewed your
+                    profile!
+                  </li>
+                );
+              } else {
+                return (
+                  <li key={`notif-${index}`} className="custom-new-message">
+                    You have a message from{" "}
+                    <strong>{notification.sender_name}</strong>:{" "}
+                    {notification.message}
+                  </li>
+                );
+              }
+            })}
+
             {unreadMessages.length > 0 ? (
               <div className="custom-mark-as-read-section">
                 <button
