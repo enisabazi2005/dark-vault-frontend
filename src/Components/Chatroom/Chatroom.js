@@ -52,10 +52,10 @@ const Chatroom = () => {
   const [isSeen, setIsSeen] = useState(false);
   const { usersMuted, updateUsersMuted } = useStorageStore();
   const friendRef = useRef(friends);
+  const messagesEnd = useRef(null);
 
   useEffect(() => {
     friendRef.current = friends;
-    // console.log(friendRef, 'friendRef');
   }, [friends]);
 
   useEffect(() => {
@@ -743,6 +743,17 @@ const Chatroom = () => {
     dislike: "👎",
   };
 
+  const scrollToBottom = () => {
+    if (messagesEnd.current) {
+      messagesEnd.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+
   return (
     <div className="full-width-layout">
       <audio ref={messageSentAudioRef} src={MessageSent} preload="auto" />
@@ -997,10 +1008,6 @@ const Chatroom = () => {
                     const isReceived = selectedUser.request_id;
                     const messageContent = msg.message;
                     const reactions = groupedReactions[msg.id] || [];
-                    // const reactionCounts = reactions.reduce((acc, r) => {
-                    //   acc[r.reaction_type] = (acc[r.reaction_type] || 0) + 1;
-                    //   return acc;
-                    // }, {});
 
                     return (
                       <div
@@ -1016,11 +1023,6 @@ const Chatroom = () => {
                         onMouseLeave={() => setHoveredMsg(null)}
                       >
                         <p className="message-content">{messageContent}</p>
-                        {/* {isSeen ? (
-                          <div className="text-green-500 text-sm">Seen</div>
-                            ) : (
-                          <div className="text-gray-500 text-sm">Sent</div>
-                            )} */}
                         {reactions.length > 0 && (
                           <div className="reaction-bar">
                             {Object.entries(
@@ -1041,7 +1043,6 @@ const Chatroom = () => {
                           </div>
                         )}
                         <div className="message-status">
-                          {/* {isSent && <span className="checkmarks">✓✓</span>} */}
                           {msg.message_sent_at && (
                             <p className="message-time">
                               {new Date(msg.message_sent_at).toLocaleTimeString(
@@ -1050,17 +1051,6 @@ const Chatroom = () => {
                               )}
                             </p>
                           )}
-                          {/* {index === sortedMessages.length - 1  && (
-                          isSeen ? (
-                            <div className="message-seen-status">
-                              <p className="message-seen-status-true">Seen</p>
-                            </div>
-                            ) : (
-                          <div className="message-seen-status">
-                            <p className="message-seen-status-false">Sent</p>
-                          </div>
-                            )
-                          )} */}
                         </div>
                         <div className="message-seen-status">
                         {index === sortedMessages.length - 1  && (
@@ -1107,6 +1097,7 @@ const Chatroom = () => {
                   </div>
                 )}
               </div>
+              <div ref={messagesEnd} />
             </div>
 
             <div className="message-input">
