@@ -77,28 +77,31 @@ const Notification = () => {
     const channel = pusher.subscribe(`unread-messages-${userId}`);
     channel.bind("App\\Events\\UnreadMessagesEvent", (data) => {
       if (Array.isArray(data.notifications)) {
-        setUnreadMessages((prevMessages) => {
-          const newMessages = data.notifications.filter(
-            (message) => !prevMessages.some((prev) => prev.id === message.id)
+        const newMessages = data.notifications
+          .filter((message) => !message.is_read) 
+          .filter(
+            (message) => !unreadMessages.some((prev) => prev.id === message.id)
           );
-          return [...newMessages, ...prevMessages];
-        });
-        const newCount = count + data.notifications.length;
-        setCount(newCount);
-
-        if (
-          data.notifications.length > 0 &&
-          newCount > previousCountRef.current &&
-          audioRef.current
-        ) {
-          audioRef.current.currentTime = 0;
-          audioRef.current.play().catch((error) => {
-            console.error("Error playing notification sound:", error);
-          });
-          previousCountRef.current = newCount;
+    
+        if (newMessages.length > 0) {
+          setUnreadMessages((prevMessages) => [...newMessages, ...prevMessages]);
+          const newCount = count + newMessages.length;
+          setCount(newCount);
+    
+          if (
+            newCount > previousCountRef.current &&
+            audioRef.current
+          ) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play().catch((error) => {
+              console.error("Error playing notification sound:", error);
+            });
+            previousCountRef.current = newCount;
+          }
         }
       }
     });
+    
     if (!myProfile) return;
 
     const friendRequestChannel = pusher.subscribe(
@@ -215,6 +218,20 @@ const Notification = () => {
     setIsNotificationModalOpen(false);
   };
 
+  const renderNotificationMessage = (notification) => {
+    switch (notification.type) {
+      case "request":
+        return <><strong>{notification.friend_name}</strong> has sent you a friend request.</>;
+      case "accepted":
+        return <>{notification.message}</>;
+      case "profile-viewed":
+        return <><strong>{notification.viewer_name}</strong> has viewed your profile!</>;
+      default:
+        return <>You have a message from <strong>{notification.sender_name}</strong>: {notification.message}</>;
+    }
+  };
+  
+
   return (
     <div className="notification-container">
       <audio ref={audioRef} src={notificationSound} preload="auto" />
@@ -234,37 +251,11 @@ const Notification = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h2>Notifications</h2>
-            {combinedNotifications.map((notification, index) => {
-              if (notification.type === "request") {
-                return (
-                  <li key={`notif-${index}`} className="custom-new-message">
-                    <strong>{notification.friend_name}</strong> has sent you a
-                    friend request.
-                  </li>
-                );
-              } else if (notification.type === "accepted") {
-                return (
-                  <li key={`notif-${index}`} className="custom-new-message">
-                    {notification.message}
-                  </li>
-                );
-              } else if (notification.type === "profile-viewed") {
-                return (
-                  <li key={`notif-${index}`} className="custom-new-message">
-                    <strong>{notification.viewer_name}</strong> has viewed your
-                    profile!
-                  </li>
-                );
-              } else {
-                return (
-                  <li key={`notif-${index}`} className="custom-new-message">
-                    You have a message from{" "}
-                    <strong>{notification.sender_name}</strong>:{" "}
-                    {notification.message}
-                  </li>
-                );
-              }
-            })}
+            {combinedNotifications.map((notification, index) => (
+  <li key={`notif-${index}`} className="custom-new-message">
+    {renderNotificationMessage(notification)}
+  </li>
+))}
 
             {unreadMessages.length > 0 ? (
               <div className="custom-mark-as-read-section">
