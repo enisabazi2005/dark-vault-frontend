@@ -32,6 +32,8 @@ import DashboardSkeleton from "./DashboardSkeleton";
 import Logo from "../../assets/images/Samira_Hadid-removebg-preview.png";
 import "../Dashboard/Dashboard.css";
 import useStorageStore from "../../Store/storageStore";
+import { BASE_URL } from "../../api";
+import { useStore } from "../../Store/store";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -45,6 +47,85 @@ const Dashboard = () => {
   const communityDropdownRef = useRef(null);
   const { totalStored, updateTotalStored, data, updateChartData } = useStorageStore();
   const [isLoading, setIsLoading] = useState(true);
+  const { myProfile } = useStore();
+  // const timer = useRef(null);
+  // const pingRecently = useRef(false);
+  // const [pingData, setPingData] = useState([]);
+
+  // const pingServer = async () => {
+  //   try {
+  //     const response = await api.post('/ping');
+  //     pingRecently.current = true;
+  //     setPingData(response.data);
+  //     console.log(response.data, 'pingData');
+      
+  //     // reset ping cooldown after 1 min
+  //     setTimeout(() => {
+  //       pingRecently.current = false;
+  //     }, 60000);
+  //   } catch (error) {
+  //     console.error('Error fetching ping:', error);
+  //   }
+  // };
+
+  // const handleActivity = () => {
+  //   if (!pingRecently.current) {
+  //     pingServer();
+  //   }
+
+  //   // Reset inactivity timer
+  //   clearTimeout(timer.current);
+  //   timer.current = setTimeout(() => {
+  //     console.log("User inactive for 5 minutes — backend will auto-mark offline");
+  //     // Do nothing here — let backend handle it
+  //   }, 300000); // 5 minutes
+  // };
+
+  // useEffect(() => {
+  //   // Trigger first ping immediately
+  //   handleActivity();
+
+  //   // Listen to mouse/keyboard activity
+  //   window.addEventListener('mousemove', handleActivity);
+  //   window.addEventListener('keydown', handleActivity);
+
+  //   // When tab/browser closes, notify backend
+  //   window.addEventListener('beforeunload', () => {
+  //     navigator.sendBeacon(`${process.env.REACT_APP_API_BASE_URL}/offline`);
+  //   });
+
+  //   return () => {
+  //     window.removeEventListener('mousemove', handleActivity);
+  //     window.removeEventListener('keydown', handleActivity);
+  //     clearTimeout(timer.current);
+  //   };
+  // }, []);
+
+  // window.addEventListener('beforeunload', async (e) => {
+  //   try {
+  //     await api.post('/offline');
+  //   } catch (err) {
+  //     console.error('Error sending offline status:', err);
+  //   }
+  // });
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (!myProfile) return;
+  
+      // Send the request using navigator.sendBeacon which is designed to handle unload events
+      const blob = new Blob([JSON.stringify({})], { type: "application/json" });
+      console.log(blob, 'blob');
+      // Use sendBeacon for async request before unload
+      navigator.sendBeacon(`${BASE_URL}/setOffline/${myProfile.id}`, blob);
+    };
+  
+    window.addEventListener("beforeunload", handleBeforeUnload);
+  
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [myProfile]);
+  
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -189,7 +270,14 @@ const Dashboard = () => {
     );
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+
+    try { 
+      await api.post('/offline');
+    } catch(error) { 
+      console.error(error, 'Error endpoint data');
+    }
+
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("userId");

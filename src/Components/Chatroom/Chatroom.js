@@ -753,6 +753,15 @@ const Chatroom = () => {
     scrollToBottom();
   }, [messages]);
 
+  const getUserStatus = (user) => {
+    console.log(user, 'user')
+    if (user.online === 1) return <div className="online-status-chatroom"></div>;
+    if (user.away === 1) return <div className="away-status-chatroom"></div>;
+    if (user.offline === 1) return <div className="offline-status-chatroom"></div>;
+    if (user.do_not_disturb === 1) return <div className="do-not-distrub-status-chatroom"></div>
+    return <div className="offline-status-chatroom"></div> 
+  };
+
 
   return (
     <div className="full-width-layout">
@@ -955,6 +964,7 @@ const Chatroom = () => {
                       className="display-friend-image"
                     ></img>
                   )}
+                  {getUserStatus(selectedUser)}
                   {selectedUser && <h1>{selectedUser.name}</h1>}
                   {usersMuted.includes(selectedUser.id) && (
                        <span style={{ color: 'red' }}>🔇</span> 
