@@ -24,27 +24,36 @@ const MyProfile = ({ updateNotificationCount }) => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem("token");
-
+    
         if (!userId || !token) {
           console.error("No user ID or token found");
           return;
         }
-
-        const response = await api.get(`/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setUser(response.data);
-        setSelectedStatus(response.data.status || "Online");
+    
+        const [userRes, statusRes] = await Promise.all([
+          api.get(`/users/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          api.get(`/get-status`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+    
+        setUser(userRes.data);
+        
+        const statusData = statusRes.data;
+    
+        if (statusData.online) setSelectedStatus("online");
+        else if (statusData.away) setSelectedStatus("away");
+        else if (statusData.do_not_disturb) setSelectedStatus("do_not_disturb");
+        else setSelectedStatus("offline"); // fallback
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error("Error fetching user or status:", error);
       } finally {
         setIsLoading(false);
       }
     };
-
+    
     fetchUser();
   }, [userId]);
 

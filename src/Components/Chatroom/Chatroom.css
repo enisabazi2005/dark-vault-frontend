@@ -706,6 +706,27 @@
     align-items: center;
     gap: 12px;
     cursor: pointer;
+    position: relative;
+}
+.offline-status-chatroom , .online-status-chatroom , .away-status-chatroom { 
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    left: 35px;
+    bottom: 5px;
+}
+.offline-status-chatroom { 
+    background-color: #f1c40f;
+}
+.online-status-chatroom { 
+    background-color: #17fd77;
+}
+.away-status-chatroom { 
+    background-color: #7f8c8d;
+}
+.do-not-disturb-status-chatroom { 
+    background-color: #e74c3c;
 }
 .settings-background-change { 
     /* flex-basis: 15%; */

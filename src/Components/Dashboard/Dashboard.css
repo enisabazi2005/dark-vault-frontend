@@ -131,7 +131,7 @@
 .card-content-charts { 
   position: absolute;
   top: 50px;
-  right: 30px;
+  /* right: 30px; */
 }
 .dashboard-card:hover {
   transform: translateY(-5px);
