@@ -3,6 +3,7 @@ import api from "../../api";
 import { useStore } from "../../Store/store";
 import { STORAGE_URL } from "../../api";
 import "./Groups.css";
+import { useNavigate } from "react-router-dom";
 
 const Groups = () => {
   const { myProfile, friends } = useStore();
@@ -20,6 +21,7 @@ const Groups = () => {
   const [groupMembers, setGroupMembers] = useState([]);
   const [acceptedGroups, setAcceptedGroups] = useState([]);
   const [isGroupModalClosed, setIsGroupModalClosed] = useState(false);
+  const navigate = useNavigate();
 
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
@@ -436,12 +438,15 @@ const Groups = () => {
               <span className="group-title">{group.title}</span>
               <div className="group-actions">
                 {/* <a href={group.group_link} className="group-link">Join</a> */}
-                <a
+                {/* <a
                   href={`${group.group_link}?user=${myProfile.id}`}
                   className="group-link"
-                >
-                  Join
-                </a>
+                > */}
+{/* <a href={`/dashboard/meeting/${group.group_link}`} className="group-link">Join</a> */}
+<button onClick={() => navigate(`/dashboard/meeting/${group.group_link}`)}>
+  Join
+</button>
+{/* </a> */}
                 <button onClick={() => handleOpenChat(group)}>
                   Open Group
                 </button>
