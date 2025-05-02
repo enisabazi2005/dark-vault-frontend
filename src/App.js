@@ -17,6 +17,7 @@ import Bot from "./Components/Bot/Bot";
 import RouteTransition from "./Components/RouteTransition/RouteTransition";
 import "./App.css";
 import { StoreProvider } from "./Store/store";
+import MeetingRoom from "./Components/MettingRoom/MettingRoom";
 
 const App = () => {
   useEffect(() => {
@@ -34,6 +35,7 @@ const App = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ResetPassword />} />
+              {/* <Route path="meeting/:code" element={<MeetingRoom />} /> */}
 
               <Route path="/dashboard" element={<Dashboard />}>
                 <Route path="bot" element={<Bot />}></Route>
@@ -45,7 +47,8 @@ const App = () => {
                 <Route path="settings" element={<Settings />}></Route>
                 <Route path="friends" element={<Friends />}></Route>
                 <Route path="groups" element={<Groups />}></Route>
-              </Route>
+                <Route path="meeting/:code" element={<MeetingRoom />} />
+                </Route>
 
               <Route path="/payout" element={<Payout />} />
             </Routes>
