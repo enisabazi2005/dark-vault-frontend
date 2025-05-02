@@ -437,16 +437,13 @@ const Groups = () => {
             <div className="group-info">
               <span className="group-title">{group.title}</span>
               <div className="group-actions">
-                {/* <a href={group.group_link} className="group-link">Join</a> */}
-                {/* <a
-                  href={`${group.group_link}?user=${myProfile.id}`}
-                  className="group-link"
-                > */}
-{/* <a href={`/dashboard/meeting/${group.group_link}`} className="group-link">Join</a> */}
-<button onClick={() => navigate(`/dashboard/meeting/${group.group_link}`)}>
-  Join
-</button>
-{/* </a> */}
+                <button
+                  onClick={() =>
+                    navigate(`/dashboard/meeting/${group.group_link}`)
+                  }
+                >
+                  Call
+                </button>
                 <button onClick={() => handleOpenChat(group)}>
                   Open Group
                 </button>
@@ -636,31 +633,19 @@ const Groups = () => {
           <div className="friends-list">
             {friends.map((friend) => (
               <div key={friend.id} className="group-friend-item">
-                {/* <img
-                  src={
-                    friend.picture
-                      ? `${STORAGE_URL}/${friend.picture}`
-                      : defaultBlankPhotoUrl
-                  }
-                  alt={`${friend.first_name} ${friend.last_name}`}
-                  className="friend-avatar"
-                />
-                <span className="niger">
-                  {friend.name} {friend.lastname}
-                </span> */}
                 <div className="group-friend-item-flex">
-                <img
-                  src={
-                    friend.picture
-                      ? `${STORAGE_URL}/${friend.picture}`
-                      : defaultBlankPhotoUrl
-                  }
-                  alt={`${friend.first_name} ${friend.last_name}`}
-                  className="friend-avatar"
-                />
-                <span className="niger">
-                  {friend.name} {friend.lastname}
-                </span>
+                  <img
+                    src={
+                      friend.picture
+                        ? `${STORAGE_URL}/${friend.picture}`
+                        : defaultBlankPhotoUrl
+                    }
+                    alt={`${friend.first_name} ${friend.last_name}`}
+                    className="friend-avatar"
+                  />
+                  <span className="niger">
+                    {friend.name} {friend.lastname}
+                  </span>
                 </div>
                 <button
                   onClick={() => handleFriendSelection(friend.id)}
