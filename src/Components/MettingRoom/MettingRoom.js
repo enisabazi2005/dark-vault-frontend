@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../../api'; // your existing API setup
+import api from '../../api'; 
 import { useStore } from '../../Store/store';
+import "../MettingRoom/MeetingRoom.css";
 
 const MeetingRoom = () => {
   const { code } = useParams();
@@ -39,27 +40,12 @@ const MeetingRoom = () => {
   if (!group) return <div>Loading meeting...</div>;
 
   return (
-    <div style={{ 
-      height: '100vh', 
-      margin: 0, 
-      padding: 0, 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      background: 'black' 
-    }}>
+    <div className='meeting-container'>
       <iframe
+        className='meeting-iframe'
         title="Meeting"
         src={`https://meet.jit.si/${code}#configOverwrite={ "startWithAudioMuted": true, "startWithVideoMuted": true, "prejoinPageEnabled": false }`}
         allow="camera; microphone; fullscreen; speaker; display-capture"
-        style={{ 
-          width: '80%', 
-          height: '80%', 
-          border: 'none', 
-          display: 'block', 
-          maxWidth: '900px', 
-          maxHeight: '600px', 
-        }}
       />
     </div>
   );
