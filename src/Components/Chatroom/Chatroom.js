@@ -277,6 +277,8 @@ const Chatroom = () => {
   };
 
   useEffect(() => {
+    if (!storeFriends || storeFriends.length === 0) return;
+
     if (!myProfile) return;
 
     const pusher = new Pusher(PUSHER_APP_KEY, {
@@ -285,8 +287,8 @@ const Chatroom = () => {
     });
 
     const channel = pusher.subscribe(`chatroom.${myProfile.id}`);
-    // console.log(`Subscribed to chatroom.${myProfile.id}`);
-    fetchFriends();
+    console.log(`Subscribeddddd to chatroom.${myProfile.id}`);
+
     channel.bind("user.typing", function (data) {
       if (data.is_typing) {
         const name = findIsTyping(Number(data.sender_id));
@@ -300,7 +302,7 @@ const Chatroom = () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [myProfile?.id, friends]);
+  }, [myProfile?.id, storeFriends]);
 
   const debouncedHandleTyping = useCallback(() => {
     if (!myProfile) return;
@@ -535,10 +537,10 @@ const Chatroom = () => {
     };
   }, [myProfile?.request_id]);
 
-  useEffect(() => {
-    if (!myProfile?.request_id) return;
-    fetchFriends();
-  }, [myProfile]);
+  // useEffect(() => {
+  //   if (!myProfile?.request_id) return;
+  //   fetchFriends();
+  // }, [myProfile]);
 
   useEffect(() => {
     if (!selectedUser?.id || !myProfile?.request_id || !isOpen) return;
@@ -754,7 +756,7 @@ const Chatroom = () => {
   }, [messages]);
 
   const getUserStatus = (user) => {
-    console.log(user, 'user')
+    // console.log(user, 'user')
     if (user.online === 1) return <div className="online-status-chatroom"></div>;
     if (user.away === 1) return <div className="away-status-chatroom"></div>;
     if (user.offline === 1) return <div className="offline-status-chatroom"></div>;
