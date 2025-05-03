@@ -18,6 +18,7 @@ import RouteTransition from "./Components/RouteTransition/RouteTransition";
 import "./App.css";
 import { StoreProvider } from "./Store/store";
 import MeetingRoom from "./Components/MettingRoom/MettingRoom";
+import ErrorPage from "./Components/ErrorPage/ErrorPage";
 
 const App = () => {
   useEffect(() => {
@@ -51,6 +52,7 @@ const App = () => {
                 </Route>
 
               <Route path="/payout" element={<Payout />} />
+              <Route path="*" element={<ErrorPage />} />
             </Routes>
           </RouteTransition>
         </Router>
