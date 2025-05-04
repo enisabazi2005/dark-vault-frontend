@@ -15,7 +15,7 @@ import {
   faDatabase,
   faShieldAlt,
   faUserGroup,
-  faArrowsRotate
+  faArrowsRotate,
 } from "@fortawesome/free-solid-svg-icons";
 import { PieChart } from "@mui/x-charts";
 import {
@@ -34,6 +34,7 @@ import "../Dashboard/Dashboard.css";
 import useStorageStore from "../../Store/storageStore";
 import { BASE_URL } from "../../api";
 import { useStore } from "../../Store/store";
+import Pro from "../Pro/Pro";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -45,94 +46,40 @@ const Dashboard = () => {
   const [isCommunityDropdownOpen, setIsCommunityDropdownOpen] = useState(false);
   const storedDropdownRef = useRef(null);
   const communityDropdownRef = useRef(null);
-  const { totalStored, updateTotalStored, data, updateChartData } = useStorageStore();
+  const { totalStored, updateTotalStored, data, updateChartData } =
+    useStorageStore();
   const [isLoading, setIsLoading] = useState(true);
   const { myProfile } = useStore();
-  // const timer = useRef(null);
-  // const pingRecently = useRef(false);
-  // const [pingData, setPingData] = useState([]);
-
-  // const pingServer = async () => {
-  //   try {
-  //     const response = await api.post('/ping');
-  //     pingRecently.current = true;
-  //     setPingData(response.data);
-  //     console.log(response.data, 'pingData');
-      
-  //     // reset ping cooldown after 1 min
-  //     setTimeout(() => {
-  //       pingRecently.current = false;
-  //     }, 60000);
-  //   } catch (error) {
-  //     console.error('Error fetching ping:', error);
-  //   }
-  // };
-
-  // const handleActivity = () => {
-  //   if (!pingRecently.current) {
-  //     pingServer();
-  //   }
-
-  //   // Reset inactivity timer
-  //   clearTimeout(timer.current);
-  //   timer.current = setTimeout(() => {
-  //     console.log("User inactive for 5 minutes — backend will auto-mark offline");
-  //     // Do nothing here — let backend handle it
-  //   }, 300000); // 5 minutes
-  // };
-
-  // useEffect(() => {
-  //   // Trigger first ping immediately
-  //   handleActivity();
-
-  //   // Listen to mouse/keyboard activity
-  //   window.addEventListener('mousemove', handleActivity);
-  //   window.addEventListener('keydown', handleActivity);
-
-  //   // When tab/browser closes, notify backend
-  //   window.addEventListener('beforeunload', () => {
-  //     navigator.sendBeacon(`${process.env.REACT_APP_API_BASE_URL}/offline`);
-  //   });
-
-  //   return () => {
-  //     window.removeEventListener('mousemove', handleActivity);
-  //     window.removeEventListener('keydown', handleActivity);
-  //     clearTimeout(timer.current);
-  //   };
-  // }, []);
-
-  // window.addEventListener('beforeunload', async (e) => {
-  //   try {
-  //     await api.post('/offline');
-  //   } catch (err) {
-  //     console.error('Error sending offline status:', err);
-  //   }
-  // });
+  // console.log(myProfile?.has_pro);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (!myProfile) return;
-  
+
       // Send the request using navigator.sendBeacon which is designed to handle unload events
       const blob = new Blob([JSON.stringify({})], { type: "application/json" });
-      console.log(blob, 'blob');
+      console.log(blob, "blob");
       // Use sendBeacon for async request before unload
       navigator.sendBeacon(`${BASE_URL}/setOffline/${myProfile.id}`, blob);
     };
-  
+
     window.addEventListener("beforeunload", handleBeforeUnload);
-  
+
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [myProfile]);
-  
-  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (storedDropdownRef.current && !storedDropdownRef.current.contains(event.target)) {
+      if (
+        storedDropdownRef.current &&
+        !storedDropdownRef.current.contains(event.target)
+      ) {
         setIsStoredDropdownOpen(false);
       }
-      if (communityDropdownRef.current && !communityDropdownRef.current.contains(event.target)) {
+      if (
+        communityDropdownRef.current &&
+        !communityDropdownRef.current.contains(event.target)
+      ) {
         setIsCommunityDropdownOpen(false);
       }
     };
@@ -213,30 +160,36 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [updateTotalStored , updateChartData]);
+  }, [updateTotalStored, updateChartData]);
 
   const refreshChart = async () => {
     try {
       setIsLoading(true);
-      const [passwordsRes, emailsRes, privateInfosRes, notesRes] = await Promise.all([
-        api.get("/store-passwords"),
-        api.get("/store-emails"),
-        api.get("/store-private-infos"),
-        api.get("/store-notes"),
-      ]);
-  
+      const [passwordsRes, emailsRes, privateInfosRes, notesRes] =
+        await Promise.all([
+          api.get("/store-passwords"),
+          api.get("/store-emails"),
+          api.get("/store-private-infos"),
+          api.get("/store-notes"),
+        ]);
+
       const passwordsCount = passwordsRes.data.length;
       const emailsCount = emailsRes.data.length;
       const privateInfosCount = privateInfosRes.data.length;
       const notesCount = notesRes.data.length;
-  
-      const total = passwordsCount + emailsCount + privateInfosCount + notesCount;
-  
+
+      const total =
+        passwordsCount + emailsCount + privateInfosCount + notesCount;
+
       // Update chart data based on current count
       updateChartData([
         { id: 0, value: (passwordsCount / total) * 100, label: "Passwords" },
         { id: 1, value: (emailsCount / total) * 100, label: "Emails" },
-        { id: 2, value: (privateInfosCount / total) * 100, label: "Private Info" },
+        {
+          id: 2,
+          value: (privateInfosCount / total) * 100,
+          label: "Private Info",
+        },
         { id: 3, value: (notesCount / total) * 100, label: "Notes" },
       ]);
     } catch (error) {
@@ -245,7 +198,6 @@ const Dashboard = () => {
       setIsLoading(false);
     }
   };
-  
 
   function GaugePointer() {
     const { valueAngle, outerRadius, cx, cy } = useGaugeState();
@@ -271,11 +223,10 @@ const Dashboard = () => {
   }
 
   const handleLogout = async () => {
-
-    try { 
-      await api.post('/offline');
-    } catch(error) { 
-      console.error(error, 'Error endpoint data');
+    try {
+      await api.post("/offline");
+    } catch (error) {
+      console.error(error, "Error endpoint data");
     }
 
     localStorage.removeItem("token");
@@ -310,35 +261,84 @@ const Dashboard = () => {
               <img src={Logo} alt="Logo" className="sidebar-logo" />
             </div>
             <nav className="sidebar-nav">
-              <Link to="/dashboard" className={`nav-item ${location.pathname === "/dashboard" ? "active" : ""}`}  state={{ MAX_STORAGE, totalStored }}>
+              <Link
+                to="/dashboard"
+                className={`nav-item ${
+                  location.pathname === "/dashboard" ? "active" : ""
+                }`}
+                state={{ MAX_STORAGE, totalStored }}
+              >
                 <FontAwesomeIcon icon={faNetworkWired} />
                 <span>Dashboard</span>
               </Link>
-              <Link to="store-password" className={`nav-item ${location.pathname === "/dashboard/store-password" ? "active" : ""}`}  state={{ MAX_STORAGE, totalStored }}>
+              <Link
+                to="store-password"
+                className={`nav-item ${
+                  location.pathname === "/dashboard/store-password"
+                    ? "active"
+                    : ""
+                }`}
+                state={{ MAX_STORAGE, totalStored }}
+              >
                 <FontAwesomeIcon icon={faLock} />
                 <span>Store Password</span>
               </Link>
-              <Link to="store-email" className={`nav-item ${location.pathname === "/dashboard/store-email" ? "active" : ""}`} state={{ MAX_STORAGE,totalStored }}>
+              <Link
+                to="store-email"
+                className={`nav-item ${
+                  location.pathname === "/dashboard/store-email" ? "active" : ""
+                }`}
+                state={{ MAX_STORAGE, totalStored }}
+              >
                 <FontAwesomeIcon icon={faSquareEnvelope} />
                 <span>Store Emails</span>
               </Link>
-              <Link to="private-info" className={`nav-item ${location.pathname === "/dashboard/private-info" ? "active" : ""}`} state={{ MAX_STORAGE,totalStored }}>
+              <Link
+                to="private-info"
+                className={`nav-item ${
+                  location.pathname === "/dashboard/private-info"
+                    ? "active"
+                    : ""
+                }`}
+                state={{ MAX_STORAGE, totalStored }}
+              >
                 <FontAwesomeIcon icon={faCircleInfo} />
                 <span>Store Private Info</span>
               </Link>
-              <Link to="store-notes" className={`nav-item ${location.pathname === "/dashboard/store-notes" ? "active" : ""}`} state={{ MAX_STORAGE,totalStored }}>
+              <Link
+                to="store-notes"
+                className={`nav-item ${
+                  location.pathname === "/dashboard/store-notes" ? "active" : ""
+                }`}
+                state={{ MAX_STORAGE, totalStored }}
+              >
                 <FontAwesomeIcon icon={faNoteSticky} />
                 <span>Store Notes</span>
               </Link>
-              <Link to="chatroom" className={`nav-item ${location.pathname === "/dashboard/chatroom" ? "active" : ""}`}>
+              <Link
+                to="chatroom"
+                className={`nav-item ${
+                  location.pathname === "/dashboard/chatroom" ? "active" : ""
+                }`}
+              >
                 <FontAwesomeIcon icon={faCommentDots} />
                 <span>Go to Chatroom</span>
               </Link>
-              <Link to="friends" className={`nav-item ${location.pathname === "/dashboard/friends" ? "active" : ""}`}>
+              <Link
+                to="friends"
+                className={`nav-item ${
+                  location.pathname === "/dashboard/friends" ? "active" : ""
+                }`}
+              >
                 <FontAwesomeIcon icon={faUserGroup} />
                 <span>Friends</span>
               </Link>
-              <Link to="groups" className={`nav-item ${location.pathname === "/dashboard/groups" ? "active" : ""}`}>
+              <Link
+                to="groups"
+                className={`nav-item ${
+                  location.pathname === "/dashboard/groups" ? "active" : ""
+                }`}
+              >
                 <FontAwesomeIcon icon={faPeopleGroup} />
                 <span>Groups</span>
               </Link>
@@ -357,7 +357,6 @@ const Dashboard = () => {
         {location.pathname === "/dashboard" && (
           <div className="dashboard-grid">
             <Bot />
-            {/* Welcome Card */}
             <div className="dashboard-card welcome-card">
               <div className="card-content">
                 <h2>Welcome Back</h2>
@@ -365,7 +364,8 @@ const Dashboard = () => {
                   {user ? `${user.name} ${user.lastname}` : "Loading..."}
                 </div>
                 <p className="welcome-message">
-                  We're glad to see you again. Your vault is secure and ready to use.
+                  We're glad to see you again. Your vault is secure and ready to
+                  use.
                 </p>
               </div>
             </div>
@@ -398,13 +398,13 @@ const Dashboard = () => {
                 <h3>Data Distribution</h3>
               </div>
               <div className="card-content card-content-charts">
-              {totalStored === 0 ? (
+                {totalStored === 0 ? (
                   <p className="empty-state">Nothing is stored yet</p>
                 ) : (
-                  <PieChart  series={[{ data }]} width={400} height={200} />
+                  <PieChart series={[{ data }]} width={400} height={200} />
                 )}
-                 <button className="refresh-chart-button" onClick={refreshChart}>
-                    <FontAwesomeIcon icon={faArrowsRotate} />
+                <button className="refresh-chart-button" onClick={refreshChart}>
+                  <FontAwesomeIcon icon={faArrowsRotate} />
                 </button>
               </div>
             </div>
@@ -422,16 +422,32 @@ const Dashboard = () => {
                     <span>End-to-End Encryption</span>
                   </div>
                   <div className="feature">
-                    <FontAwesomeIcon icon={faShieldAlt} className="feature-icon" />
+                    <FontAwesomeIcon
+                      icon={faShieldAlt}
+                      className="feature-icon"
+                    />
                     <span>Secure Storage</span>
                   </div>
                   <div className="feature">
-                    <FontAwesomeIcon icon={faDatabase} className="feature-icon" />
+                    <FontAwesomeIcon
+                      icon={faDatabase}
+                      className="feature-icon"
+                    />
                     <span>Data Backup</span>
                   </div>
                 </div>
               </div>
             </div>
+            {myProfile?.has_pro && (
+              <div className="dashboard-card">
+                <div className="card-header">
+                  <h1>Pro Feature</h1>
+                </div>
+                <div className="card-content card-content-pro-1">
+                  <Pro />
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -444,29 +460,52 @@ const Dashboard = () => {
             <span>Dashboard</span>
           </Link>
           <div className="dropdown-container">
-            <button className="nav-item" onClick={() => setIsStoredDropdownOpen(!isStoredDropdownOpen)}>
+            <button
+              className="nav-item"
+              onClick={() => setIsStoredDropdownOpen(!isStoredDropdownOpen)}
+            >
               <FontAwesomeIcon icon={faGrip} />
               <span>Stored</span>
             </button>
             {isStoredDropdownOpen && (
               <div ref={storedDropdownRef} className="mobile-dropdown-menu">
-                <Link to="/dashboard" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
+                <Link
+                  to="/dashboard"
+                  className="mobile-dropdown-item"
+                  onClick={() => setIsStoredDropdownOpen(false)}
+                >
                   <FontAwesomeIcon icon={faArrowRightFromBracket} />
                   <span>Go back</span>
                 </Link>
-                <Link to="store-password" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
+                <Link
+                  to="store-password"
+                  className="mobile-dropdown-item"
+                  onClick={() => setIsStoredDropdownOpen(false)}
+                >
                   <FontAwesomeIcon icon={faLock} />
                   <span>Passwords</span>
                 </Link>
-                <Link to="store-email" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
+                <Link
+                  to="store-email"
+                  className="mobile-dropdown-item"
+                  onClick={() => setIsStoredDropdownOpen(false)}
+                >
                   <FontAwesomeIcon icon={faSquareEnvelope} />
                   <span>Email</span>
                 </Link>
-                <Link to="store-notes" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
+                <Link
+                  to="store-notes"
+                  className="mobile-dropdown-item"
+                  onClick={() => setIsStoredDropdownOpen(false)}
+                >
                   <FontAwesomeIcon icon={faNoteSticky} />
                   <span>Notes</span>
                 </Link>
-                <Link to="private-info" className="mobile-dropdown-item" onClick={() => setIsStoredDropdownOpen(false)}>
+                <Link
+                  to="private-info"
+                  className="mobile-dropdown-item"
+                  onClick={() => setIsStoredDropdownOpen(false)}
+                >
                   <FontAwesomeIcon icon={faCircleInfo} />
                   <span>Private Info</span>
                 </Link>
@@ -474,25 +513,46 @@ const Dashboard = () => {
             )}
           </div>
           <div className="dropdown-container">
-            <button className="nav-item" onClick={() => setIsCommunityDropdownOpen(!isCommunityDropdownOpen)}>
+            <button
+              className="nav-item"
+              onClick={() =>
+                setIsCommunityDropdownOpen(!isCommunityDropdownOpen)
+              }
+            >
               <FontAwesomeIcon icon={faPeopleGroup} />
               <span>Community</span>
             </button>
             {isCommunityDropdownOpen && (
               <div ref={communityDropdownRef} className="mobile-dropdown-menu">
-                <Link to="/dashboard" className="mobile-dropdown-item" onClick={() => setIsCommunityDropdownOpen(false)}>
+                <Link
+                  to="/dashboard"
+                  className="mobile-dropdown-item"
+                  onClick={() => setIsCommunityDropdownOpen(false)}
+                >
                   <FontAwesomeIcon icon={faArrowRightFromBracket} />
                   <span>Go back</span>
                 </Link>
-                <Link to="friends" className="mobile-dropdown-item" onClick={() => setIsCommunityDropdownOpen(false)}>
+                <Link
+                  to="friends"
+                  className="mobile-dropdown-item"
+                  onClick={() => setIsCommunityDropdownOpen(false)}
+                >
                   <FontAwesomeIcon icon={faUserGroup} />
                   <span>Friends</span>
                 </Link>
-                <Link to="groups" className="mobile-dropdown-item" onClick={() => setIsCommunityDropdownOpen(false)}>
+                <Link
+                  to="groups"
+                  className="mobile-dropdown-item"
+                  onClick={() => setIsCommunityDropdownOpen(false)}
+                >
                   <FontAwesomeIcon icon={faPeopleGroup} />
                   <span>Groups</span>
                 </Link>
-                <Link to="chatroom" className="mobile-dropdown-item" onClick={() => setIsCommunityDropdownOpen(false)}>
+                <Link
+                  to="chatroom"
+                  className="mobile-dropdown-item"
+                  onClick={() => setIsCommunityDropdownOpen(false)}
+                >
                   <FontAwesomeIcon icon={faCommentDots} />
                   <span>Chatroom</span>
                 </Link>
@@ -505,7 +565,9 @@ const Dashboard = () => {
           </span>
           <span className="profile-mobile">
             <MyProfile />
-            <span className="profile-mobile-name">{user ? `${user.name}` : ""}</span>
+            <span className="profile-mobile-name">
+              {user ? `${user.name}` : ""}
+            </span>
           </span>
         </nav>
       )}
