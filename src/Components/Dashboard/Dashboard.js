@@ -441,7 +441,7 @@ const Dashboard = () => {
             {myProfile?.has_pro && (
               <div className="dashboard-card">
                 <div className="card-header">
-                  <h1>Pro Feature</h1>
+                  <h3>Pro Feature</h3>
                 </div>
                 <div className="card-content card-content-pro-1">
                   <Pro />
