@@ -56,11 +56,7 @@ const Dashboard = () => {
     const handleBeforeUnload = () => {
       if (!myProfile) return;
 
-      // Send the request using navigator.sendBeacon which is designed to handle unload events
-      const blob = new Blob([JSON.stringify({})], { type: "application/json" });
-      console.log(blob, "blob");
-      // Use sendBeacon for async request before unload
-      navigator.sendBeacon(`${BASE_URL}/setOffline/${myProfile.id}`, blob);
+      navigator.sendBeacon(`${BASE_URL}/setOffline/${myProfile.id}`);
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -223,16 +219,19 @@ const Dashboard = () => {
   }
 
   const handleLogout = async () => {
+    // if(!myProfile) return;
     try {
-      await api.post("/offline");
+      await api.post(`/setOffline/${myProfile.id}`);
     } catch (error) {
       console.error(error, "Error endpoint data");
     }
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("userId");
-    window.location.href = "/login";
+    setTimeout(() => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userId");
+      window.location.href = "/login";
+    }, 1500);
   };
 
   useEffect(() => {

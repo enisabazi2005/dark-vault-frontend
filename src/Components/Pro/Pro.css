@@ -20,7 +20,7 @@
 }
 .pro-piechart-container .recharts-responsive-container {
   margin-left: 35px;
-  height: 250px;
+  height: 250px !important;
 }
 
 .pro-total-completed-tasks {
