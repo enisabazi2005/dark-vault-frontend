@@ -438,16 +438,27 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            {myProfile?.has_pro && (
-              <div className="dashboard-card">
-                <div className="card-header">
-                  <h3>Pro Feature</h3>
+            {myProfile?.has_pro ? (
+              <>
+                <div className="dashboard-card">
+                  <div className="card-header">
+                    <h3>Pro Feature (Bar Chart)</h3>
+                  </div>
+                  <div className="card-content card-content-pro-1">
+                    <Pro chartType="bar" />
+                  </div>
                 </div>
-                <div className="card-content card-content-pro-1">
-                  <Pro />
+
+                <div className="dashboard-card">
+                  <div className="card-header">
+                    <h3>Pro Feature (Pie Chart)</h3>
+                  </div>
+                  <div className="card-content card-content-pro-2">
+                    <Pro chartType="pie" />
+                  </div>
                 </div>
-              </div>
-            )}
+              </>
+            ) : null}
           </div>
         )}
       </main>
