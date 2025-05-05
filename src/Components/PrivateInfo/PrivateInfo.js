@@ -3,9 +3,9 @@ import "../PrivateInfo/PrivateInfo.css";
 import api from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
-import { useLocation } from "react-router-dom";
 import Storage from "../Storage/Storage";
 import useStorageStore from "../../Store/storageStore";
+import { useStore } from "../../Store/store";
 
 const PrivateInfo = () => {
   const [privateInfos, setPrivateInfos] = useState([]);
@@ -18,10 +18,10 @@ const PrivateInfo = () => {
   const [deleteInfoId, setDeleteInfoId] = useState(null);
   const [viewInfo, setViewInfo] = useState({});
   const [selectedPrivateInfoId, setSelectedPrivateInfoId] = useState(null);
-  const location = useLocation();
-  const MAX_STORAGE = location.state?.MAX_STORAGE || 5;  
   const { totalStored, updateTotalStored } = useStorageStore();
   const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
+  const { myProfile } = useStore();
+  const MAX_STORAGE = myProfile?.MAX_STORAGE;
 
   const handleSelectPrivateInfo = (id) => {
     setSelectedPrivateInfoId(id);
