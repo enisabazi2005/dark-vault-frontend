@@ -17,6 +17,7 @@ import "../Pro/Pro.css";
 const Pro = ({ chartType = "bar" }) => {
   const { myProfile, friends } = useStore();
   const [proData, setProData] = useState([]);
+  const [time, setTime] = useState([]);
 
   const filteredFriends = friends.filter(
     (friend) =>
@@ -52,15 +53,19 @@ const Pro = ({ chartType = "bar" }) => {
     };
 
     fetchProVersion();
-  }, [myProfile]);
 
-  const chartData = [
-    { name: "Feature A", value: 400 },
-    { name: "Feature B", value: 300 },
-    { name: "Feature C", value: 200 },
-    { name: "Feature D", value: 278 },
-    { name: "Feature E", value: 189 },
-  ];
+    const getSpentTime = async () => {
+      try {
+        const response = await api.get("/online-times");
+        setTime(response.data);
+      } catch (error) {
+        console.error(error, "Error fetching data");
+        throw error;
+      }
+    };
+
+    getSpentTime();
+  }, [myProfile]);
 
   const data = [
     { name: "Online", value: onlineCount },
@@ -69,26 +74,34 @@ const Pro = ({ chartType = "bar" }) => {
     { name: "Offline", value: offlineCount },
   ];
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+  const COLORS = ["#27ae60", "#7f8c8d", "#c0392b", "#FFBB28"];
 
   return (
     <div className="pro-version-container">
-      {chartType === "bar" && (
+      {chartType === "bar" && time.length > 0 && (
         <>
           <div className="pro-version-responsive-container">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart width={150} height={40} data={chartData}>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={time}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip
+                  formatter={(value) => [
+                    `${(value * 60).toFixed(0)} min`,
+                    "Time Spent",
+                  ]}
+                />
                 <Bar dataKey="value" fill="#8884d8" />
-                <Tooltip />
-                <XAxis dataKey="name" hide />
-                <YAxis hide />
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="pro-total-friends-tracker">Total Hours Spent: 10</div>
+          <div className="pro-total-friends-tracker">
+            Total Time Spent:{" "}
+            {(time.reduce((acc, cur) => acc + cur.value, 0) * 60).toFixed(0)}{" "}
+            minutes
+          </div>
         </>
       )}
-
       {chartType === "pie" && (
         <>
           <div className="pro-piechart-container">

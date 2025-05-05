@@ -3,9 +3,9 @@ import "../StoreNotes/Notes.css";
 import api from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
-import { useLocation } from "react-router-dom";
 import Storage from "../Storage/Storage";
 import useStorageStore from "../../Store/storageStore";
+import { useStore } from "../../Store/store";
 
 const Notes = () => {
   const [notes, setNotes] = useState([]);
@@ -17,10 +17,10 @@ const Notes = () => {
   const [deleteNoteId, setDeleteNoteId] = useState(null);
   const [viewNote, setViewNote] = useState("");
   const [selectedNoteId, setSelectedNoteId] = useState(null);
-  const location = useLocation();
-  const MAX_STORAGE = location.state?.MAX_STORAGE || 5;  
   const { totalStored, updateTotalStored } = useStorageStore();
   const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
+  const { myProfile } = useStore();
+  const MAX_STORAGE = myProfile?.MAX_STORAGE;  
 
   useEffect(() => {
     if (totalStored >= MAX_STORAGE) {

@@ -39,7 +39,6 @@ import Pro from "../Pro/Pro";
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const location = useLocation();
-  const MAX_STORAGE = 5;
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
   const [isStoredDropdownOpen, setIsStoredDropdownOpen] = useState(false);
@@ -47,10 +46,10 @@ const Dashboard = () => {
   const storedDropdownRef = useRef(null);
   const communityDropdownRef = useRef(null);
   const { totalStored, updateTotalStored, data, updateChartData } =
-    useStorageStore();
+  useStorageStore();
   const [isLoading, setIsLoading] = useState(true);
   const { myProfile } = useStore();
-  // console.log(myProfile?.has_pro);
+  const MAX_STORAGE = myProfile?.MAX_STORAGE;
 
   useEffect(() => {
     const handleBeforeUnload = () => {

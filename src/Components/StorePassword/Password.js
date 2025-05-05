@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "../StorePassword/Password.css";
-import { useLocation } from "react-router-dom";
 import api from "../../api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import PasswordSkeleton from "./PasswordSkeleton";
 import Storage from "../Storage/Storage";
 import useStorageStore from "../../Store/storageStore";
+import { useStore } from "../../Store/store";
 
 const StorePassword = () => {
   const [passwords, setPasswords] = useState([]);
@@ -18,12 +18,11 @@ const StorePassword = () => {
   const [viewPassword, setViewPassword] = useState("");
   const [selectedPasswordId, setSelectedPasswordId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
-  const MAX_STORAGE = location.state?.MAX_STORAGE || 5;  
   const [isStorageLimitReached, setIsStorageLimitReached] = useState(false);
   const { totalStored, updateTotalStored } = useStorageStore();
-  console.log(totalStored, 'totalStored')
-  console.log(MAX_STORAGE, 'MAX_STORAGE')
+  const { myProfile } = useStore();
+  const MAX_STORAGE = myProfile?.MAX_STORAGE;  
+
   useEffect(() => {
     const fetchPasswords = async () => {
       try {
