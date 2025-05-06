@@ -35,6 +35,9 @@ import useStorageStore from "../../Store/storageStore";
 import { BASE_URL } from "../../api";
 import { useStore } from "../../Store/store";
 import Pro from "../Pro/Pro";
+import DriverJs from "../DriverJs/DriverJs";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -50,6 +53,42 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { myProfile } = useStore();
   const MAX_STORAGE = myProfile?.MAX_STORAGE;
+
+  useEffect(() => {
+    if(myProfile?.view || !myProfile) return;
+  
+    const driverObj = driver({
+      showProgress: true,
+      allowClose: false,
+      steps: [
+        {
+          element: ".sidebar",
+          popover: {
+            title: "This is the sidebar",
+            description: "Make it dynamically",
+          },
+        },
+        {
+          element: ".profile-wrapper",
+          popover: {
+            title: "This is your Profile",
+            description: "Change it if you'd like.",
+          },
+        },
+        {
+          element: ".container",
+          popover: {
+            title: "This is your dashboard",
+            description: "Let's use it!",
+          }
+        }
+      ],
+      onDestroyed: () => {
+        api.post('/view-tutorial');
+      }
+    });
+    driverObj.drive();
+  }, [myProfile]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -253,7 +292,7 @@ const Dashboard = () => {
       </div>
       {/* Sidebar */}
       {!isMobile && (
-        <aside className="sidebar">
+        <aside className="sidebar" id="sidebar">
           <div className="sidebar-content">
             <div className="sidebar-header">
               <img src={Logo} alt="Logo" className="sidebar-logo" />
@@ -359,7 +398,7 @@ const Dashboard = () => {
               <div className="card-content">
                 <h2>Welcome Back</h2>
                 <div className="user-name">
-                  {user ? `${user.name} ${user.lastname}` : "Loading..."}
+                  {myProfile ? `${myProfile?.name} ${myProfile?.lastname}` : "Loading..."}
                 </div>
                 <p className="welcome-message">
                   We're glad to see you again. Your vault is secure and ready to
