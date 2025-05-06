@@ -55,6 +55,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if(myProfile?.view || !myProfile) return;
+
   
     const driverObj = driver({
       showProgress: true,
@@ -71,7 +72,7 @@ const Dashboard = () => {
           element: ".profile-wrapper",
           popover: {
             title: "This is your Profile",
-            description: "Change it if you'd like.",
+            description: "Manually change the status to prevent false inactivity please.",
           },
         },
         {

@@ -19,6 +19,7 @@ import "./App.css";
 import { StoreProvider } from "./Store/store";
 import MeetingRoom from "./Components/MettingRoom/MettingRoom";
 import ErrorPage from "./Components/ErrorPage/ErrorPage";
+import Paypal from "./Components/Paypal/Paypal";
 
 const App = () => {
   useEffect(() => {
@@ -49,6 +50,7 @@ const App = () => {
                 <Route path="friends" element={<Friends />}></Route>
                 <Route path="groups" element={<Groups />}></Route>
                 <Route path="meeting/:code" element={<MeetingRoom />} />
+                <Route path="paypal-payment" element={<Paypal />} />
                 </Route>
 
               <Route path="/payout" element={<Payout />} />
