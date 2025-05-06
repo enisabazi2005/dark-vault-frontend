@@ -109,7 +109,8 @@ const MyProfile = ({ updateNotificationCount }) => {
     <div className="profile-settings-wrapper">
       <div className="profile-settings">
         <div className="profile-info-row">
-          <div className="profile-info-col profile-info-col-notification">
+        <div className="profile-wrapper">
+        <div className="profile-info-col profile-info-col-notification">
             <Notification updateNotificationCount={updateNotificationCount} />
           </div>
           <div
@@ -142,6 +143,7 @@ const MyProfile = ({ updateNotificationCount }) => {
                 .replace(/\b\w/g, (char) => char.toUpperCase())}
             </p>
           </div>
+        </div>
         </div>
       </div>
 

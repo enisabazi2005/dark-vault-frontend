@@ -12,6 +12,11 @@
     z-index: 100;
     overflow: visible; 
   }
+  .profile-wrapper { 
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+  }
   
   .profile-info-col-notification { 
     position: relative;
