@@ -35,7 +35,6 @@ import useStorageStore from "../../Store/storageStore";
 import { BASE_URL } from "../../api";
 import { useStore } from "../../Store/store";
 import Pro from "../Pro/Pro";
-import DriverJs from "../DriverJs/DriverJs";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
