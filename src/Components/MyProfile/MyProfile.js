@@ -110,7 +110,22 @@ const MyProfile = ({ updateNotificationCount }) => {
       <div className="profile-settings">
         <div className="profile-info-row">
         <div className="profile-wrapper">
-        <div className="profile-info-col profile-info-col-notification">
+          <div className="profile-info-col profile-info-col-pro">
+            {user?.has_pro ? (
+              <div class="pro-mode-header">
+               <span class="sparkle">✨</span>
+              <h3>Pro Mode</h3>
+               <span class="sparkle">✨</span>
+             </div>
+            ) : (
+              <a href="dashboard/paypal-payment">
+                <button className="switch-to-pro-btn" >
+                  Switch to Pro 
+                </button>
+              </a>
+            )}
+          </div>
+          <div className="profile-info-col profile-info-col-notification">
             <Notification updateNotificationCount={updateNotificationCount} />
           </div>
           <div

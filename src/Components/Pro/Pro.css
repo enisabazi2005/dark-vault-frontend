@@ -18,6 +18,19 @@
   height: 375px;
   position: relative;
 }
+.header-fallback { 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50% , -50%);
+}
+.header-fallback h3 { 
+    margin: 10px 0;
+    text-align: center;
+    font-weight: 500;
+    font-size: 17px;
+    color: #2c3e50;
+}
 .pro-piechart-container .recharts-responsive-container {
   margin-left: 35px;
   height: 250px !important;

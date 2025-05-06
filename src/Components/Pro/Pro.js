@@ -104,47 +104,55 @@ const Pro = ({ chartType = "bar" }) => {
       )}
       {chartType === "pie" && (
         <>
-          <div className="pro-piechart-container">
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={data}
-                  cx="30%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {data.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="pro-total-completed-tasks">
-              Friends: {friends.length}
+         {friends.length >= 1 ? (
+             <div className="pro-piechart-container">
+             <ResponsiveContainer width="100%" height={300}>
+               <PieChart>
+                 <Pie
+                   data={data}
+                   cx="30%"
+                   cy="50%"
+                   innerRadius={60}
+                   outerRadius={80}
+                   fill="#8884d8"
+                   paddingAngle={5}
+                   dataKey="value"
+                 >
+                   {data.map((entry, index) => (
+                     <Cell
+                       key={`cell-${index}`}
+                       fill={COLORS[index % COLORS.length]}
+                     />
+                   ))}
+                 </Pie>
+               </PieChart>
+             </ResponsiveContainer>
+             <div className="pro-total-completed-tasks">
+               Friends: {friends.length}
+             </div>
+             <div className="status-legend">
+               <div className="status-legend-grid">
+                 {data.map((item, index) => (
+                   <div key={index} className="status-item">
+                     <div
+                       className="status-color-box"
+                       style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                     ></div>
+                     <span className="status-name">
+                       {item.name} - {item.value}
+                     </span>
+                   </div>
+                 ))}
+               </div>
+             </div>
+           </div>
+         ) : (
+            <div className="pro-piechart-container">
+                <div className="header-fallback">
+                    <h3>No friends</h3>
+                </div>
             </div>
-            <div className="status-legend">
-              <div className="status-legend-grid">
-                {data.map((item, index) => (
-                  <div key={index} className="status-item">
-                    <div
-                      className="status-color-box"
-                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                    ></div>
-                    <span className="status-name">
-                      {item.name} - {item.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+         )}
         </>
       )}
     </div>

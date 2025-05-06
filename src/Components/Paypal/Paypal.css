@@ -1,0 +1,10 @@
+.paypal-container { 
+    margin-top: 80px;
+    position: relative;
+}
+.paypal-row { 
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+    justify-content: space-between;
+}

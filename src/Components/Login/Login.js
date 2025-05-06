@@ -80,7 +80,7 @@ const Login = () => {
         setTimeout(() => {
           setShowSuccessModal(false);
           navigate("/dashboard");
-        }, 3000);
+        }, 100000);
         return;
       }
 

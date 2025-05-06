@@ -33,6 +33,9 @@ api.interceptors.request.use(
   }
 );
 
+export const PAYPAL_CLIENT_ID = "AYLXwxucl3hrRCQaDUQpAPgXEf9EcHOuFJfmttYoly2xW_5J-hAtCd4jRYYKMsKgr1xAIjB9T1_38Plf";
+export const PAYPAL_SECRET_KEY = "EIYlAlY6RfBacHEh0QYow0kyWr34U-pe0hmgm1zEMkuY9zKJ_oGuV9QVjJxWipxOxcFv06ulV9noq4lA";
+
 export const STORAGE_URL = "http://127.0.0.1:8000/storage";
 // export const STORAGE_URL = "http://192.168.1.7:8000/storage";
 
