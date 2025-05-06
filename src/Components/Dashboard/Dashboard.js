@@ -55,6 +55,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if(myProfile?.view || !myProfile) return;
+
   
     const driverObj = driver({
       showProgress: true,
