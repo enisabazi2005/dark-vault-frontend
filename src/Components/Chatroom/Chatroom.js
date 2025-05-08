@@ -44,6 +44,7 @@ const Chatroom = () => {
   const messageSentAudioRef = useRef(null);
   const [isBackgroundModalOpen, setIsBackgroundModalOpen] = useState(false);
   const [chatBackground, setChatBackground] = useState(null);
+  const [customBackground, setCustomBackground] = useState(null);
   const [hoveredMsg, setHoveredMsg] = useState(null);
   const [groupedReactions, setGroupedReactions] = useState({});
   const { myProfile, friends: storeFriends } = useStore();
@@ -54,6 +55,41 @@ const Chatroom = () => {
   const { usersMuted, updateUsersMuted } = useStorageStore();
   const friendRef = useRef(friends);
   const messagesEnd = useRef(null);
+  const [color1, setColor1] = useState(localStorage.getItem("customColor1"));
+  const [color2, setColor2] = useState(localStorage.getItem("customColor2"));
+
+  const getBackgroundStyle = () => {
+    if (typeof chatBackground === "object" && chatBackground.color_1 && chatBackground.color_2) {
+      // If it's a custom background object with colors
+      return {
+        background: `linear-gradient(135deg, ${chatBackground.color_1}, ${chatBackground.color_2})`,
+      };
+    } else if (chatBackground === "custom") {
+      // If it's set to custom but we need to get colors from localStorage
+      const color1 = localStorage.getItem("customColor1") || "#2016e9";
+      const color2 = localStorage.getItem("customColor2") || "#c60101";
+      return {
+        background: `linear-gradient(135deg, ${color1}, ${color2})`,
+      };
+    }
+    // Return the background based on the chatBackground type if it's a valid option
+    return {};
+  };
+
+  // const fetchBg = async () => {
+  //   if(!myProfile) return;
+  //  try {
+  //   const response = await api.get("/custom-background");
+  //   console.log(response.data.data);
+  //  } catch(error) {
+  //   throw error;
+  //  }
+  //  fetchBg();
+  // }
+
+  // useEffect(() => {
+  //   fetchBg();
+  // }, [myProfile]);
 
   useEffect(() => {
     friendRef.current = friends;
@@ -256,7 +292,7 @@ const Chatroom = () => {
       ]);
       if (isOpen) {
         markLastMessageAsSeen(data.message.id);
-      } 
+      }
     });
 
     return () => {
@@ -704,7 +740,7 @@ const Chatroom = () => {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); 
+      e.preventDefault();
       handleSendMessage();
     }
   };
@@ -715,12 +751,41 @@ const Chatroom = () => {
 
   const fetchBackground = async () => {
     try {
+      // Try fetching from /background first
       const response = await api.get("/background");
+
       if (response.data && response.data.option) {
-        setChatBackground(response.data.option);
+        setChatBackground(response.data.option); // Set chat background from /background
+      } else {
+        console.log(
+          "No option from /background, attempting /custom-background..."
+        );
+        await fetchCustomBackground(); // Fallback to custom background
       }
     } catch (error) {
-      console.error("Error fetching background:", error);
+      if (error.response && error.response.status === 404) {
+        // If /background returns 404, fallback to /custom-background
+        console.log("404 from /background, attempting /custom-background...");
+        await fetchCustomBackground();
+      } else {
+        console.error("Error fetching background from /background:", error);
+      }
+    }
+  };
+
+  const fetchCustomBackground = async () => {
+    try {
+      const customResponse = await api.get("/custom-background");
+      if (customResponse && customResponse.data && customResponse.data.data) {
+        const customData = customResponse.data.data;
+        setCustomBackground(customData);
+        setChatBackground(customData); 
+        console.log("Custom background fetched:", customData);
+      } else {
+        console.log("No valid custom background data returned.");
+      }
+    } catch (error) {
+      console.error("Error fetching custom background:", error);
     }
   };
 
@@ -757,7 +822,7 @@ const Chatroom = () => {
       return <div className="do-not-distrub-status-chatroom"></div>;
     return <div className="offline-status-chatroom"></div>;
   };
-
+  
   return (
     <div className="full-width-layout">
       <audio ref={messageSentAudioRef} src={MessageSent} preload="auto" />
@@ -791,7 +856,9 @@ const Chatroom = () => {
                     className="user-image-filter"
                   />
                   {user.name} {user.lastname}
-                  {user.has_pro ? ( <img className="icon-pro" src={Icon}></img> ) : null}
+                  {user.has_pro ? (
+                    <img className="icon-pro" src={Icon}></img>
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -816,10 +883,9 @@ const Chatroom = () => {
               </div>
               <div className="user-details">
                 <div className="selected-user-details">
-                {selectedUser.has_pro ? (
-                      <p className="p-verified-user">Verified User</p>
-                      
-                    ) : null}
+                  {selectedUser.has_pro ? (
+                    <p className="p-verified-user">Verified User</p>
+                  ) : null}
                   <div className="user-info">
                     <p>
                       {selectedUser.name} {selectedUser.lastname}
@@ -933,9 +999,9 @@ const Chatroom = () => {
                       <span style={{ marginLeft: 8, color: "red" }}>🔇</span>
                     )}
                   </span>
-                    {friend.has_pro ? (
-                      <img className="icon-pro" src={Icon}></img>
-                    ): null}
+                  {friend.has_pro ? (
+                    <img className="icon-pro" src={Icon}></img>
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -949,7 +1015,15 @@ const Chatroom = () => {
       )}
       {isOpen && selectedUser && messages && (
         <div className="chat-layout">
-          <div className={`chat-window ${chatBackground || ""}`}>
+          {/* <div className={`chat-window ${chatBackground || ""}`}> */}
+          <div
+            className={`chat-window ${
+              typeof chatBackground === "object"
+                ? "custom"
+                : chatBackground || ""
+            }`}
+            style={getBackgroundStyle()}
+          >
             <div className="messages">
               <div className="display-friend-row">
                 <div

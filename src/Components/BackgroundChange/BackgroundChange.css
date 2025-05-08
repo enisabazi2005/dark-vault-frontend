@@ -29,7 +29,7 @@
 
 .background-options {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -52,7 +52,7 @@
 }
 
 .background-option.selected {
-  border-color: #6862cc;
+  border-color: #6862cc !important;
   background-color: rgba(104, 98, 204, 0.1);
 }
 
@@ -67,7 +67,7 @@
 }
 
 .background-option.custom-option {
-  border-color: #3498db;
+  border-color: #e1ebf1;
   background-color: rgba(52, 152, 219, 0.1);
 }
 

@@ -12,6 +12,8 @@ const BackgroundChange = ({ isOpen, onClose, onBackgroundChange }) => {
   const [showCustomColor, setShowCustomColor] = useState(false);
   const [customColor1, setCustomColor1] = useState("#6862cc");
   const [customColor2, setCustomColor2] = useState("#ffffff");
+  const [hasFetchedBackground, setHasFetchedBackground] = useState(false);
+  const [hasFetchedCustomBackground, setHasFetchedCustomBackground] = useState(false);
   const navigate = useNavigate();
   const { myProfile } = useStore();
 
@@ -19,21 +21,56 @@ const BackgroundChange = ({ isOpen, onClose, onBackgroundChange }) => {
   const fetchCurrentBackground = useCallback(async () => {
     try {
       const response = await api.get("/background");
+
       if (response.data && response.data.option) {
+        // Set current background from the /background endpoint
         setCurrentBackground(response.data.option);
         setSelectedOption(response.data.option);
-        console.log(selectedOption, "selectedOption");
+
+        console.log(response.data.option, "selectedOption from /background");
+
+        // If the selected option is "custom", fetch the custom background colors
+        if (response.data.option === "custom") {
+          await fetchCustomBackground();
+        }
       }
     } catch (error) {
       console.error("Error fetching background:", error);
     }
-  }, [selectedOption]);
+  }, []);
+
+  // Function 2: Fetch the custom background data if the "custom" option is selected
+  const fetchCustomBackground = async () => {
+    try {
+      const customBgResponse = await api.get("/custom-background");
+      console.log(customBgResponse, "custom background response");
+
+      if (customBgResponse) {
+        // Set the custom background colors
+        setCustomColor1(customBgResponse.data.data.color_1);
+        setCustomColor2(customBgResponse.data.data.color_2);
+        console.log("Custom background colors:", customBgResponse.data.data);
+      }
+    } catch (customError) {
+      console.error("Error fetching custom background colors:", customError);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
-      fetchCurrentBackground();
+      // Fetch current background only once
+      if (!hasFetchedBackground) {
+        fetchCurrentBackground();
+        setHasFetchedBackground(true); // Flag to prevent redundant requests
+      }
+
+      // Fetch custom background only once for users with pro
+      if (myProfile?.has_pro && !hasFetchedCustomBackground) {
+        fetchCustomBackground();
+        setHasFetchedCustomBackground(true); // Flag to prevent redundant requests
+      }
     }
-  }, [isOpen, fetchCurrentBackground]);
+  }, [isOpen, fetchCurrentBackground, fetchCustomBackground, myProfile?.has_pro, hasFetchedBackground, hasFetchedCustomBackground]);
 
   const handleOptionSelect = async (option) => {
     if (option === "premium") {
@@ -91,8 +128,9 @@ const BackgroundChange = ({ isOpen, onClose, onBackgroundChange }) => {
       preview: "linear-gradient(to bottom, #95a5a6, #1a1a1a)",
     },
   ];
-  
-  const premiumOptions = [
+
+  // Use a function to get the premium options so we can update the custom preview dynamically
+  const getPremiumOptions = () => [
     {
       value: "galaxy",
       label: "Galaxy",
@@ -133,14 +171,23 @@ const BackgroundChange = ({ isOpen, onClose, onBackgroundChange }) => {
 
   const handleCustomColorSubmit = async () => {
     try {
-      const option = "custom";
-      const colors = { color1: customColor1, color2: customColor2 };
-      
-      const response = await api.post("/background", { option, colors });
-      if (response.data && response.data.option) {
-        setCurrentBackground(response.data.option);
-        onBackgroundChange(response.data.option);
+      // Only make the custom-background API call
+      const customResponse = await api.post("/custom-background", {
+        color_1: customColor1,
+        color_2: customColor2
+      });
+
+      if (customResponse) {
+        setCurrentBackground("custom");
+        onBackgroundChange({
+          color_1: customColor1,
+          color_2: customColor2
+        });
         setShowCustomColor(false);
+
+        // Store colors in localStorage
+        localStorage.setItem("customColor1", customColor1);
+        localStorage.setItem("customColor2", customColor2);
       }
     } catch (error) {
       console.error("Error updating custom background:", error);
@@ -153,46 +200,53 @@ const BackgroundChange = ({ isOpen, onClose, onBackgroundChange }) => {
 
   if (!isOpen) return null;
 
+  const handleModalClick = (e) => {
+    if (e.target.className === "background-change-modal") {
+      onClose();
+    }
+  };
+
   return (
-    <div className="background-change-modal">
+    <div className="background-change-modal" onClick={handleModalClick}>
       <div className="background-change-content">
         <h2>Customize Background</h2>
-        
+
         {showCustomColor ? (
           <div className="custom-color-section">
+            <button
+              className="back-button"
+              onClick={() => setShowCustomColor(false)}
+            >
+              &larr; Back
+            </button>
             <h3>Create Custom Background</h3>
+
             <div className="color-pickers">
               <div className="color-picker">
                 <label>Top Color</label>
-                <input 
-                  type="color" 
+                <input
+                  type="color"
                   value={customColor1}
                   onChange={(e) => setCustomColor1(e.target.value)}
                 />
               </div>
               <div className="color-picker">
                 <label>Bottom Color</label>
-                <input 
-                  type="color" 
+                <input
+                  type="color"
                   value={customColor2}
                   onChange={(e) => setCustomColor2(e.target.value)}
                 />
               </div>
             </div>
             <div className="custom-preview">
-              <div 
-                className="color-preview custom-preview-box" 
+              <div
+                className="color-preview custom-preview-box"
                 style={{ background: `linear-gradient(to bottom, ${customColor1}, ${customColor2})` }}
               ></div>
             </div>
             <div className="custom-buttons">
-              <button 
-                className="back-button"
-                onClick={() => setShowCustomColor(false)}
-              >
-                &larr; Back
-              </button>
-              <button 
+              <button
                 className="apply-button"
                 onClick={handleCustomColorSubmit}
               >
@@ -205,21 +259,20 @@ const BackgroundChange = ({ isOpen, onClose, onBackgroundChange }) => {
             {showPremiumColors && myProfile.has_pro ? (
               <>
                 <div className="premium-options-header">
-                  <button 
+                  <button
                     className="back-button"
                     onClick={backToBasic}
                   >
-                    &larr; Back
+                    &larr; Back to Basics
                   </button>
                   <h3>Premium Themes</h3>
                 </div>
                 <div className="background-options">
-                  {premiumOptions.map((option) => (
+                  {getPremiumOptions().map((option) => (
                     <div
                       key={option.value}
-                      className={`background-option ${
-                        currentBackground === option.value ? "selected" : ""
-                      } ${option.isCustom ? "custom-option" : ""}`}
+                      className={`background-option ${currentBackground === option.value ? "selected" : ""
+                        } ${option.isCustom ? "custom-option" : ""}`}
                       onClick={() => handleOptionSelect(option.value)}
                     >
                       <div className="color-preview" style={{ background: option.preview }}></div>
@@ -233,9 +286,8 @@ const BackgroundChange = ({ isOpen, onClose, onBackgroundChange }) => {
                 {basicOptions.map((option) => (
                   <div
                     key={option.value}
-                    className={`background-option ${
-                      currentBackground === option.value ? "selected" : ""
-                    }`}
+                    className={`background-option ${currentBackground === option.value ? "selected" : ""
+                      }`}
                     onClick={() => handleOptionSelect(option.value)}
                   >
                     <div className="color-preview" style={{ background: option.preview }}></div>
