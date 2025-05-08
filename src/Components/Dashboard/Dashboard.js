@@ -16,6 +16,8 @@ import {
   faShieldAlt,
   faUserGroup,
   faArrowsRotate,
+  faPhone,
+  faComments,
 } from "@fortawesome/free-solid-svg-icons";
 import { PieChart } from "@mui/x-charts";
 import {
@@ -37,6 +39,7 @@ import { useStore } from "../../Store/store";
 import Pro from "../Pro/Pro";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import DailyMessage from "../DailyMessage/DailyMessage";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -48,15 +51,13 @@ const Dashboard = () => {
   const storedDropdownRef = useRef(null);
   const communityDropdownRef = useRef(null);
   const { totalStored, updateTotalStored, data, updateChartData } =
-  useStorageStore();
+    useStorageStore();
   const [isLoading, setIsLoading] = useState(true);
   const { myProfile } = useStore();
   const MAX_STORAGE = myProfile?.MAX_STORAGE;
-
   useEffect(() => {
-    if(myProfile?.view || !myProfile) return;
+    if (myProfile?.view || !myProfile) return;
 
-  
     const driverObj = driver({
       showProgress: true,
       allowClose: false,
@@ -72,7 +73,8 @@ const Dashboard = () => {
           element: ".profile-wrapper",
           popover: {
             title: "This is your Profile",
-            description: "Manually change the status to prevent false inactivity please.",
+            description:
+              "Manually change the status to prevent false inactivity please.",
           },
         },
         {
@@ -80,12 +82,12 @@ const Dashboard = () => {
           popover: {
             title: "This is your dashboard",
             description: "Let's use it!",
-          }
-        }
+          },
+        },
       ],
       onDestroyed: () => {
-        api.post('/view-tutorial');
-      }
+        api.post("/view-tutorial");
+      },
     });
     driverObj.drive();
   }, [myProfile]);
@@ -398,12 +400,15 @@ const Dashboard = () => {
               <div className="card-content">
                 <h2>Welcome Back</h2>
                 <div className="user-name">
-                  {myProfile ? `${myProfile?.name} ${myProfile?.lastname}` : "Loading..."}
+                  {myProfile
+                    ? `${myProfile?.name} ${myProfile?.lastname}`
+                    : "Loading..."}
                 </div>
                 <p className="welcome-message">
                   We're glad to see you again. Your vault is secure and ready to
                   use.
                 </p>
+                <DailyMessage />
               </div>
             </div>
 
@@ -445,12 +450,10 @@ const Dashboard = () => {
                 </button>
               </div>
             </div>
-
-            {/* Security Status Card */}
             <div className="dashboard-card">
               <div className="card-header">
                 <FontAwesomeIcon icon={faShieldAlt} />
-                <h3>Security Status</h3>
+                <h3>Key Features</h3>
               </div>
               <div className="card-content">
                 <div className="security-features">
@@ -466,11 +469,15 @@ const Dashboard = () => {
                     <span>Secure Storage</span>
                   </div>
                   <div className="feature">
+                    <FontAwesomeIcon icon={faPhone} className="feature-icon" />
+                    <span>Live Group Calls</span>
+                  </div>
+                  <div className="feature">
                     <FontAwesomeIcon
-                      icon={faDatabase}
+                      icon={faComments}
                       className="feature-icon"
                     />
-                    <span>Data Backup</span>
+                    <span>Live Chats</span>
                   </div>
                 </div>
               </div>
@@ -488,10 +495,19 @@ const Dashboard = () => {
 
                 <div className="dashboard-card">
                   <div className="card-header">
-                    <h3>Pro Feature (Pie Chart)</h3>
+                    <h3>Pro Feature (Chart)</h3>
                   </div>
                   <div className="card-content card-content-pro-2">
                     <Pro chartType="pie" />
+                  </div>
+                </div>
+
+                <div className="dashboard-card">
+                  <div className="card-header">
+                    <h3>Pro Feature (Chart)</h3>
+                  </div>
+                  <div className="card-content card-cotnent-pro-3">
+                    <Pro chartType="piegroups" />
                   </div>
                 </div>
               </>

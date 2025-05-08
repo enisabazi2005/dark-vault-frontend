@@ -15,7 +15,7 @@ import {
 import "../Pro/Pro.css";
 
 const Pro = ({ chartType = "bar" }) => {
-  const { myProfile, friends } = useStore();
+  const { myProfile, friends, myProfileGroups, myProfileAcceptedGroups } = useStore();
   const [proData, setProData] = useState([]);
   const [time, setTime] = useState([]);
 
@@ -72,6 +72,11 @@ const Pro = ({ chartType = "bar" }) => {
     { name: "Away", value: awayCount },
     { name: "DND", value: doNotDisturbCount },
     { name: "Offline", value: offlineCount },
+  ];
+
+  const groupData = [
+    { name: 'Owner', value: myProfileGroups.length},
+    { name: 'Accepted', value: myProfileAcceptedGroups.length},
   ];
 
   const COLORS = ["#27ae60", "#7f8c8d", "#c0392b", "#FFBB28"];
@@ -152,9 +157,56 @@ const Pro = ({ chartType = "bar" }) => {
                     <h3>No friends</h3>
                 </div>
             </div>
-         )}
+         )} 
         </>
       )}
+        {chartType === "piegroups" && (
+        <div className="pro-piechart-container">
+          {myProfileGroups.length > 0 || myProfileAcceptedGroups.length > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={groupData}
+                    cx="30%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {groupData.map((entry, index) => (
+                      <Cell key={`cell-group-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="pro-total-completed-tasks">
+                Total Groups: {myProfileGroups.length + myProfileAcceptedGroups.length}
+              </div>
+              <div className="status-legend">
+                <div className="status-legend-flex">
+                  {groupData.map((item, index) => (
+                    <div key={index} className="status-item">
+                      <div
+                        className="status-color-box"
+                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                      ></div>
+                      <span className="status-name">
+                        {item.name} - {item.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="header-fallback">
+              <h3>No groups</h3>
+            </div>
+          )}
+        </div>
+       )}
     </div>
   );
 };
