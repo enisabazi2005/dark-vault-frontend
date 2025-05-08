@@ -7,6 +7,7 @@ import { faLockOpen, faUnlock, faTrash } from "@fortawesome/free-solid-svg-icons
 import FriendsSkeleton from "./FriendsSkeleton";
 import useStorageStore from "../../Store/storageStore";
 import ProfileView from "../ProfileView/ProfileView";
+import Icon from "../../assets/images/check.png";
 
 const Friends = () => {
   const [friends, setFriends] = useState([]);
@@ -91,6 +92,7 @@ const Friends = () => {
                     className="user-avatar"
                   />
                   <span>{friend.name}</span>
+                    {friend.has_pro ? (<img className="icon-pro" src={Icon}></img>) : null}
                   <div className="user-mute-div">
                   {usersMuted.includes(friend.id) && (
                       <span className="user-mute-span" style={{ marginLeft: 8, color: 'red' }}>🔇</span> 

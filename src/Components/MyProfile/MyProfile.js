@@ -8,6 +8,7 @@ import MyProfileSkeleton from "./MyProfileSkeleton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import Settings from "../Settings/Settings";
+import Icon from "../../assets/images/check.png";
 
 const MyProfile = ({ updateNotificationCount }) => {
   const [user, setUser] = useState(null);
@@ -24,12 +25,12 @@ const MyProfile = ({ updateNotificationCount }) => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem("token");
-    
+
         if (!userId || !token) {
           console.error("No user ID or token found");
           return;
         }
-    
+
         const [userRes, statusRes] = await Promise.all([
           api.get(`/users/${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -38,11 +39,11 @@ const MyProfile = ({ updateNotificationCount }) => {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
-    
+
         setUser(userRes.data);
-        
+
         const statusData = statusRes.data;
-    
+
         if (statusData.online) setSelectedStatus("online");
         else if (statusData.away) setSelectedStatus("away");
         else if (statusData.do_not_disturb) setSelectedStatus("do_not_disturb");
@@ -53,7 +54,7 @@ const MyProfile = ({ updateNotificationCount }) => {
         setIsLoading(false);
       }
     };
-    
+
     fetchUser();
   }, [userId]);
 
@@ -109,56 +110,59 @@ const MyProfile = ({ updateNotificationCount }) => {
     <div className="profile-settings-wrapper">
       <div className="profile-settings">
         <div className="profile-info-row">
-        <div className="profile-wrapper">
-          <div className="profile-info-col profile-info-col-pro">
-            {user?.has_pro ? (
-              <div class="pro-mode-header">
-               <span class="sparkle">✨</span>
-              <h3>Pro Mode</h3>
-               <span class="sparkle">✨</span>
-             </div>
-            ) : (
-              <a href="dashboard/paypal-payment">
-                <button className="switch-to-pro-btn" >
-                  Switch to Pro 
-                </button>
-              </a>
-            )}
+          <div className="profile-wrapper">
+            <div className="profile-info-col profile-info-col-pro">
+              {user?.has_pro ? (
+                <div class="pro-mode-header">
+                  <span class="sparkle">✨</span>
+                  <h3>Pro Mode</h3>
+                  <span class="sparkle">✨</span>
+                </div>
+              ) : (
+                <a href="dashboard/paypal-payment">
+                  <button className="switch-to-pro-btn">Switch to Pro</button>
+                </a>
+              )}
+            </div>
+            <div className="profile-info-col profile-info-col-notification">
+              <Notification updateNotificationCount={updateNotificationCount} />
+            </div>
+            <div
+              className="profile-info-col"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <img
+                src={
+                  user.picture
+                    ? `${STORAGE_URL}/${user.picture}`
+                    : `${defaultBlankPhotoUrl}`
+                }
+                alt={`${user.name} ${user.lastname}`}
+                className="user-pic"
+                style={{
+                  border: `2px solid ${borderColor}`,
+                }}
+              />
+              {user?.has_pro ? (
+                <span className="checkIcon-div">
+                  <img src={`${Icon}`} alt="Pro Icon" />
+                </span>
+              ) : null}
+            </div>
+            <div
+              className="profile-info-col profile-info-col-user-names"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <h1 className="user-name">
+                {user.name} {user.lastname}
+              </h1>
+              <p className="user-status">
+                {selectedStatus
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (char) => char.toUpperCase())}
+              </p>
+            </div>
           </div>
-          <div className="profile-info-col profile-info-col-notification">
-            <Notification updateNotificationCount={updateNotificationCount} />
-          </div>
-          <div
-            className="profile-info-col"
-            onClick={() => setIsModalOpen(true)}
-          >
-            <img
-              src={
-                user.picture
-                  ? `${STORAGE_URL}/${user.picture}`
-                  : `${defaultBlankPhotoUrl}`
-              }
-              alt={`${user.name} ${user.lastname}`}
-              className="user-pic"
-              style={{
-                border: `2px solid ${borderColor}`,
-              }}
-            />
-          </div>
-          <div
-            className="profile-info-col profile-info-col-user-names"
-            onClick={() => setIsModalOpen(true)}
-          >
-            <h1 className="user-name">
-              {user.name} {user.lastname}
-            </h1>
-            <p className="user-status">
-              {selectedStatus
-                .replace(/_/g, " ")
-                .replace(/\b\w/g, (char) => char.toUpperCase())}
-            </p>
-          </div>
-        </div>
         </div>
       </div>
 
@@ -202,13 +206,15 @@ const MyProfile = ({ updateNotificationCount }) => {
                 Settings
               </li>
               <li
-               className="mobile-settings" 
-               onClick={() => setIsModalOpen(false)}>
+                className="mobile-settings"
+                onClick={() => setIsModalOpen(false)}
+              >
                 <Link to="friends">Friends and Blocked friends</Link>
               </li>
-              <li 
-              className="mobile-settings"
-              onClick={() => setIsModalOpen(false)}>
+              <li
+                className="mobile-settings"
+                onClick={() => setIsModalOpen(false)}
+              >
                 <button onClick={handleLogout}>
                   <FontAwesomeIcon icon={faArrowRightFromBracket} />
                   Log Out
