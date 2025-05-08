@@ -282,7 +282,13 @@
     border: 2px solid #6862cc;
     box-shadow: 0 2px 6px rgba(104, 98, 204, 0.2);
 }
-
+.icon-pro { 
+    width: 20px;
+    height: 20px;
+}
+.p-verified-user { 
+    padding: 5px !important;
+}
 .friend-request-name span {
     flex: 1;
     margin: 0 15px;
@@ -337,7 +343,7 @@
     text-align: center;
     color: #94a3b8;
     font-size: 14px;
-    padding: 20px;
+    padding: 15px;
     background: #f8f9fa;
     border-radius: 12px;
     border: 1px dashed #e1e4e8;

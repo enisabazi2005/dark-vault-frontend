@@ -13,6 +13,7 @@ import BackgroundChange from "../BackgroundChange/BackgroundChange";
 import MessageSent from "../../assets/images/message-sent.wav";
 import { useStore } from "../../Store/store";
 import useStorageStore from "../../Store/storageStore";
+import Icon from "../../assets/images/check.png";
 
 const Chatroom = () => {
   const [users, setUsers] = useState([]);
@@ -76,7 +77,6 @@ const Chatroom = () => {
 
     fetchMutedUsers();
   }, [userId, updateUsersMuted]);
-
 
   const removeReaction = async (messageId) => {
     try {
@@ -211,13 +211,11 @@ const Chatroom = () => {
         },
       ]);
       setMessage("");
-      if(isOpen) { 
-        console.log(isOpen, 'isOpen');
+      if (isOpen) {
         markLastMessageAsSeen(response.data.data.message.id);
-      } else { 
+      } else {
         console.log("isopen false", isOpen);
       }
-      // Play the message sent sound
       if (messageSentAudioRef.current) {
         messageSentAudioRef.current.currentTime = 0;
         messageSentAudioRef.current.play().catch((error) => {
@@ -256,13 +254,9 @@ const Chatroom = () => {
           is_seen: data.message.is_seen,
         },
       ]);
-      if(isOpen) {
-        console.log(isOpen, "isOpen true"); 
+      if (isOpen) {
         markLastMessageAsSeen(data.message.id);
-      } else { 
-        console.log(isOpen, 'isOpen false');
-      }
-      console.log(messages, "messages");
+      } 
     });
 
     return () => {
@@ -524,11 +518,11 @@ const Chatroom = () => {
 
       setPendingRequests((prevRequests) =>
         prevRequests.filter(
-          (request) => request.request_friend_id !== data.receiver.request_id &&
-                       request.request_friend_id !== data.sender.request_id
+          (request) =>
+            request.request_friend_id !== data.receiver.request_id &&
+            request.request_friend_id !== data.sender.request_id
         )
       );
-
     });
     console.log(myProfile, "myProfile");
     return () => {
@@ -561,15 +555,15 @@ const Chatroom = () => {
 
   useEffect(() => {
     if (!messages.length) return;
-  
+
     const lastMessage = messages[messages.length - 1];
     if (!lastMessage.is_seen) {
       console.log("Marking last message as seen:", lastMessage.id);
-      markLastMessageAsSeen(lastMessage.id);  
-    } else { 
+      markLastMessageAsSeen(lastMessage.id);
+    } else {
       console.log("Marking last message as not seen not working sadly");
     }
-  
+
     if (lastMessage?.is_seen) {
       setIsSeen(true);
     } else {
@@ -675,7 +669,7 @@ const Chatroom = () => {
   const handleSelectUser = (user, isFriendSelection = false) => {
     setSelectedUser(user);
 
-    const isBlockedByUser = blockedBy.some((blocked) => blocked.id === user.id); 
+    const isBlockedByUser = blockedBy.some((blocked) => blocked.id === user.id);
     console.log(isBlockedByUser);
 
     if (isBlockedByUser) {
@@ -685,8 +679,6 @@ const Chatroom = () => {
       setErrorMessage("");
       setFriend(isFriend(user.request_id));
     }
-    console.log(isFriendSelection, 'isFriendSelection')
-    console.log(user, 'user ')
     if (isFriendSelection) {
       setIsOpen(true);
     } else {
@@ -712,7 +704,7 @@ const Chatroom = () => {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Prevent new line
+      e.preventDefault(); 
       handleSendMessage();
     }
   };
@@ -750,20 +742,21 @@ const Chatroom = () => {
       messagesEnd.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-  
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   const getUserStatus = (user) => {
-    // console.log(user, 'user')
-    if (user.online === 1) return <div className="online-status-chatroom"></div>;
+    if (user.online === 1)
+      return <div className="online-status-chatroom"></div>;
     if (user.away === 1) return <div className="away-status-chatroom"></div>;
-    if (user.offline === 1) return <div className="offline-status-chatroom"></div>;
-    if (user.do_not_disturb === 1) return <div className="do-not-distrub-status-chatroom"></div>
-    return <div className="offline-status-chatroom"></div> 
+    if (user.offline === 1)
+      return <div className="offline-status-chatroom"></div>;
+    if (user.do_not_disturb === 1)
+      return <div className="do-not-distrub-status-chatroom"></div>;
+    return <div className="offline-status-chatroom"></div>;
   };
-
 
   return (
     <div className="full-width-layout">
@@ -798,6 +791,7 @@ const Chatroom = () => {
                     className="user-image-filter"
                   />
                   {user.name} {user.lastname}
+                  {user.has_pro ? ( <img className="icon-pro" src={Icon}></img> ) : null}
                 </li>
               ))}
             </ul>
@@ -822,6 +816,10 @@ const Chatroom = () => {
               </div>
               <div className="user-details">
                 <div className="selected-user-details">
+                {selectedUser.has_pro ? (
+                      <p className="p-verified-user">Verified User</p>
+                      
+                    ) : null}
                   <div className="user-info">
                     <p>
                       {selectedUser.name} {selectedUser.lastname}
@@ -831,9 +829,9 @@ const Chatroom = () => {
                             {selectedUserFriends.friends_count} Friends
                           </span>
                         )}
-                        {usersMuted.includes(selectedUser.id) && (
-                          <span style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
-                        )}
+                      {usersMuted.includes(selectedUser.id) && (
+                        <span style={{ marginLeft: 8, color: "red" }}>🔇</span>
+                      )}
                     </p>
                   </div>
                   <button
@@ -932,9 +930,12 @@ const Chatroom = () => {
                   <span>
                     {friend.name} {friend.lastname}
                     {usersMuted.includes(friend.id) && (
-                       <span style={{ marginLeft: 8, color: 'red' }}>🔇</span> 
+                      <span style={{ marginLeft: 8, color: "red" }}>🔇</span>
                     )}
                   </span>
+                    {friend.has_pro ? (
+                      <img className="icon-pro" src={Icon}></img>
+                    ): null}
                 </li>
               ))}
             </ul>
@@ -969,8 +970,11 @@ const Chatroom = () => {
                   {getUserStatus(selectedUser)}
                   {selectedUser && <h1>{selectedUser.name}</h1>}
                   {usersMuted.includes(selectedUser.id) && (
-                       <span style={{ color: 'red' }}>🔇</span> 
-                    )}
+                    <span style={{ color: "red" }}>🔇</span>
+                  )}
+                  {selectedUser.has_pro ? (
+                    <img className="icon-pro" src={Icon}></img>
+                  ) : null}
                 </div>
                 {isProfileClicked && selectedUser && (
                   <div className="modal-profile-clicked">
@@ -1065,14 +1069,13 @@ const Chatroom = () => {
                           )}
                         </div>
                         <div className="message-seen-status">
-                        {index === sortedMessages.length - 1  && (
-                          isSeen ? (
+                          {index === sortedMessages.length - 1 &&
+                            (isSeen ? (
                               <p className="message-seen-status-true">Seen</p>
                             ) : (
                               <p className="message-seen-status-false">Sent</p>
-                            )
-                          )}
-                          </div>
+                            ))}
+                        </div>
                         {hoveredMsg === index && (
                           <div className="emoji-reactions">
                             <span onClick={() => handleReact(msg.id, "heart")}>

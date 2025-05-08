@@ -2,6 +2,9 @@ import React, { useState, useCallback, useEffect } from "react";
 import api, { STORAGE_URL } from "../../api";
 import { useStore } from "../../Store/store";
 import "./ProfileView.css";
+import Icon from "../../assets/images/check.png";
+import { DownloadIcon, CheckIcon , LoadingSpinner } from "../SVG/svg";
+
 
 const ProfileView = () => {
   const [users, setUsers] = useState([]);
@@ -12,7 +15,9 @@ const ProfileView = () => {
   const { myProfile, friends } = useStore();
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-  const [isViewed, setIsViewed] = useState('');
+  const [isViewed, setIsViewed] = useState("");
+  const [downloadStatus, setDownloadStatus] = useState('idle');
+
 
   const isFriend = (user) => {
     return friends.some((friend) => friend.request_id === user.request_id);
@@ -38,16 +43,15 @@ const ProfileView = () => {
     fetchUsers();
   }, []);
 
-//   console.log(selectedUser, "selectedUser");
 
   const getUserStatus = (user) => {
     if (user.online === 1) return "online";
     if (user.away === 1) return "away";
     if (user.offline === 1) return "offline";
-    return "offline"; // Default status
+    if (user.do_not_disturb === 1) return "do_not_disturb";
+    return "offline"; 
   };
 
-  // Debounced search
   const debounce = (func, delay) => {
     let timer;
     return (...args) => {
@@ -93,21 +97,101 @@ const ProfileView = () => {
 
   const handleSelectUser = async (user) => {
     setSelectedUser(user);
-    try { 
-        const response = await api.post('/profile-viewed', {
-            viewed_user_id: user.id,
-        });
-        setIsViewed(response.data);
-
-    } catch(error) { 
-        console.error(error , 'error');
-        throw error;
+    try {
+      const response = await api.post("/profile-viewed", {
+        viewed_user_id: user.id,
+      });
+      setIsViewed(response.data);
+    } catch (error) {
+      console.error(error, "error");
+      throw error;
     }
-
   };
 
   const handleCloseModal = () => {
     setSelectedUser(null);
+  };
+
+  const proUser = () => {
+    const handleDownload = async () => {
+      if (downloadStatus === 'success') return;
+      
+      setDownloadStatus('loading');
+      
+      try {
+        const response = await api.get(`/download-profile-picture/${selectedUser.picture}`, {
+          responseType: "blob", 
+        });
+      
+        const blob = response.data;
+      
+        const link = document.createElement("a");
+        const url = window.URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute("download", selectedUser.picture.split("/").pop()); 
+      
+        document.body.appendChild(link);
+        link.click();
+      
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        setDownloadStatus('success');
+      } catch (error) {
+        console.error("Error downloading file", error);
+        setDownloadStatus('error');
+        
+        setTimeout(() => {
+          setDownloadStatus('idle');
+        }, 3000);
+      }
+    };
+  
+    return (
+      <>
+        {myProfile?.has_pro ? (
+          <>
+            <p>
+              <strong>Email: </strong> {selectedUser.email}
+            </p>
+            <p>
+              <strong>Profile Picture:</strong>{" "}
+              <button 
+                className={`download-button-picture ${downloadStatus === 'success' ? 'success' : ''}`} 
+                onClick={handleDownload}
+                disabled={downloadStatus === 'loading'}
+              >
+                {downloadStatus === 'idle' && (
+                  <>
+                    <DownloadIcon />
+                    Download PFP
+                  </>
+                )}
+                {downloadStatus === 'loading' && (
+                  <span className="loading-wrapper">
+                    <LoadingSpinner />
+                    Downloading...
+                  </span>
+                )}
+                {downloadStatus === 'success' && (
+                  <>
+                    <span className="download-checkmark">
+                      <CheckIcon />
+                    </span>
+                    Downloaded
+                  </>
+                )}
+                {downloadStatus === 'error' && (
+                  <>
+                    <span className="text-red-500">Failed - Try Again</span>
+                  </>
+                )}
+              </button>
+            </p>
+          </>
+        ) : null}
+      </>
+    );
   };
 
   return (
@@ -145,6 +229,9 @@ const ProfileView = () => {
                   <h4>
                     {user.name} {user.lastname}
                   </h4>
+                  {user.has_pro ? (
+                    <img className="icon-pro" src={Icon}></img>
+                  ) : null}
                   {isFriend(user) && (
                     <p
                       className={`profile-view-user-status ${getUserStatus(
@@ -182,6 +269,9 @@ const ProfileView = () => {
             />
             <h2>
               {selectedUser.name} {selectedUser.lastname}
+              {selectedUser.has_pro ? (
+                <img className="icon-pro" src={Icon}></img>
+              ) : null}
             </h2>
             {isFriend(selectedUser) && (
               <>
@@ -193,6 +283,7 @@ const ProfileView = () => {
                   {getUserStatus(selectedUser)}
                 </p>
                 <div className="profile-view-user-details">
+                  {myProfile?.has_pro ? proUser() : null}
                   {selectedUser.age && (
                     <p>
                       <strong>Age:</strong> {selectedUser.age}
@@ -201,6 +292,12 @@ const ProfileView = () => {
                   {selectedUser.gender && (
                     <p>
                       <strong>Gender:</strong> {selectedUser.gender}
+                    </p>
+                  )}
+                  {selectedUser.request_id && (
+                    <p>
+                      <span>Request ID:</span>{" "}
+                      <strong>{selectedUser.request_id}</strong>
                     </p>
                   )}
                 </div>
