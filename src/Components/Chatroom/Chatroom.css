@@ -374,6 +374,43 @@
     transition: all 0.3s ease;
 }
 
+.chat-window.cosmic_fusion{
+    background: linear-gradient(to bottom, #ff00cc, #333399);
+}
+.chat-window.cosmic_fusion .display-friend-row h1 {
+    color: #fff;
+}
+
+.chat-window.galaxy { 
+    background:linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+}
+.chat-window.galaxy .display-friend-row h1 { 
+    color: #fff;
+}
+.chat-window.supernova { 
+    background: linear-gradient(to bottom, #f83600, #f9d423);
+}
+.chat-window.supernova .display-friend-row h1 { 
+    color: #fff;
+}
+.chat-window.heart_nebula { 
+    background: linear-gradient(to bottom, #ee0979, #ff6a00);
+}
+.chat-window.heart_nebula .display-friend-row h1 { 
+    color: #fff;
+}
+.chat-window.sunset_vibe {
+    background: linear-gradient(to bottom, #ff7e5f, #feb47b);
+}
+.chat-window.sunset_vibe .display-friend-row h1 { 
+    color: #fff;
+}
+.chat-window.northern_lights { 
+    background: linear-gradient(to bottom, #43cea2, #185a9d);
+}
+.chat-window.northern_lights .display-friend-row h1 { 
+    color: #fff;
+}
 .chat-window.purple_white {
     background: linear-gradient(to bottom, #6862cc, #ffffff);
 }
