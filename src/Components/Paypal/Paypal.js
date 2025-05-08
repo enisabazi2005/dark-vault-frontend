@@ -31,6 +31,7 @@ const Paypal = () => {
   }
 
   return (
+      <div className="paypal-container-wrapper"> 
     <PayPalScriptProvider options={{ "client-id": clientID }}>
       <div className="paypal-container">
         <div className="paypal-pro-feature-box">
@@ -131,6 +132,7 @@ const Paypal = () => {
         </div>
       </div>
     </PayPalScriptProvider>
+    </div>
   );
 };
 

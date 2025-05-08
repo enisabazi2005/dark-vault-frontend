@@ -1,0 +1,15 @@
+.daily-date-container { 
+    text-align: center;
+    display: block;
+}
+.daily-date-container p , .daily-date-container h2{ 
+    font-size: 17px;
+    font-weight: 500;
+    margin: 5px 0;
+    color: #c5c5c5;
+}
+.daily-date-container strong { 
+    font-size: 17px;
+    font-weight: bold;
+    color: #fff;
+}

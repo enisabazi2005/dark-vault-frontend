@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import api from "../api";
 
 const StoreContext = createContext();
@@ -6,10 +12,12 @@ const StoreContext = createContext();
 export const StoreProvider = ({ children }) => {
   const [myProfile, setMyProfile] = useState(null);
   const [friends, setFriends] = useState([]);
+  const [myProfileGroups, setMyProfileGrups] = useState([]);
+  const [myProfileAcceptedGroups, setMyProfileAcceptedGroups] = useState([]);
   const userId = localStorage.getItem("user_id");
   const request_id = localStorage.getItem("request_id");
+  const token = localStorage.getItem("token");
 
-  // Fetch profile data function
   const fetchProfile = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -18,58 +26,106 @@ export const StoreProvider = ({ children }) => {
         return;
       }
 
-      // Fetching the profile data
       const profileResponse = await api.get(`/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMyProfile(profileResponse.data);
-
     } catch (error) {
       console.error("Error fetching profile:", error);
     }
-  }, [userId]); // Now `userId` is part of the dependency array
+  }, [userId]);
 
-  // Fetch friends data function
   const fetchFriends = useCallback(async () => {
-    if (!request_id) return; // Make sure request_id is available before fetching
+    if (!request_id) return;
 
     try {
       const token = localStorage.getItem("token");
-      const friendsResponse = await api.get(`/friend-request/${request_id}/friends`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const friendsResponse = await api.get(
+        `/friend-request/${request_id}/friends`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      // Debugging the friends response
-      console.log("Friends Response:", friendsResponse.data);
-
-      // Ensure data is valid before updating state
       if (friendsResponse.data) {
         setFriends(friendsResponse.data);
       } else {
         console.error("No friends data found.");
         setFriends([]);
       }
-
     } catch (error) {
       console.error("Error fetching friends:", error);
-      setFriends([]); // Ensure an empty list in case of error
+      setFriends([]);
     }
-  }, [request_id]); // Now `request_id` is part of the dependency array
+  }, [request_id]);
+
+  const fetchGroups = useCallback(async () => {
+    if (!myProfile) return;
+
+    try {
+      const groupResponse = await api.get(
+        `/groups?request_id=${myProfile.request_id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (groupResponse) {
+        setMyProfileGrups(groupResponse.data);
+      } else {
+        setMyProfileGrups([]);
+      }
+    } catch (error) {
+      console.error("Error fetching groups", error);
+      setMyProfileGrups([]);
+    }
+  }, [myProfile]);
+
+  const fetchAcceptedGroups = useCallback(async () => {
+    if (!myProfile) return;
+
+    try {
+      const response = await api.get(
+        `/groups/member?request_id=${myProfile.request_id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response) {
+        setMyProfileAcceptedGroups(response.data);
+      } else {
+        setMyProfileAcceptedGroups([]);
+      }
+    } catch (error) {
+      console.error("Error fetching accepted groups", error);
+      myProfileAcceptedGroups([]);
+    }
+  }, [myProfile]);
 
   useEffect(() => {
-    // Fetch profile first
     fetchProfile();
-  }, [fetchProfile]); // Dependency array with `fetchProfile`
+  }, [fetchProfile]);
 
-  // Once profile is loaded, fetch friends
   useEffect(() => {
     if (myProfile) {
       fetchFriends();
+      fetchGroups();
+      fetchAcceptedGroups();
     }
-  }, [myProfile, fetchFriends]); // Dependency array with `myProfile` and `fetchFriends`
+  }, [myProfile, fetchFriends, fetchGroups, fetchAcceptedGroups]);
 
   return (
-    <StoreContext.Provider value={{ myProfile, setMyProfile, friends, setFriends }}>
+    <StoreContext.Provider
+      value={{
+        myProfile,
+        setMyProfile,
+        friends,
+        setFriends,
+        myProfileGroups,
+        setMyProfileGrups,
+        myProfileAcceptedGroups,
+        setMyProfileAcceptedGroups,
+      }}
+    >
       {children}
     </StoreContext.Provider>
   );

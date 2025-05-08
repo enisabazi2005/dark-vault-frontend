@@ -53,7 +53,7 @@ const App = () => {
                 <Route path="paypal-payment" element={<Paypal />} />
                 </Route>
 
-              <Route path="/payout" element={<Payout />} />
+              {/* <Route path="/payout" element={<Payout />} /> */}
               <Route path="*" element={<ErrorPage />} />
             </Routes>
           </RouteTransition>

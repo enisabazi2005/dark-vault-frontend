@@ -34,6 +34,12 @@
 .pro-piechart-container .recharts-responsive-container {
   margin-left: 35px;
   height: 250px !important;
+} 
+.status-legend-flex { 
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  justify-content: center;
 }
 
 .pro-total-completed-tasks {
