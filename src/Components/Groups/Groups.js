@@ -36,6 +36,9 @@ const Groups = () => {
   const [selectedMessageId, setSelectedMessageId] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [selectedReason, setSelectedReason] = useState(null);
+  const [reportedMessages, setReportedMessages] = useState([]);
+  const [showReportSuccess, setShowReportSuccess] = useState(false);
+  const [isSemiAdmin, setIsSemiAdmin] = useState(false);
 
   const fetchGroupUsers = async (groupId) => {
     try {
@@ -274,7 +277,7 @@ const Groups = () => {
   };
   const reportGroupMessage = async () => {
     if (!selectedMessageId || !selectedReason) {
-      console.log('No selected emssage id , and reason');
+      console.log('No selected message id and reason');
       return;
     }
   
@@ -284,15 +287,29 @@ const Groups = () => {
         reason: selectedReason,
       });
   
-      console.log('report sended successfully', response.data);
-      closeChatMenu();
+      console.log('report sent successfully', response.data);
+      setReportedMessages(prev => [...prev, selectedMessageId]);
+      setShowReportSuccess(true);
+      
+      // Close modal after 2 seconds
+      setTimeout(() => {
+        setShowReportSuccess(false);
+        closeChatMenu();
+      }, 2000);
     } catch (error) {
       console.error("Error reporting message:", error);
       alert("There was a problem reporting the message.");
     }
   };
   
-
+  useEffect(() => {
+    if (!activeChat) return;
+  
+    if (activeChat.semi_admin_id === myProfile.id) {
+      setIsSemiAdmin(true);
+    }
+  }, [activeChat, myProfile]);
+  
 
   const openChatMenu = async (messageId) => {
     setSelectedMessageId(messageId);
@@ -434,7 +451,7 @@ const Groups = () => {
                     key={index}
                     className={`group-chat-messages ${
                       isMyMessage ? "myUser" : "otherUser"
-                    }`}
+                    } ${reportedMessages.includes(msg.id) ? "reported" : ""}`}
                   >
                     <div
                       className="dot-points"
@@ -442,52 +459,66 @@ const Groups = () => {
                     >
                       <FontAwesomeIcon icon={faEllipsisVertical} />
                     </div>
-                    {chatMenu && (
+                    {chatMenu && isSemiAdmin && (
                       <div className="modal-overlay modal-overlay-msg-groups">
-                        <div className="modal-content" ref={modalRef}>
-                          <h1 className="report-header-groups">
-                            Report Message
-                          </h1>
-                          {selectedMessage?.message ? (
-                            <p className="message-report">
-                              Message:{" "}
-                              <strong>{selectedMessage.message}</strong>
-                            </p>
+                        <div className="modal-content report-modal" ref={modalRef}>
+                          {showReportSuccess ? (
+                            <div className="report-success">
+                              <i className="fas fa-check-circle"></i>
+                              <h2>Report Submitted Successfully</h2>
+                              <p>Thank you for helping keep our community safe.</p>
+                            </div>
                           ) : (
-                            <p>Loading...</p>
+                            <>
+                              <h2 className="report-header-groups">
+                                Report Message
+                              </h2>
+                              {selectedMessage?.message ? (
+                                <div className="message-report-container">
+                                  <p className="message-report-label">Message Content:</p>
+                                  <p className="message-report">
+                                    {selectedMessage.message}
+                                  </p>
+                                </div>
+                              ) : (
+                                <p>Loading...</p>
+                              )}
+                              <div className="report-options">
+                                {[
+                                  { label: "Harassment", value: "harassment", icon: "fa-exclamation-triangle" },
+                                  { label: "Racism", value: "racism", icon: "fa-ban" },
+                                  { label: "Inappropriate Content", value: "inappropriate", icon: "fa-exclamation-circle" },
+                                  { label: "Fake Account", value: "fake_account", icon: "fa-user-slash" },
+                                ].map((option) => (
+                                  <button
+                                    key={option.value}
+                                    className={`report-option-btn ${
+                                      selectedReason === option.value ? "active" : ""
+                                    }`}
+                                    onClick={() => setSelectedReason(option.value)}
+                                  >
+                                    <i className={`fas ${option.icon}`}></i>
+                                    {option.label}
+                                  </button>
+                                ))}
+                              </div>
+                              <div className="report-actions">
+                                <button 
+                                  className="report-cancel-btn"
+                                  onClick={closeChatMenu}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  className="report-submit-btn"
+                                  onClick={reportGroupMessage}
+                                  disabled={!selectedReason}
+                                >
+                                  Submit Report
+                                </button>
+                              </div>
+                            </>
                           )}
-                          <div className="report-options">
-                            {[
-                              { label: "Harrasment", value: "harrasment" },
-                              { label: "Racism (N word)", value: "racism" },
-                              {
-                                label: "Inappropriate Words",
-                                value: "innapropriate_words",
-                              },
-                              { label: "Fake Account", value: "fake_account" },
-                            ].map((option) => (
-                              <h3
-                                key={option.value}
-                                className={`report-options-headers ${
-                                  selectedReason === option.value
-                                    ? "active"
-                                    : ""
-                                }`}
-                                onClick={() => setSelectedReason(option.value)}
-                              >
-                                {option.label}
-                              </h3>
-                            ))}
-                          </div>
-                          <div className="report-buttons">
-                            <button onClick={closeChatMenu}>Close</button>
-                            <button
-                              className="report-buttons-button"
-                              onClick={reportGroupMessage}
-                            >
-                              Report
-                            </button>
-                          </div>
                         </div>
                       </div>
                     )}

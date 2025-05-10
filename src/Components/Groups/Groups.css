@@ -17,8 +17,16 @@
   }
   
 .modal-overlay-msg-groups { 
-    background-color: transparent !important;
-    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
 }
 .modal-overlay-msg-groups .report-header-groups { 
     font-size: 20px;
@@ -959,7 +967,6 @@
     }
 }
 
-/* Additional responsive improvements */
 @media (max-width: 480px) {
     .group-container {
         margin: 20px 20px 100px 20px;
@@ -1249,4 +1256,191 @@
 
 .admin-btn span {
     display: none;
+}
+
+/* Report Modal Styles */
+.report-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.report-header-groups {
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.message-report-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.message-report-label {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.message-report {
+    color: #2c3e50;
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.report-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.report-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: white;
+    color: #495057;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.report-option-btn i {
+    font-size: 16px;
+    color: #6c757d;
+}
+
+.report-option-btn:hover {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.report-option-btn.active {
+    background: #e3f2fd;
+    border-color: #2196f3;
+    color: #1976d2;
+}
+
+.report-option-btn.active i {
+    color: #1976d2;
+}
+
+.report-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.report-cancel-btn {
+    padding: 10px 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+    color: #495057;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.report-cancel-btn:hover {
+    background: #f8f9fa;
+}
+
+.report-submit-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #dc3545;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.report-submit-btn:hover:not(:disabled) {
+    background: #c82333;
+}
+
+.report-submit-btn:disabled {
+    background: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+.report-success {
+    text-align: center;
+    padding: 24px;
+}
+
+.report-success i {
+    font-size: 48px;
+    color: #28a745;
+    margin-bottom: 16px;
+}
+
+.report-success h2 {
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.report-success p {
+    color: #6c757d;
+    font-size: 16px;
+    margin: 0;
+}
+
+.group-chat-messages.reported {
+    opacity: 0.7;
+    position: relative;
+}
+
+.group-chat-messages.myUser.reported::after {
+    content: "Reported";
+    position: absolute;
+    top: 0px;
+    left: 8px;
+    background: #dc3545;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+.group-chat-messages.otherUser.reported::after {
+    content: "Reported";
+    position: absolute;
+    top: 0px;
+    right: 8px;
+    background: #dc3545;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.modal-overlay-msg-groups .modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
