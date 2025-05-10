@@ -11,7 +11,61 @@
     grid-template-columns: 1fr 1fr;
     gap: 30px;
 }
-
+.report-options-headers.active {
+    color: red;
+    font-weight: bold;
+  }
+  
+.modal-overlay-msg-groups { 
+    background-color: transparent !important;
+    text-align: center;
+}
+.modal-overlay-msg-groups .report-header-groups { 
+    font-size: 20px;
+    font-family: sans-serif;
+    font-weight: 500;
+    color: #2c3e50;
+    padding: 10px 0;
+    margin: 0;
+}
+.modal-overlay-msg-groups .message-report { 
+    font-size: 15px;
+    font-family: sans-serif;
+    font-weight: 500;
+    color: #495057;
+    padding: 15px 0;
+}
+.report-buttons { 
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+    justify-content: center;
+    padding: 10px 0;
+    margin: 15px 0;
+}
+.report-buttons .report-buttons-button { 
+    background-color: rgb(116, 2, 2) !important;
+}
+.report-options { 
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+    justify-content: center;
+}
+.report-options .report-options-headers { 
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+    padding: 10px;
+    border: 1px solid #4a90e2;
+    background-color: #4a90e2;
+    border-radius: 10px;
+    outline: none;
+}
+.report-options .report-options-headers:hover { 
+    background-color: #357abd;
+    transition: 0.3s ease-in;
+}
 .group-container h1 {
     color: #2c3e50;
     font-size: 28px;
@@ -415,17 +469,46 @@
     display: flex;
     align-items: center;
     column-gap: 5px;
+    position: relative;
+    cursor: pointer;
+    padding: 0 7px;
+}
+.group-chat-messages:hover { 
+    background: #e6e3e347;
+    transition: 0.3s ease;
+    border-radius: 10px;
 }
 
 .group-chat-messages.myUser {
     justify-content: start;
     flex-direction: row; 
-  }
+    position: relative;
+}
+
+.group-chat-messages.myUser .dot-points {
+    position: absolute;
+    right: 0;
+    padding: 0 7px;
+    visibility: hidden;
+}
+.group-chat-messages.myUser:hover .dot-points { 
+    visibility: visible;
+}
   
-  .group-chat-messages.otherUser {
+.group-chat-messages.otherUser {
     justify-content: end;
     flex-direction: row-reverse; 
-  }
+    position: relative;
+}
+.group-chat-messages.otherUser .dot-points { 
+    position: absolute;
+    left: 0;
+    padding: 0 7px;
+    visibility: hidden;
+}
+.group-chat-messages.otherUser:hover .dot-points { 
+    visibility: visible;
+}
 
 .group-chat-messages .group-chat-message-image { 
     width: 30px;
@@ -602,7 +685,8 @@
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    /* padding: 20px; */
+    padding: 10px;
 }
 
 .chat-input-container {

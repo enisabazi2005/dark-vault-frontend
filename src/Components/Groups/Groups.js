@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { PUSHER_CLUSTER, PUSHER_APP_KEY } from "../../api";
 import Pusher from "pusher-js";
 import { useRef } from "react";
+import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Groups = () => {
   const { myProfile, friends } = useStore();
@@ -19,7 +21,7 @@ const Groups = () => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [activeChat, setActiveChat] = useState(null);
-  const bottomRef = useRef(null);
+  const modalRef = useRef(null);
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [groupMembers, setGroupMembers] = useState([]);
   const [acceptedGroups, setAcceptedGroups] = useState([]);
@@ -30,6 +32,10 @@ const Groups = () => {
   const [usersInGroup, setUsersInGroup] = useState([]);
   const [groupMessages, setGroupMessages] = useState([]);
   const [chatMessage, setChatMessage] = useState("");
+  const [chatMenu, setChatMenu] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [selectedReason, setSelectedReason] = useState(null);
 
   const fetchGroupUsers = async (groupId) => {
     try {
@@ -95,7 +101,7 @@ const Groups = () => {
         {
           id: data.id,
           message: data.message,
-          sent_by: data.sent_by, 
+          sent_by: data.sent_by,
           group_id: data.group_id,
           message_sent_at: data.sent_at,
         },
@@ -256,6 +262,64 @@ const Groups = () => {
     setIsGroupModalClosed(false);
   };
 
+  const fetchSingleMessage = async (messageId) => {
+    try {
+      const response = await api.get(`/get-single-message/${messageId}`);
+      console.log(response.data);
+      setSelectedMessage(response.data);
+    } catch (error) {
+      console.error(error, "Error fetching single message data...");
+      throw error;
+    }
+  };
+  const reportGroupMessage = async () => {
+    if (!selectedMessageId || !selectedReason) {
+      console.log('No selected emssage id , and reason');
+      return;
+    }
+  
+    try {
+      const response = await api.post("/report-group-message", {
+        message_id: selectedMessageId,
+        reason: selectedReason,
+      });
+  
+      console.log('report sended successfully', response.data);
+      closeChatMenu();
+    } catch (error) {
+      console.error("Error reporting message:", error);
+      alert("There was a problem reporting the message.");
+    }
+  };
+  
+
+
+  const openChatMenu = async (messageId) => {
+    setSelectedMessageId(messageId);
+    setChatMenu(true);
+    await fetchSingleMessage(messageId);
+  };
+
+  // const closeChatMenu = () => setChatMenu(false);
+  const closeChatMenu = () => {
+    setChatMenu(false);
+    setSelectedMessage(null);
+    setSelectedMessageId(null);
+    setSelectedReason(null);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        closeChatMenu();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const renderChat = () => {
     if (!activeChat) return null;
 
@@ -372,6 +436,62 @@ const Groups = () => {
                       isMyMessage ? "myUser" : "otherUser"
                     }`}
                   >
+                    <div
+                      className="dot-points"
+                      onClick={() => openChatMenu(msg.id)}
+                    >
+                      <FontAwesomeIcon icon={faEllipsisVertical} />
+                    </div>
+                    {chatMenu && (
+                      <div className="modal-overlay modal-overlay-msg-groups">
+                        <div className="modal-content" ref={modalRef}>
+                          <h1 className="report-header-groups">
+                            Report Message
+                          </h1>
+                          {selectedMessage?.message ? (
+                            <p className="message-report">
+                              Message:{" "}
+                              <strong>{selectedMessage.message}</strong>
+                            </p>
+                          ) : (
+                            <p>Loading...</p>
+                          )}
+                          <div className="report-options">
+                            {[
+                              { label: "Harrasment", value: "harrasment" },
+                              { label: "Racism (N word)", value: "racism" },
+                              {
+                                label: "Inappropriate Words",
+                                value: "innapropriate_words",
+                              },
+                              { label: "Fake Account", value: "fake_account" },
+                            ].map((option) => (
+                              <h3
+                                key={option.value}
+                                className={`report-options-headers ${
+                                  selectedReason === option.value
+                                    ? "active"
+                                    : ""
+                                }`}
+                                onClick={() => setSelectedReason(option.value)}
+                              >
+                                {option.label}
+                              </h3>
+                            ))}
+                          </div>
+                          <div className="report-buttons">
+                            <button onClick={closeChatMenu}>Close</button>
+                            <button
+                              className="report-buttons-button"
+                              onClick={reportGroupMessage}
+                            >
+                              Report
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <img
                       src={
                         sender?.picture
