@@ -113,10 +113,10 @@ const MyProfile = ({ updateNotificationCount }) => {
           <div className="profile-wrapper">
             <div className="profile-info-col profile-info-col-pro">
               {user?.has_pro ? (
-                <div class="pro-mode-header">
-                  <span class="sparkle">✨</span>
+                <div className="pro-mode-header">
+                  <span className="sparkle">✨</span>
                   <h3>Pro Mode</h3>
-                  <span class="sparkle">✨</span>
+                  <span className="sparkle">✨</span>
                 </div>
               ) : (
                 <a href="dashboard/paypal-payment">

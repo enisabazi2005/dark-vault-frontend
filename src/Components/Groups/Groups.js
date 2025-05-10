@@ -4,6 +4,11 @@ import { useStore } from "../../Store/store";
 import { STORAGE_URL } from "../../api";
 import "./Groups.css";
 import { useNavigate } from "react-router-dom";
+import { PUSHER_CLUSTER, PUSHER_APP_KEY } from "../../api";
+import Pusher from "pusher-js";
+import { useRef } from "react";
+import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Groups = () => {
   const { myProfile, friends } = useStore();
@@ -16,15 +21,101 @@ const Groups = () => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [activeChat, setActiveChat] = useState(null);
-  const [chatMessage, setChatMessage] = useState("");
+  const modalRef = useRef(null);
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [groupMembers, setGroupMembers] = useState([]);
   const [acceptedGroups, setAcceptedGroups] = useState([]);
   const [isGroupModalClosed, setIsGroupModalClosed] = useState(false);
   const navigate = useNavigate();
-
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+  const [usersInGroup, setUsersInGroup] = useState([]);
+  const [groupMessages, setGroupMessages] = useState([]);
+  const [chatMessage, setChatMessage] = useState("");
+  const [chatMenu, setChatMenu] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [selectedReason, setSelectedReason] = useState(null);
+  const [reportedMessages, setReportedMessages] = useState([]);
+  const [showReportSuccess, setShowReportSuccess] = useState(false);
+  const [isSemiAdmin, setIsSemiAdmin] = useState(false);
+
+  const fetchGroupUsers = async (groupId) => {
+    try {
+      const response = await api.get(`/get-users-in-group/${groupId}`);
+      setUsersInGroup(response.data);
+      console.log(response.data);
+      console.log(response.data.data);
+    } catch (error) {
+      console.error("Error fetching group users");
+      throw error;
+    }
+  };
+
+  const fetchGroupMessages = async (groupId) => {
+    try {
+      const response = await api.get(`get-groups-messages/${groupId}`);
+      setGroupMessages(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching group messages");
+      throw error;
+    }
+  };
+
+  const handleGroupSendMessage = async () => {
+    if (!chatMessage.trim()) return;
+
+    try {
+      const response = await api.post(`/send-message-group/${activeChat.id}`, {
+        message: chatMessage,
+      });
+      // setGroupMessages((prevMessages) => [...prevMessages, response.data]);
+      setChatMessage("");
+    } catch (error) {
+      console.error("Error sending message", error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    if (activeChat) {
+      fetchGroupMessages(activeChat.id);
+      fetchGroupUsers(activeChat.id);
+    }
+  }, [activeChat]);
+
+  useEffect(() => {
+    if (!activeChat?.id) return;
+
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: true,
+    });
+
+    const channel = pusher.subscribe(`group.${activeChat.id}`);
+    console.log(`Subscribed to group.${activeChat.id}`);
+
+    channel.bind("new.group.message", function (data) {
+      console.log("New group message received:", data);
+
+      setGroupMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: data.id,
+          message: data.message,
+          sent_by: data.sent_by,
+          group_id: data.group_id,
+          message_sent_at: data.sent_at,
+        },
+      ]);
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [activeChat?.id]);
 
   const fetchGroups = useCallback(async () => {
     try {
@@ -32,6 +123,7 @@ const Groups = () => {
         `/groups?request_id=${myProfile.request_id}`
       );
       setGroups(response.data);
+      console.log(groups, "groups");
     } catch (error) {
       console.error("Error fetching admin groups:", error);
     }
@@ -173,27 +265,77 @@ const Groups = () => {
     setIsGroupModalClosed(false);
   };
 
-  const handleSendMessage = async () => {
-    if (!chatMessage.trim() || !activeChat) return;
-
+  const fetchSingleMessage = async (messageId) => {
     try {
-      console.log("Sending message:", chatMessage);
-      setChatMessage("");
+      const response = await api.get(`/get-single-message/${messageId}`);
+      console.log(response.data);
+      setSelectedMessage(response.data);
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error(error, "Error fetching single message data...");
+      throw error;
     }
   };
-
-  const handleShowMembers = async (group) => {
+  const reportGroupMessage = async () => {
+    if (!selectedMessageId || !selectedReason) {
+      console.log('No selected message id and reason');
+      return;
+    }
+  
     try {
-      setGroupMembers(group.users_in_group);
-      setShowMembersModal(true);
+      const response = await api.post("/report-group-message", {
+        message_id: selectedMessageId,
+        reason: selectedReason,
+      });
+  
+      console.log('report sent successfully', response.data);
+      setReportedMessages(prev => [...prev, selectedMessageId]);
+      setShowReportSuccess(true);
+      
+      // Close modal after 2 seconds
+      setTimeout(() => {
+        setShowReportSuccess(false);
+        closeChatMenu();
+      }, 2000);
     } catch (error) {
-      console.error("Error fetching group members:", error);
+      console.error("Error reporting message:", error);
+      alert("There was a problem reporting the message.");
     }
   };
+  
+  useEffect(() => {
+    if (!activeChat) return;
+  
+    if (activeChat.semi_admin_id === myProfile.id) {
+      setIsSemiAdmin(true);
+    }
+  }, [activeChat, myProfile]);
+  
 
-  console.log(handleShowMembers);
+  const openChatMenu = async (messageId) => {
+    setSelectedMessageId(messageId);
+    setChatMenu(true);
+    await fetchSingleMessage(messageId);
+  };
+
+  // const closeChatMenu = () => setChatMenu(false);
+  const closeChatMenu = () => {
+    setChatMenu(false);
+    setSelectedMessage(null);
+    setSelectedMessageId(null);
+    setSelectedReason(null);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        closeChatMenu();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const renderChat = () => {
     if (!activeChat) return null;
@@ -225,12 +367,6 @@ const Groups = () => {
                 const isMyProfile = memberId === myProfile.id;
                 const isAdminMember = memberId === activeChat.admin_id;
                 const isSemiAdminMember = memberId === activeChat.semi_admin_id;
-                console.log(
-                  isAdminMember,
-                  "isAdminMember",
-                  isSemiAdminMember,
-                  "isSemiAdminMember"
-                );
 
                 return (
                   <div
@@ -300,7 +436,111 @@ const Groups = () => {
               })}
             </div>
           </div>
-          <div className="chat-messages"></div>
+          <div className="chat-messages">
+            {/* <div ref={bottomRef} /> */}
+            {Array.isArray(groupMessages) &&
+              groupMessages.map((msg, index) => {
+                const sender = usersInGroup.find(
+                  (user) => user.id === msg.sent_by
+                );
+
+                const isMyMessage = msg.sent_by === myProfile.id;
+
+                return (
+                  <div
+                    key={index}
+                    className={`group-chat-messages ${
+                      isMyMessage ? "myUser" : "otherUser"
+                    } ${reportedMessages.includes(msg.id) ? "reported" : ""}`}
+                  >
+                    <div
+                      className="dot-points"
+                      onClick={() => openChatMenu(msg.id)}
+                    >
+                      <FontAwesomeIcon icon={faEllipsisVertical} />
+                    </div>
+                    {chatMenu && isSemiAdmin && (
+                      <div className="modal-overlay modal-overlay-msg-groups">
+                        <div className="modal-content report-modal" ref={modalRef}>
+                          {showReportSuccess ? (
+                            <div className="report-success">
+                              <i className="fas fa-check-circle"></i>
+                              <h2>Report Submitted Successfully</h2>
+                              <p>Thank you for helping keep our community safe.</p>
+                            </div>
+                          ) : (
+                            <>
+                              <h2 className="report-header-groups">
+                                Report Message
+                              </h2>
+                              {selectedMessage?.message ? (
+                                <div className="message-report-container">
+                                  <p className="message-report-label">Message Content:</p>
+                                  <p className="message-report">
+                                    {selectedMessage.message}
+                                  </p>
+                                </div>
+                              ) : (
+                                <p>Loading...</p>
+                              )}
+                              <div className="report-options">
+                                {[
+                                  { label: "Harassment", value: "harassment", icon: "fa-exclamation-triangle" },
+                                  { label: "Racism", value: "racism", icon: "fa-ban" },
+                                  { label: "Inappropriate Content", value: "inappropriate", icon: "fa-exclamation-circle" },
+                                  { label: "Fake Account", value: "fake_account", icon: "fa-user-slash" },
+                                ].map((option) => (
+                                  <button
+                                    key={option.value}
+                                    className={`report-option-btn ${
+                                      selectedReason === option.value ? "active" : ""
+                                    }`}
+                                    onClick={() => setSelectedReason(option.value)}
+                                  >
+                                    <i className={`fas ${option.icon}`}></i>
+                                    {option.label}
+                                  </button>
+                                ))}
+                              </div>
+                              <div className="report-actions">
+                                <button 
+                                  className="report-cancel-btn"
+                                  onClick={closeChatMenu}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  className="report-submit-btn"
+                                  onClick={reportGroupMessage}
+                                  disabled={!selectedReason}
+                                >
+                                  Submit Report
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    <img
+                      src={
+                        sender?.picture
+                          ? `${STORAGE_URL}/${sender.picture}`
+                          : defaultBlankPhotoUrl
+                      }
+                      alt={sender?.name || "User"}
+                      className="group-chat-message-image"
+                    />
+                    <div className="group-chat-messages-container">
+                      <div className="group-chat-message-message">
+                        {msg.message}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
           <div className="chat-input-container">
             <textarea
               className="chat-textarea"
@@ -308,10 +548,13 @@ const Groups = () => {
               onChange={(e) => setChatMessage(e.target.value)}
               placeholder="Type your message..."
               onKeyPress={(e) =>
-                e.key === "Enter" && !e.shiftKey && handleSendMessage()
+                e.key === "Enter" && !e.shiftKey && handleGroupSendMessage()
               }
             />
-            <button className="chat-send-btn" onClick={handleSendMessage}>
+            <button
+              className="chat-send-btn"
+              onClick={() => handleGroupSendMessage(activeChat.id)}
+            >
               Send
             </button>
           </div>
