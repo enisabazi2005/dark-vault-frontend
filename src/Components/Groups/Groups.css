@@ -2,7 +2,7 @@
 
 .group-container {
     max-width: 1200px;
-    margin: 40px auto;
+    margin: 80px auto;
     padding: 30px;
     background: #fff;
     border-radius: 12px;
@@ -409,6 +409,51 @@
 .decline-btn:hover {
     background: #c82333;
     transform: translateY(-1px);
+}
+
+.group-chat-messages { 
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+}
+
+.group-chat-messages.myUser {
+    justify-content: start;
+    flex-direction: row; 
+  }
+  
+  .group-chat-messages.otherUser {
+    justify-content: end;
+    flex-direction: row-reverse; 
+  }
+
+.group-chat-messages .group-chat-message-image { 
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+}
+.group-chat-messages-container { 
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    align-items: center;
+    margin: 10px 0;
+}
+.group-chat-messages-container .group-chat-messages-sender-name { 
+    font-size: 12px;
+    font-family: sans-serif;
+    font-weight: 500;
+    color: #2c3e50;
+}
+.group-chat-message-message { 
+    font-size: 14px;
+    font-family: sans-serif;
+    font-weight: 500;
+    color: #495057;
+    padding: 10px;
+    border: 1px solid #f3f3fa;
+    background-color: #f3f3fa;
+    border-radius: 10px;
 }
 
 /* Chat Styles */
