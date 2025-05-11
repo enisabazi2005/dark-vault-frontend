@@ -363,6 +363,7 @@
     }
     .mobile-nav-username {
       display: block;
+      text-align: center;
      }
     .mobile-settings button { 
       display: flex;
@@ -444,8 +445,8 @@
     }
     .bottom-nav .checkIcon-div {
       position: absolute;
-      right: -2px;
-      bottom: 12px;
+      right: -7px;
+      bottom: 4px;
       /* background: white; */
       border-radius: 50%;
       padding: 1px;
@@ -472,7 +473,7 @@
     font-size: 10px;
     font-weight: 500;
     color: #4a5568;
-    margin: 0;
+    margin: 0 ;
     max-width: 60px;
     overflow: hidden;
     text-overflow: ellipsis;

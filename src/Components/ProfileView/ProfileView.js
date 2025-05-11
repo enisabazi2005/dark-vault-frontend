@@ -230,7 +230,7 @@ const ProfileView = () => {
                     {user.name} {user.lastname}
                   </h4>
                   {user.has_pro ? (
-                    <img className="icon-pro" src={Icon}></img>
+                    <img className="icon-pro-profile-view" src={Icon} alt="Pro" />
                   ) : null}
                   {isFriend(user) && (
                     <p

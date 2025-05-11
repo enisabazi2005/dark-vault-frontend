@@ -310,3 +310,96 @@ h6 {
         margin-left: 4px;
     }
 }
+
+.profile-view-filtered-user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.profile-view-user-image-filter {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #6862cc;
+}
+
+.profile-view-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.profile-view-user-info h4 {
+    font-size: 14px;
+    color: #2c3e50;
+    margin: 0;
+    font-weight: 500;
+}
+
+.profile-view-user-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: auto;
+}
+
+.profile-view-user-status.online {
+    background: rgba(46, 204, 113, 0.1);
+    color: #27ae60;
+}
+
+.profile-view-user-status.offline {
+    background: rgba(149, 165, 166, 0.1);
+    color: #7f8c8d;
+}
+
+.profile-view-user-status.away {
+    background: rgba(241, 196, 15, 0.1);
+    color: #f39c12;
+}
+
+@media (max-width: 768px) {
+    .profile-view-filtered-user-card {
+        padding: 6px;
+        gap: 8px;
+    }
+
+    .profile-view-user-image-filter {
+        width: 32px;
+        height: 32px;
+        border-width: 1.5px;
+    }
+
+    .profile-view-user-info {
+        gap: 6px;
+    }
+
+    .profile-view-user-info h4 {
+        font-size: 12px;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .profile-view-user-status {
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        white-space: nowrap;
+    }
+
+    .icon-pro {
+        width: 10px;
+        height: 10px;
+        margin-left: 2px;
+    }
+}
