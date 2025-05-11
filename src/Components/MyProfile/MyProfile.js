@@ -143,6 +143,7 @@ const MyProfile = ({ updateNotificationCount }) => {
                   border: `2px solid ${borderColor}`,
                 }}
               />
+              <p className="mobile-nav-username">{user.name}</p>
               {user?.has_pro ? (
                 <span className="checkIcon-div">
                   <img src={`${Icon}`} alt="Pro Icon" />

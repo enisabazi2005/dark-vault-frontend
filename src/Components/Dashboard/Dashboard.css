@@ -266,6 +266,8 @@
   z-index: 1000;
   align-items: center;
   width: 100%;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
 }
 
 .bottom-nav .nav-item {
