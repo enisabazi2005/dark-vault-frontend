@@ -39,6 +39,7 @@ const Groups = () => {
   const [reportedMessages, setReportedMessages] = useState([]);
   const [showReportSuccess, setShowReportSuccess] = useState(false);
   const [isSemiAdmin, setIsSemiAdmin] = useState(false);
+  const [showMobileMembers, setShowMobileMembers] = useState(false);
 
   const fetchGroupUsers = async (groupId) => {
     try {
@@ -351,26 +352,25 @@ const Groups = () => {
             <button className="chat-close-btn" onClick={handleCloseChat}>
               ×
             </button>
+            <button className="mobile-members-menu" onClick={() => setShowMobileMembers(true)}>
+              <i className="fas fa-users"></i>
+            </button>
           </div>
           <div className="chat-members-section">
             <div className="chat-members-header">
               <h3>Members</h3>
             </div>
             <div className="chat-members-list">
-              {activeChat.users_in_group?.map((memberId) => {
-                const member =
-                  memberId === myProfile.id
-                    ? myProfile
-                    : friends.find((f) => f.id === memberId);
+              {usersInGroup?.map((member) => {
                 if (!member) return null;
 
-                const isMyProfile = memberId === myProfile.id;
-                const isAdminMember = memberId === activeChat.admin_id;
-                const isSemiAdminMember = memberId === activeChat.semi_admin_id;
+                const isMyProfile = member.id === myProfile.id;
+                const isAdminMember = member.id === activeChat.admin_id;
+                const isSemiAdminMember = member.id === activeChat.semi_admin_id;
 
                 return (
                   <div
-                    key={memberId}
+                    key={member.id}
                     className={`chat-member-item ${
                       isAdminMember ? "admin-member" : ""
                     } ${isSemiAdminMember ? "semi-admin-member" : ""}`}
@@ -407,7 +407,7 @@ const Groups = () => {
                       <div className="admin-controls">
                         <button
                           className="admin-btn remove-btn"
-                          onClick={() => handleRemoveUser(memberId)}
+                          onClick={() => handleRemoveUser(member.id)}
                           title="Remove member"
                         >
                           <i className="fas fa-trash-alt"></i>
@@ -415,7 +415,7 @@ const Groups = () => {
                         {isSemiAdminMember ? (
                           <button
                             className="admin-btn demote-btn"
-                            onClick={() => handleDemoteUser(memberId)}
+                            onClick={() => handleDemoteUser(member.id)}
                             title="Remove Semi-Admin role"
                           >
                             <i className="fas fa-arrow-down"></i>
@@ -423,7 +423,7 @@ const Groups = () => {
                         ) : (
                           <button
                             className="admin-btn promote-btn"
-                            onClick={() => handlePromoteUser(memberId)}
+                            onClick={() => handlePromoteUser(member.id)}
                             title="Promote to Semi-Admin"
                           >
                             <i className="fas fa-check"></i>
@@ -633,21 +633,35 @@ const Groups = () => {
         >
           <h2>Group Members</h2>
           <div className="group-members-list">
-            {groupMembers.map((memberId) => {
-              const member = friends.find((f) => f.id === memberId);
+            {usersInGroup?.map((member) => {
+              if (!member) return null;
+
+              const isMyProfile = member.id === myProfile.id;
+              const isAdminMember = member.id === activeChat.admin_id;
+              const isSemiAdminMember = member.id === activeChat.semi_admin_id;
+
               return (
-                <div key={memberId} className="member-item">
+                <div key={member.id} className="member-item">
                   <img
                     src={
-                      member?.picture
+                      member.picture
                         ? `${STORAGE_URL}/${member.picture}`
                         : defaultBlankPhotoUrl
                     }
-                    alt={`${member?.first_name} ${member?.last_name}`}
+                    alt={`${member.name} ${member.lastname}`}
                     className="member-avatar"
                   />
                   <span className="member-name">
-                    {member?.first_name} {member?.last_name}
+                    {member.name} {member.lastname} {isMyProfile ? "(You)" : ""}
+                  </span>
+                  <span className="member-status">
+                    {isAdminMember
+                      ? "Admin"
+                      : isSemiAdminMember
+                      ? "Semi-Admin"
+                      : member.online
+                      ? "Online"
+                      : "Offline"}
                   </span>
                 </div>
               );
@@ -906,6 +920,94 @@ const Groups = () => {
       {showInviteModal && renderInviteModal()}
       {renderChat()}
       {renderGroupMembersModal()}
+
+      {/* Mobile Members Modal */}
+      <div className={`mobile-members-modal ${showMobileMembers ? 'active' : ''}`}>
+        <div className="mobile-members-content">
+          <div className="mobile-members-header">
+            <h3>Group Members</h3>
+            <button className="mobile-members-close" onClick={() => setShowMobileMembers(false)}>
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+          <div className="mobile-members-list">
+            {usersInGroup?.map((member) => {
+              if (!member || !activeChat) return null;
+
+              const isMyProfile = member.id === myProfile.id;
+              const isAdminMember = member.id === activeChat.admin_id;
+              const isSemiAdminMember = member.id === activeChat.semi_admin_id;
+              const isAdmin = myProfile.id === activeChat.admin_id;
+
+              return (
+                <div
+                  key={member.id}
+                  className={`chat-member-item ${
+                    isAdminMember ? "admin-member" : ""
+                  } ${isSemiAdminMember ? "semi-admin-member" : ""}`}
+                >
+                  <img
+                    src={
+                      member.picture
+                        ? `${STORAGE_URL}/${member.picture}`
+                        : defaultBlankPhotoUrl
+                    }
+                    alt={`${member.name} ${member.lastname}`}
+                    className="chat-member-avatar"
+                  />
+                  <div className="chat-member-info">
+                    <span className="chat-member-name">
+                      {member.name} {member.lastname}{" "}
+                      {isMyProfile ? "(You)" : ""}
+                    </span>
+                    <span
+                      className={`chat-member-status ${
+                        isAdminMember ? "admin-status" : ""
+                      } ${isSemiAdminMember ? "semi-admin-status" : ""}`}
+                    >
+                      {isAdminMember
+                        ? "Admin"
+                        : isSemiAdminMember
+                        ? "Semi-Admin"
+                        : member.online
+                        ? "Online"
+                        : "Offline"}
+                    </span>
+                  </div>
+                  {isAdmin && !isMyProfile && !isAdminMember && (
+                    <div className="admin-controls">
+                      <button
+                        className="admin-btn remove-btn"
+                        onClick={() => handleRemoveUser(member.id)}
+                        title="Remove member"
+                      >
+                        <i className="fas fa-trash-alt"></i>
+                      </button>
+                      {isSemiAdminMember ? (
+                        <button
+                          className="admin-btn demote-btn"
+                          onClick={() => handleDemoteUser(member.id)}
+                          title="Remove Semi-Admin role"
+                        >
+                          <i className="fas fa-arrow-down"></i>
+                        </button>
+                      ) : (
+                        <button
+                          className="admin-btn promote-btn"
+                          onClick={() => handlePromoteUser(member.id)}
+                          title="Promote to Semi-Admin"
+                        >
+                          <i className="fas fa-check"></i>
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1034,7 +1034,8 @@
     }
 
     .chat-window .personal-chat-layout {
-        margin: 50px 0 100px 0;
+        /* margin: 50px 0 100px 0; */
+        margin: 140px 0 100px 0;
         height: auto;
         /* min-height: 100%; */
         min-height: 90%;
