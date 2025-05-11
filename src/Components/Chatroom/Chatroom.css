@@ -967,6 +967,10 @@
     .full-width-layout { 
         margin: 20px 0 100px 0;
     }
+    .background-change-modal .close-button { 
+        background-color: #333399 !important;
+        color: #fff !important;
+    }
     .chat-window {
         position: fixed;
         top: 0;
@@ -974,24 +978,27 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 90dvh;
+        height: 100dvh;
         max-width: 100%;
         margin: 0;
-        padding: 10px;
+        padding: 0;
         border-radius: 0;
         z-index: 10001;
         display: flex;
         flex-direction: column;
-        -webkit-overflow-scrolling: touch;
     }
 
     .chat-window .messages {
         flex: 1;
-        height: calc(90vh - 180px);
-        overflow-y: hidden;
-        padding: 10px 5px !important;
-        margin-bottom: 60px;
-        margin-top: 20px;
+        height: calc(100dvh - 180px);
+        min-height: 0;
+        max-height: calc(100dvh - 180px);
+        overflow-y: auto;
+        padding: 0 !important;
+        margin: 0;
+        margin-top: 70px;
+        margin-bottom: 120px;
+        padding-bottom: 20px !important;
         -webkit-overflow-scrolling: touch;
     }
 
@@ -1005,19 +1012,20 @@
         margin: 0;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
         z-index: 10002;
+        height: 20%;
     }
 
     .chat-window .message-input textarea {
         width: 100%;
         min-height: 50px;
-        max-height: 100px;
+        max-height: 60px;
         margin-bottom: 8px;
     }
 
     .chat-window .message-input button {
         width: 100%;
         padding: 12px;
-        margin-bottom: 10px;
+        margin-bottom: 0;
     }
 
     .chat-window .display-friend-row {
@@ -1026,19 +1034,19 @@
         left: 0;
         right: 0;
         width: 100%;
-        padding: 20px;
+        padding: 15px;
         margin: 0;
         z-index: 1000;
         border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         background: inherit;
+        height: 70px;
     }
 
     .chat-window .personal-chat-layout {
-        /* margin: 50px 0 100px 0; */
-        margin: 140px 0 100px 0;
-        height: auto;
-        /* min-height: 100%; */
-        min-height: 90%;
+        margin: 0;
+        padding: 10px;
+        height: 100%;
+        min-height: 0;
         width: 100%;
         overflow-y: visible;
     }
@@ -1046,12 +1054,14 @@
     .chat-window .message {
         padding: 12px 16px !important;
         margin: 6px 0 !important;
+        max-width: 85% !important;
         flex-shrink: 0;
     }
 
     .chat-window .close-chat-window {
         position: fixed;
         right: 10px;
+        top: 15px;
         z-index: 1001;
     }
 
@@ -1075,6 +1085,92 @@
         bottom: 150px;
     }
 
+    /* Background Change Modal Mobile Styles */
+    .background-change-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 10002;
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    .background-change-modal {
+        animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .background-change-modal .background-options {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 10px;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .background-change-modal .background-option {
+        padding: 20px;
+        margin-bottom: 20px;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .background-change-modal .background-option .color-preview {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+    }
+
+    .background-change-modal .background-option span {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .background-change-modal .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .background-change-modal .modal-header h2 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .background-change-modal .close-button {
+        padding: 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #666;
+    }
+
     .full-width-layout .row-layout .col-50 {
         width: 100%;
         padding: 15px;
@@ -1084,39 +1180,38 @@
         width: 100px;
         height: 100px;
     }
+
+    .background-change-modal-overlay {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .background-change-modal {
+        width: 100%;
+        margin: 0;
+        border-radius: 20px 20px 0 0;
+        background: white;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
 }
 
 /* iOS specific fixes */
 @supports (-webkit-touch-callout: none) {
     .chat-window {
-        height: 90dvh;
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: hidden;
+        height: 100dvh;
     }
     
     .messages {
-        height: calc(90dvh - 200px);
+        height: calc(100dvh - 180px);
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-        padding: 10px 5px !important;
     }
     
     .personal-chat-layout {
-        height: auto;
-        min-height: 100%;
+        height: 100%;
+        min-height: 0;
         overflow-y: visible;
         -webkit-overflow-scrolling: touch;
-    }
-
-    .message {
-        padding: 12px 16px !important;
-        margin: 6px 0 !important;
-        max-width: 85% !important;
-        flex-shrink: 0;
     }
 }
 
