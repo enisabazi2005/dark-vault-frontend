@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import "./BackgroundChange.css";
 import { useStore } from "../../Store/store";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const BackgroundChange = ({ isOpen, onClose, onBackgroundChange }) => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -263,7 +265,7 @@ const BackgroundChange = ({ isOpen, onClose, onBackgroundChange }) => {
                     className="back-button"
                     onClick={backToBasic}
                   >
-                    &larr; Back to Basics
+                    <FontAwesomeIcon icon={faArrowLeft} />
                   </button>
                   <h3>Premium Themes</h3>
                 </div>

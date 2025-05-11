@@ -59,6 +59,8 @@ const Chatroom = () => {
   const [color2, setColor2] = useState(localStorage.getItem("customColor2"));
 
   const getBackgroundStyle = () => {
+    if(!myProfile.has_pro) return;
+
     if (typeof chatBackground === "object" && chatBackground.color_1 && chatBackground.color_2) {
       // If it's a custom background object with colors
       return {

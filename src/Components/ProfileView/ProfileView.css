@@ -92,7 +92,8 @@
     flex: 1;
     display: flex;
     align-items: center;
-    column-gap: 30px;
+    position: relative;
+    padding-right: 20px;
 }
   
   .profile-view-user-info h4 {
@@ -101,6 +102,10 @@
     font-weight: 600;
     color: #2c3e50;
     font-family: 'Segoe UI', sans-serif;
+    max-width: calc(100% - 30px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
   .profile-view-user-status {
@@ -411,4 +416,33 @@
       width: 100px;
       height: 100px;
     }
+
+    .icon-pro-profile-view {
+        width: 8px;
+        height: 8px;
+        right: 6px;
+    }
+
+    .profile-view-user-info {
+        padding-right: 16px;
+    }
+
+    .profile-view-user-info h4 {
+        font-size: 12px;
+        max-width: calc(100% - 24px);
+    }
+  }
+
+  .icon-pro {
+    width: 12px;
+    height: 12px;
+    margin-left: 4px;
+  }
+
+  .icon-pro-profile-view {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    right: 0;
+    top: 0;
   }

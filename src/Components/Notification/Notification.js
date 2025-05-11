@@ -221,13 +221,13 @@ const Notification = () => {
   const renderNotificationMessage = (notification) => {
     switch (notification.type) {
       case "request":
-        return <><strong>{notification.friend_name}</strong> has sent you a friend request.</>;
+        return <><strong>{notification.friend_name}</strong> sent you a friend request</>;
       case "accepted":
-        return <>{notification.message}</>;
+        return <><strong>{notification.friend_name}</strong> accepted your friend request</>;
       case "profile-viewed":
-        return <><strong>{notification.viewer_name}</strong> has viewed your profile!</>;
+        return <><strong>{notification.viewer_name}</strong> viewed your profile</>;
       default:
-        return <>You have a message from <strong>{notification.sender_name}</strong>: {notification.message}</>;
+        return <><strong>{notification.sender_name}</strong>: {notification.message}</>;
     }
   };
   
@@ -252,10 +252,14 @@ const Notification = () => {
           >
             <h2>Notifications</h2>
             {combinedNotifications.map((notification, index) => (
-  <li key={`notif-${index}`} className="custom-new-message">
-    {renderNotificationMessage(notification)}
-  </li>
-))}
+              <li 
+                key={`notif-${index}`} 
+                className="custom-new-message"
+                data-type={notification.type}
+              >
+                {renderNotificationMessage(notification)}
+              </li>
+            ))}
 
             {unreadMessages.length > 0 ? (
               <div className="custom-mark-as-read-section">
