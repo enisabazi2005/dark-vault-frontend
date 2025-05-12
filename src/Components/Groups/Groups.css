@@ -140,6 +140,11 @@
     justify-content: space-between;
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #e9ecef;
+}
+
+.group-container li:last-child {
+    border-bottom: none;
 }
 
 .group-container li:hover {
@@ -152,28 +157,33 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    gap: 15px;
 }
 
 .group-title {
     font-size: 18px;
     font-weight: 500;
     color: #2c3e50;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .group-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    min-width: 300px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    min-width: 200px;
 }
 
 .group-actions button {
-    flex: 0 0 auto;
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 12px;
     white-space: nowrap;
-    min-width: 70px;
-    padding: 8px 12px;
-    font-size: 13px;
+    min-width: 0;
 }
 
 .edit-group {
@@ -272,13 +282,32 @@
     transform: translateY(-1px);
 }
 
-.friends-list {
+.group-friend-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: auto;
+    padding-right: 10px;
+}
+
+.group-friend-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.group-friend-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.group-friend-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.group-friend-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .group-friend-item {
@@ -291,6 +320,8 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
     width: 100%;
+    justify-content: space-between;
+    margin: 10px 0;
 }
 
 .group-friend-item:hover {
@@ -912,21 +943,21 @@
     }
 
     .group-actions {
-        flex-direction: column;
+        grid-template-columns: repeat(2, 1fr);
         width: 100%;
-        gap: 8px;
+        gap: 6px;
     }
 
-    .group-actions button,
-    .group-actions .group-link {
+    .group-actions button {
         width: 100%;
-        padding: 12px;
-        text-align: center;
+        padding: 8px;
+        font-size: 12px;
     }
 
-    .friends-list {
+    .group-friend-list {
         grid-template-columns: 1fr;
         gap: 10px;
+        max-height: 250px;
     }
 
     .group-friend-item {
@@ -1609,5 +1640,23 @@
         padding: 0 15px;
         height: 40px;
         min-width: 60px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .group-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .group-title {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .group-actions {
+        width: 100%;
+        min-width: 0;
     }
 }

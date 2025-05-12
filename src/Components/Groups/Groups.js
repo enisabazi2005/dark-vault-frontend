@@ -702,7 +702,7 @@ const Groups = () => {
                   Call
                 </button>
                 <button onClick={() => handleOpenChat(group)}>
-                  Open Group
+                  Chat
                 </button>
                 {isAdmin && (
                   <>
@@ -887,7 +887,7 @@ const Groups = () => {
         />
         <div className="friends-selection-box">
           <h3>Invite Friends</h3>
-          <div className="friends-list">
+          <div className="group-friend-list">
             {friends.map((friend) => (
               <div key={friend.id} className="group-friend-item">
                 <div className="group-friend-item-flex">
