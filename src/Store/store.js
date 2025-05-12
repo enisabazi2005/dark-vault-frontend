@@ -97,7 +97,7 @@ export const StoreProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error fetching accepted groups", error);
-      myProfileAcceptedGroups([]);
+      setMyProfileAcceptedGroups([]);
     }
   }, [myProfile]);
 

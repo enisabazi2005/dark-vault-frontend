@@ -7,7 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { PUSHER_CLUSTER, PUSHER_APP_KEY } from "../../api";
 import Pusher from "pusher-js";
 import { useRef } from "react";
-import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEllipsisVertical,
+  faArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Groups = () => {
@@ -40,6 +43,29 @@ const Groups = () => {
   const [showReportSuccess, setShowReportSuccess] = useState(false);
   const [isSemiAdmin, setIsSemiAdmin] = useState(false);
   const [showMobileMembers, setShowMobileMembers] = useState(false);
+  const [hasLeaved, setHasLeaved] = useState(false);
+  const [hasDeleted, setHasDeleted] = useState(false);
+
+  const deleteGroup = async (groupId) => { 
+    try { 
+      const response = await api.post(`/groups/delete/${groupId}`);
+      setHasDeleted(true);
+      console.log(response.data);
+    }catch(error) { 
+      console.error(error, 'Error deleting the group');
+    }
+  }
+
+  const leaveGroup = async (groupId) => {
+    try {
+      const response = await api.post(`/groups/leave/${groupId}`);
+      setHasLeaved(true);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error, "Error leaving the group, please contact the owner");
+      throw error;
+    }
+  };
 
   const fetchGroupUsers = async (groupId) => {
     try {
@@ -83,6 +109,12 @@ const Groups = () => {
     if (activeChat) {
       fetchGroupMessages(activeChat.id);
       fetchGroupUsers(activeChat.id);
+      if (hasLeaved || hasDeleted) {
+        fetchGroupMessages(activeChat.id);
+        fetchGroupUsers(activeChat.id);
+        fetchGroups();
+        fetchAcceptedGroups();
+      }
     }
   }, [activeChat]);
 
@@ -266,6 +298,16 @@ const Groups = () => {
     setIsGroupModalClosed(false);
   };
 
+  useEffect(() => {
+    if (hasLeaved || hasDeleted) {
+      setIsGroupModalClosed(false);
+      setActiveChat(null);
+      fetchGroups()
+      fetchAcceptedGroups();
+    }
+  }, [hasLeaved, hasDeleted]);
+  console.log(hasLeaved, 'hasLeaved');
+
   const fetchSingleMessage = async (messageId) => {
     try {
       const response = await api.get(`/get-single-message/${messageId}`);
@@ -278,20 +320,20 @@ const Groups = () => {
   };
   const reportGroupMessage = async () => {
     if (!selectedMessageId || !selectedReason) {
-      console.log('No selected message id and reason');
+      console.log("No selected message id and reason");
       return;
     }
-  
+
     try {
       const response = await api.post("/report-group-message", {
         message_id: selectedMessageId,
         reason: selectedReason,
       });
-  
-      console.log('report sent successfully', response.data);
-      setReportedMessages(prev => [...prev, selectedMessageId]);
+
+      console.log("report sent successfully", response.data);
+      setReportedMessages((prev) => [...prev, selectedMessageId]);
       setShowReportSuccess(true);
-      
+
       // Close modal after 2 seconds
       setTimeout(() => {
         setShowReportSuccess(false);
@@ -302,15 +344,14 @@ const Groups = () => {
       alert("There was a problem reporting the message.");
     }
   };
-  
+
   useEffect(() => {
     if (!activeChat) return;
-  
+
     if (activeChat.semi_admin_id === myProfile.id) {
       setIsSemiAdmin(true);
     }
   }, [activeChat, myProfile]);
-  
 
   const openChatMenu = async (messageId) => {
     setSelectedMessageId(messageId);
@@ -352,21 +393,48 @@ const Groups = () => {
             <button className="chat-close-btn" onClick={handleCloseChat}>
               ×
             </button>
-            <button className="mobile-members-menu" onClick={() => setShowMobileMembers(true)}>
+            <button
+              className="mobile-members-menu"
+              onClick={() => setShowMobileMembers(true)}
+            >
               <i className="fas fa-users"></i>
             </button>
           </div>
           <div className="chat-members-section">
             <div className="chat-members-header">
-              <h3>Members</h3>
+              <div className="chat-member-header-col">
+                <h3>Members</h3>
+              </div>
+              {!hasLeaved && myProfile.id !== activeChat.admin_id && (
+                <div className="chat-member-header-col">
+                  <button
+                    className="leave-group-button"
+                    onClick={() => leaveGroup(activeChat.id)}
+                  >
+                    Leave <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+                </div>
+              )}
+              {myProfile.id === activeChat.admin_id && (
+                <div className="chat-member-header-col">
+                  <button
+                    className="delete-group-button"
+                    onClick={() => deleteGroup(activeChat.id)}
+                  >
+                    Delete <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+                </div>
+              )}
             </div>
+
             <div className="chat-members-list">
               {usersInGroup?.map((member) => {
                 if (!member) return null;
 
                 const isMyProfile = member.id === myProfile.id;
                 const isAdminMember = member.id === activeChat.admin_id;
-                const isSemiAdminMember = member.id === activeChat.semi_admin_id;
+                const isSemiAdminMember =
+                  member.id === activeChat.semi_admin_id;
 
                 return (
                   <div
@@ -461,12 +529,17 @@ const Groups = () => {
                     </div>
                     {chatMenu && isSemiAdmin && (
                       <div className="modal-overlay modal-overlay-msg-groups">
-                        <div className="modal-content report-modal" ref={modalRef}>
+                        <div
+                          className="modal-content report-modal"
+                          ref={modalRef}
+                        >
                           {showReportSuccess ? (
                             <div className="report-success">
                               <i className="fas fa-check-circle"></i>
                               <h2>Report Submitted Successfully</h2>
-                              <p>Thank you for helping keep our community safe.</p>
+                              <p>
+                                Thank you for helping keep our community safe.
+                              </p>
                             </div>
                           ) : (
                             <>
@@ -475,7 +548,9 @@ const Groups = () => {
                               </h2>
                               {selectedMessage?.message ? (
                                 <div className="message-report-container">
-                                  <p className="message-report-label">Message Content:</p>
+                                  <p className="message-report-label">
+                                    Message Content:
+                                  </p>
                                   <p className="message-report">
                                     {selectedMessage.message}
                                   </p>
@@ -485,17 +560,37 @@ const Groups = () => {
                               )}
                               <div className="report-options">
                                 {[
-                                  { label: "Harassment", value: "harassment", icon: "fa-exclamation-triangle" },
-                                  { label: "Racism", value: "racism", icon: "fa-ban" },
-                                  { label: "Inappropriate Content", value: "inappropriate", icon: "fa-exclamation-circle" },
-                                  { label: "Fake Account", value: "fake_account", icon: "fa-user-slash" },
+                                  {
+                                    label: "Harassment",
+                                    value: "harassment",
+                                    icon: "fa-exclamation-triangle",
+                                  },
+                                  {
+                                    label: "Racism",
+                                    value: "racism",
+                                    icon: "fa-ban",
+                                  },
+                                  {
+                                    label: "Inappropriate Content",
+                                    value: "inappropriate",
+                                    icon: "fa-exclamation-circle",
+                                  },
+                                  {
+                                    label: "Fake Account",
+                                    value: "fake_account",
+                                    icon: "fa-user-slash",
+                                  },
                                 ].map((option) => (
                                   <button
                                     key={option.value}
                                     className={`report-option-btn ${
-                                      selectedReason === option.value ? "active" : ""
+                                      selectedReason === option.value
+                                        ? "active"
+                                        : ""
                                     }`}
-                                    onClick={() => setSelectedReason(option.value)}
+                                    onClick={() =>
+                                      setSelectedReason(option.value)
+                                    }
                                   >
                                     <i className={`fas ${option.icon}`}></i>
                                     {option.label}
@@ -503,7 +598,7 @@ const Groups = () => {
                                 ))}
                               </div>
                               <div className="report-actions">
-                                <button 
+                                <button
                                   className="report-cancel-btn"
                                   onClick={closeChatMenu}
                                 >
@@ -701,9 +796,7 @@ const Groups = () => {
                 >
                   Call
                 </button>
-                <button onClick={() => handleOpenChat(group)}>
-                  Open Group
-                </button>
+                <button onClick={() => handleOpenChat(group)}>Chat</button>
                 {isAdmin && (
                   <>
                     <button onClick={() => handleEditClick(group)}>Edit</button>
@@ -887,7 +980,7 @@ const Groups = () => {
         />
         <div className="friends-selection-box">
           <h3>Invite Friends</h3>
-          <div className="friends-list">
+          <div className="group-friend-list">
             {friends.map((friend) => (
               <div key={friend.id} className="group-friend-item">
                 <div className="group-friend-item-flex">
@@ -922,11 +1015,16 @@ const Groups = () => {
       {renderGroupMembersModal()}
 
       {/* Mobile Members Modal */}
-      <div className={`mobile-members-modal ${showMobileMembers ? 'active' : ''}`}>
+      <div
+        className={`mobile-members-modal ${showMobileMembers ? "active" : ""}`}
+      >
         <div className="mobile-members-content">
           <div className="mobile-members-header">
             <h3>Group Members</h3>
-            <button className="mobile-members-close" onClick={() => setShowMobileMembers(false)}>
+            <button
+              className="mobile-members-close"
+              onClick={() => setShowMobileMembers(false)}
+            >
               <i className="fas fa-times"></i>
             </button>
           </div>
