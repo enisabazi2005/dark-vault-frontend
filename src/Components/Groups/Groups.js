@@ -10,6 +10,7 @@ import { useRef } from "react";
 import {
   faEllipsisVertical,
   faArrowRight,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -42,9 +43,11 @@ const Groups = () => {
   const [reportedMessages, setReportedMessages] = useState([]);
   const [showReportSuccess, setShowReportSuccess] = useState(false);
   const [isSemiAdmin, setIsSemiAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showMobileMembers, setShowMobileMembers] = useState(false);
   const [hasLeaved, setHasLeaved] = useState(false);
   const [hasDeleted, setHasDeleted] = useState(false);
+  const [isMessageDeleted, setIsMessageDeleted] = useState(null);
 
   const deleteGroup = async (groupId) => { 
     try { 
@@ -144,6 +147,35 @@ const Groups = () => {
       ]);
     });
 
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [activeChat?.id]);
+
+  useEffect(() => {
+    if (!activeChat?.id) return;
+  
+    const pusher = new Pusher(PUSHER_APP_KEY, {
+      cluster: PUSHER_CLUSTER,
+      encrypted: true,
+    });
+  
+    const channel = pusher.subscribe(`group.${activeChat.id}`);
+    console.log(`Subscribed to group.${activeChat.id}`);
+  
+    channel.bind("group.message.deleted", function (data) {
+      console.log("Message deleted event received:", data);
+  
+      setGroupMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === data.messageId
+            ? { ...msg, message: "Admin deleted this message", deleted: true }
+            : msg
+        )
+      );
+    });
+  
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
@@ -306,7 +338,6 @@ const Groups = () => {
       fetchAcceptedGroups();
     }
   }, [hasLeaved, hasDeleted]);
-  console.log(hasLeaved, 'hasLeaved');
 
   const fetchSingleMessage = async (messageId) => {
     try {
@@ -318,6 +349,23 @@ const Groups = () => {
       throw error;
     }
   };
+
+  const deleteGroupMessage = async (groupId, messageId) => {
+    if (!messageId) return;
+  
+    try {
+      const response = await api.post(`/delete-group-message/${groupId}`, {
+        message_id: messageId,
+      });
+      console.log(response.data);
+      setIsMessageDeleted(messageId); 
+    } catch (error) {
+      console.error(error, "Error deleting the message");
+      throw error;
+    }
+  };
+  
+
   const reportGroupMessage = async () => {
     if (!selectedMessageId || !selectedReason) {
       console.log("No selected message id and reason");
@@ -350,6 +398,9 @@ const Groups = () => {
 
     if (activeChat.semi_admin_id === myProfile.id) {
       setIsSemiAdmin(true);
+    } 
+    if(activeChat.admin_id === myProfile.id) { 
+      setIsAdmin(true);
     }
   }, [activeChat, myProfile]);
 
@@ -511,7 +562,6 @@ const Groups = () => {
                 const sender = usersInGroup.find(
                   (user) => user.id === msg.sent_by
                 );
-
                 const isMyMessage = msg.sent_by === myProfile.id;
 
                 return (
@@ -521,12 +571,24 @@ const Groups = () => {
                       isMyMessage ? "myUser" : "otherUser"
                     } ${reportedMessages.includes(msg.id) ? "reported" : ""}`}
                   >
-                    <div
-                      className="dot-points"
-                      onClick={() => openChatMenu(msg.id)}
-                    >
-                      <FontAwesomeIcon icon={faEllipsisVertical} />
-                    </div>
+                    {isSemiAdmin && (
+                      <div
+                        className="dot-points"
+                        onClick={() => openChatMenu(msg.id)}
+                      >
+                        <FontAwesomeIcon icon={faEllipsisVertical} />
+                      </div>
+                    )}
+                    {isAdmin && (
+                      <div
+                        className="dot-points dot-points-delete"
+                        onClick={() =>
+                          deleteGroupMessage(activeChat.id, msg.id)
+                        }
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </div>
+                    )}
                     {chatMenu && isSemiAdmin && (
                       <div className="modal-overlay modal-overlay-msg-groups">
                         <div
@@ -628,8 +690,13 @@ const Groups = () => {
                       className="group-chat-message-image"
                     />
                     <div className="group-chat-messages-container">
-                      <div className="group-chat-message-message">
+                      {/* <div className="group-chat-message-message">
                         {msg.message}
+                      </div> */}
+                      <div className="group-chat-message-message">
+                        {isMessageDeleted === msg.id
+                          ? "Admin deleted this message"
+                          : msg.message}
                       </div>
                     </div>
                   </div>
