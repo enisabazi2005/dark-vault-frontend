@@ -7,23 +7,84 @@
 
 .container-layout {
     min-height: 100vh;
+    height: 100vh;
     display: flex;
+    padding: 0;
+    flex-direction: row;
+    background: #ffffff;
+}
+
+.ocean-section {
+    flex-basis: 50%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #1a2980 0%, #26d0ce 100%);
+}
+
+.ocean-animation {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80') center/cover;
+    opacity: 0.7;
+    animation: waveAnimation 20s infinite linear;
+}
+
+.ocean-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(26, 41, 128, 0.8), rgba(38, 208, 206, 0.8));
+}
+
+.ocean-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    padding: 40px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.ocean-content h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.ocean-content p {
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 500px;
+    margin-bottom: 30px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.form-section {
+    flex-basis: 50%;
+    height: 100vh;
+    display: flex;
+    border-radius: 0 !important;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    position: relative;
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    overflow: hidden;
+    padding: 40px;
+    background: #ffffff;
 }
 
 .form {
     width: 100%;
     max-width: 420px;
-    padding: 35px;
+    padding: 40px;
     background: white;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 24px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     position: relative;
@@ -332,6 +393,7 @@
     color: #7f8c8d;
     font-size: 14px;
     font-family: 'Segoe UI', sans-serif;
+    padding: 3px;
 }
 
 .textLink a {
@@ -408,27 +470,39 @@
 }
 
 @media (max-width: 768px) {
+    .container-layout {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .ocean-section {
+        display: none; /* Hide ocean section on mobile */
+    }
+
+    .form-section {
+        flex-basis: 100%;
+        height: auto;
+        min-height: 100vh;
+        padding: 20px;
+        justify-content: flex-start;
+        margin: 0;
+    }
+
     .form {
         padding: 25px;
-        width: 90%;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 16px;
+        margin: 0 auto;
     }
 
-    .container-layout h2 {
-        font-size: 28px;
+    .ocean-content h1 {
+        font-size: 32px;
     }
 
-    .sphereBlack {
-        width: 200px;
-        height: 200px;
-        right: 5%;
-        filter: blur(40px);
-    }
-
-    .sphere {
-        width: 250px;
-        height: 250px;
-        left: 5%;
-        filter: blur(50px);
+    .ocean-content p {
+        font-size: 16px;
     }
 
     .login-inputs {
@@ -440,18 +514,166 @@
         padding: 12px;
         font-size: 15px;
     }
+
+    .google-login-btn {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .textLink {
+        margin-top: 15px;
+    }
+
+    .textLink p {
+        font-size: 13px;
+    }
 }
 
+/* Tablet styles */
 @media (min-width: 769px) and (max-width: 1024px) {
-    .sphereBlack {
-        width: 250px;
-        height: 250px;
-        right: 10%;
+    .container-layout {
+        height: 100vh;
     }
 
-    .sphere {
-        width: 300px;
-        height: 300px;
-        left: 10%;
+    .ocean-section {
+        flex-basis: 40%;
     }
+
+    .form-section {
+        flex-basis: 60%;
+        padding: 30px;
+    }
+
+    .form {
+        max-width: 380px;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .form-section {
+        padding: 15px;
+        margin: 0;
+    }
+
+    .form {
+        padding: 20px;
+    }
+
+    .container-layout h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .login-inputs {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .registerButton {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .google-login-btn {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .textLink {
+        margin-top: 10px;
+    }
+
+    .textLink p {
+        font-size: 12px;
+    }
+}
+
+/* Landscape mode for mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .form-section {
+        padding: 15px;
+        justify-content: flex-start;
+        margin: 0;
+    }
+
+    .form {
+        padding: 20px;
+    }
+
+    .container-layout h2 {
+        margin-bottom: 15px;
+    }
+
+    .login-inputs {
+        padding: 8px;
+        margin-bottom: 15px;
+    }
+
+    .remember-me {
+        margin: 10px 0 15px 0;
+    }
+
+    .textLink {
+        margin-top: 10px;
+    }
+}
+
+.google-login-container {
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.or-divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.or-divider::before,
+.or-divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.or-divider::before {
+    margin-right: 10px;
+}
+
+.or-divider::after {
+    margin-left: 10px;
+}
+
+.google-login-btn {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    border: 2px solid #e1e4e8;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.google-login-btn:hover {
+    background: #f8f9fa;
+    border-color: #bdc3c7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.google-login-btn img {
+    width: 24px;
+    height: 24px;
 }
