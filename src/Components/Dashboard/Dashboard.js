@@ -57,7 +57,7 @@ const Dashboard = () => {
   const { myProfile } = useStore();
   const MAX_STORAGE = myProfile?.MAX_STORAGE;
   useEffect(() => {
-    if (myProfile?.view || !myProfile) return;
+  if (!myProfile || myProfile.view === true) return;
 
     const driverObj = driver({
       showProgress: true,
