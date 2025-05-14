@@ -230,7 +230,7 @@ const Notification = () => {
         return <><strong>{notification.sender_name}</strong>: {notification.message}</>;
     }
   };
-  
+  console.log(count, 'count')
 
   return (
     <div className="notification-container">
