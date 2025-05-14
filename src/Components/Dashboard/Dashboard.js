@@ -56,42 +56,42 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { myProfile } = useStore();
   const MAX_STORAGE = myProfile?.MAX_STORAGE;
-  useEffect(() => {
-  if (!myProfile || myProfile.view === true) return;
+  // useEffect(() => {
+  // if (!myProfile || myProfile.view === true) return;
 
-    const driverObj = driver({
-      showProgress: true,
-      allowClose: false,
-      steps: [
-        {
-          element: ".sidebar",
-          popover: {
-            title: "This is the sidebar",
-            description: "Make it dynamically",
-          },
-        },
-        {
-          element: ".profile-wrapper",
-          popover: {
-            title: "This is your Profile",
-            description:
-              "Manually change the status to prevent false inactivity please.",
-          },
-        },
-        {
-          element: ".container",
-          popover: {
-            title: "This is your dashboard",
-            description: "Let's use it!",
-          },
-        },
-      ],
-      onDestroyed: () => {
-        api.post("/view-tutorial");
-      },
-    });
-    driverObj.drive();
-  }, [myProfile]);
+  //   const driverObj = driver({
+  //     showProgress: true,
+  //     allowClose: false,
+  //     steps: [
+  //       {
+  //         element: ".sidebar",
+  //         popover: {
+  //           title: "This is the sidebar",
+  //           description: "Make it dynamically",
+  //         },
+  //       },
+  //       {
+  //         element: ".profile-wrapper",
+  //         popover: {
+  //           title: "This is your Profile",
+  //           description:
+  //             "Manually change the status to prevent false inactivity please.",
+  //         },
+  //       },
+  //       {
+  //         element: ".container",
+  //         popover: {
+  //           title: "This is your dashboard",
+  //           description: "Let's use it!",
+  //         },
+  //       },
+  //     ],
+  //     onDestroyed: () => {
+  //       api.post("/view-tutorial");
+  //     },
+  //   });
+  //   driverObj.drive();
+  // }, [myProfile]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
