@@ -506,7 +506,7 @@ const Groups = () => {
                     <div className="chat-member-info">
                       <span className="chat-member-name">
                         {member.name} {member.lastname}{" "}
-                        {isMyProfile ? "(You)" : ""}
+                        {isMyProfile ? <strong>"(You)"</strong> : ""}
                       </span>
                       <span
                         className={`chat-member-status ${

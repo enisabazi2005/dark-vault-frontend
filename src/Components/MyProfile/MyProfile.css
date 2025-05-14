@@ -45,6 +45,11 @@
     letter-spacing: 0.05em;
     margin: 0;
   }
+  .change-status-div { 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
   .checkIcon-div { 
     position: absolute;

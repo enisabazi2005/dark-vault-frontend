@@ -176,7 +176,18 @@ const MyProfile = ({ updateNotificationCount }) => {
             className="modal-content-status"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2>Change Status</h2>
+            <div className="change-status-div">
+              <h2>Change Status</h2>
+              {user?.has_pro ? (
+                <div className="pro-mode-header pro-mode-header-responsive">
+                  <h3>Pro Mode</h3>
+                </div>
+              ) : (
+                <a href="dashboard/paypal-payment">
+                  <button className="switch-to-pro-btn">Switch to Pro</button>
+                </a>
+              )}
+            </div>
             <ul>
               {Object.keys(statusBorderColors).map((status) => (
                 <li
@@ -212,17 +223,6 @@ const MyProfile = ({ updateNotificationCount }) => {
               >
                 <Link to="friends">Friends and Blocked friends</Link>
               </li>
-              {user?.has_pro ? (
-                <div className="pro-mode-header pro-mode-header-responsive">
-                  <span className="sparkle">✨</span>
-                  <h3>Pro Mode</h3>
-                  <span className="sparkle">✨</span>
-                </div>
-              ) : (
-                <a href="dashboard/paypal-payment">
-                  <button className="switch-to-pro-btn">Switch to Pro</button>
-                </a>
-              )}
               <li
                 className="mobile-settings"
                 onClick={() => setIsModalOpen(false)}
