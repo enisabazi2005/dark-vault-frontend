@@ -8,6 +8,7 @@ import {
   faEye,
   faCheckDouble,
   faCheckCircle,
+  faUpload,
 } from "@fortawesome/free-solid-svg-icons";
 
 const Register = () => {
@@ -144,141 +145,148 @@ const Register = () => {
       {isModalVisible && <div className="modal-overlay"></div>}
       
       <div className="container-layout">
-        <h2>Register</h2>
-        {error && <p className="error">{error}</p>}
+        <div className="ocean-section">
+          <div className="ocean-animation"></div>
+          <div className="ocean-overlay"></div>
+          <div className="ocean-content">
+            <h1>Create Account</h1>
+            <p>Join our secure platform and start protecting your digital assets today. Your security is our top priority.</p>
+          </div>
+        </div>
 
-        <form onSubmit={handleSubmit} className="form">
-          <input
-            className="inputs"
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Name"
-            required
-          />
-          <input
-            className="inputs"
-            type="text"
-            name="lastname"
-            value={formData.lastname}
-            onChange={handleChange}
-            placeholder="Lastname"
-            required
-          />
-          <input
-            className="inputs"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="E-mail"
-            required
-          />
-          <div className="password-check">
+        <div className="form-section register">
+          <form onSubmit={handleSubmit} className="form">
+            <h2>Register</h2>
+            {error && <p className="error">{error}</p>}
+
             <input
               className="inputs"
-              type={showPassword ? "text" : "password"}
-              name="password"
-              value={formData.password}
+              type="text"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
-              placeholder="Password"
+              placeholder="Name"
               required
             />
-            {
-              <div className={`password-strength-bar${passwordStrength}`}>
-                {passwordStrength === "Weak" && <span>Weak</span>}
-                {passwordStrength === "Normal" && <span>Normal</span>}
-                {passwordStrength === "Strong" && <span>Strong</span>}
-              </div>
-            }
-            <button
-              className="show-password-btn show-password-btn-3"
-              type="button"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {showPassword ? (
-                <FontAwesomeIcon icon={faEye} />
-              ) : (
-                <FontAwesomeIcon icon={faEyeSlash} />
-              )}
-            </button>
-          </div>
-          <div className="row">
-            <div className="col">
-              <select
-                className="selects"
-                name="gender"
-                value={formData.gender}
+            <input
+              className="inputs"
+              type="text"
+              name="lastname"
+              value={formData.lastname}
+              onChange={handleChange}
+              placeholder="Lastname"
+              required
+            />
+            <input
+              className="inputs"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="E-mail"
+              required
+            />
+            <div className="password-check">
+              <input
+                className="inputs"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
                 onChange={handleChange}
+                placeholder="Password"
                 required
+              />
+              {
+                <div className={`password-strength-bar${passwordStrength}`}>
+                  {passwordStrength === "Weak" && <span>Weak</span>}
+                  {passwordStrength === "Normal" && <span>Normal</span>}
+                  {passwordStrength === "Strong" && <span>Strong</span>}
+                </div>
+              }
+              <button
+                className="show-password-btn show-password-btn-3"
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
               >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-            </div>
-            <div className="col">
-              <input
-                className="inputs"
-                type="number"
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-                placeholder="Age"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="col">
-              <div className="col">
-                <label htmlFor="fileInput" className="custom-file-upload">
-                  Choose Picture
-                </label>
-                <input
-                  id="fileInput"
-                  className="inputs file-input"
-                  type="file"
-                  name="picture"
-                  onChange={handleChange}
-                  accept="image/*"
-                />
-                {haveFile ? (
-                  <span className="checkFileUpload">
-                    <FontAwesomeIcon icon={faCheckDouble} />
-                  </span>
+                {showPassword ? (
+                  <FontAwesomeIcon icon={faEye} />
                 ) : (
-                  ""
+                  <FontAwesomeIcon icon={faEyeSlash} />
                 )}
+              </button>
+            </div>
+            <div className="row">
+              <div className="col">
+                <select
+                  className="selects"
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div className="col">
+                <input
+                  className="inputs"
+                  type="number"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleChange}
+                  placeholder="Age"
+                  required
+                />
               </div>
             </div>
-            <div className="col">
-              <input
-                className="inputs"
-                type="date"
-                name="birthdate"
-                value={formData.birthdate}
-                onChange={handleChange}
-                required
-              />
+
+            <div className="row">
+              <div className="col">
+                <div className="file-input-container">
+                  <label htmlFor="fileInput" className="custom-file-upload">
+                    <FontAwesomeIcon icon={faUpload} />
+                    Choose Profile Picture
+                  </label>
+                  <input
+                    id="fileInput"
+                    className="file-input"
+                    type="file"
+                    name="picture"
+                    onChange={handleChange}
+                    accept="image/*"
+                  />
+                  {haveFile && (
+                    <span className="checkFileUpload">
+                      <FontAwesomeIcon icon={faCheckDouble} />
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="col">
+                <input
+                  className="inputs"
+                  type="date"
+                  name="birthdate"
+                  value={formData.birthdate}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
+
+            <button type="submit" className="registerButton">
+              Register
+            </button>
+          </form>
+
+          <div className="textLink">
+            <p>
+              Have already an account? <Link to="/login">Click Here</Link>
+            </p>
           </div>
-
-          <button type="submit" className="registerButton">
-            Register
-          </button>
-        </form>
-
-        <div className="textLink">
-          <p>
-            Have already an account? <Link to="/login">Click Here</Link>
-          </p>
         </div>
-        
-        <div className="sphereBlack"></div>
-        <div className="sphere"></div>
       </div>
     </>
   );

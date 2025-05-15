@@ -119,9 +119,9 @@ const MyProfile = ({ updateNotificationCount }) => {
                   <span className="sparkle">✨</span>
                 </div>
               ) : (
-                <a href="dashboard/paypal-payment">
+                <Link to="paypal-payment">
                   <button className="switch-to-pro-btn">Switch to Pro</button>
-                </a>
+                </Link>
               )}
             </div>
             <div className="profile-info-col profile-info-col-notification">
@@ -183,9 +183,9 @@ const MyProfile = ({ updateNotificationCount }) => {
                   <h3>Pro Mode</h3>
                 </div>
               ) : (
-                <a href="dashboard/paypal-payment">
+                <Link to="paypal-payment">
                   <button className="switch-to-pro-btn">Switch to Pro</button>
-                </a>
+                </Link>
               )}
             </div>
             <ul>

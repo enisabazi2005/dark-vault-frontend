@@ -102,74 +102,102 @@ const Login = () => {
     }, 3000);
   };
 
+  const handleGoogleLogin = () => {
+    // Add your Google login logic here
+    console.log("Google login clicked");
+  };
+
   return (
     <div className="container-layout">
-      <h2>Login</h2>
+      <div className="ocean-section">
+        <div className="ocean-animation"></div>
+        <div className="ocean-overlay"></div>
+        <div className="ocean-content">
+          <h1>Welcome Back</h1>
+          <p>Secure your digital assets with our advanced encryption technology. Your security is our top priority.</p>
+        </div>
+      </div>
+      
+      <div className="form-section">
+        <form
+          onSubmit={handleSubmit}
+          className={`form ${showSuccessModal ? "register-container-blur" : ""}`}
+        >
+          <h2>Login</h2>
+          {success && <p className="success">{success}</p>}
+          {error && <p className="error">{error}</p>}
 
-      {success && <p className="success">{success}</p>}
-      {error && <p className="error">{error}</p>}
-
-      <form
-        onSubmit={handleSubmit}
-        className={`form ${showSuccessModal ? "register-container-blur" : ""}`}
-      >
-        <input
-          className="login-inputs"
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="E-mail"
-          required
-        />
-        <div className="password-check">
           <input
             className="login-inputs"
-            type={showPassword ? "text" : "password"}
-            name="password"
-            value={formData.password}
+            type="email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
-            placeholder="Password"
+            placeholder="E-mail"
             required
           />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="show-password-btn"
-          >
-            {showPassword ? (
-              <FontAwesomeIcon icon={faEye} />
-            ) : (
-              <FontAwesomeIcon icon={faEyeSlash} />
-            )}
-          </button>
-          <div className="remember-me">
+          <div className="password-check">
             <input
-              type="checkbox"
-              id="rememberMe"
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
+              className="login-inputs"
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Password"
+              required
             />
-            <label htmlFor="rememberMe">Remember me</label>
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="show-password-btn"
+            >
+              {showPassword ? (
+                <FontAwesomeIcon icon={faEye} />
+              ) : (
+                <FontAwesomeIcon icon={faEyeSlash} />
+              )}
+            </button>
+            <div className="remember-me">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+              />
+              <label htmlFor="rememberMe">Remember me</label>
+            </div>
           </div>
-        </div>
-        <div className="sphereBlack"></div>
-        <div className="sphere"></div>
-        <button type="submit" className="registerButton">
-          Login
-        </button>
-      </form>
+          <button type="submit" className="registerButton">
+            Login
+          </button>
 
-      <div className="textLink">
-        <p>
-          Forgot your password?{" "}
-          <a href="/forgot-password">Reset Password here</a>
-        </p>
-      </div>
-      <div className="textLink">
-        <p>
-          Don't have an account? <a href="/register">Click here</a>
-        </p>
+          <div className="google-login-container">
+            <div className="or-divider">OR</div>
+            <button 
+              type="button" 
+              className="google-login-btn"
+              onClick={handleGoogleLogin}
+            >
+              <img 
+                src="https://www.google.com/favicon.ico" 
+                alt="Google" 
+              />
+              Login with Google
+            </button>
+          </div>
+        </form>
+
+        <div className="textLink">
+          <p>
+            Forgot your password?{" "}
+            <a href="/forgot-password">Reset Password here</a>
+          </p>
+        </div>
+        <div className="textLink">
+          <p>
+            Don't have an account? <a href="/register">Click here</a>
+          </p>
+        </div>
       </div>
 
       {showSuccessModal && (
