@@ -1,12 +1,11 @@
 import axios from "axios";
 
-export const BASE_URL = 'http://127.0.0.1:8000/api';
+export const BASE_URL = process.env.REACT_APP_BASE_URL;
 // export const BASE_URL = 'https://870e-46-19-227-186.ngrok-free.app/api'
 // export const BASE_URL = 'http://192.168.1.3:8000/api';
-console.log(process.env.REACT_APP_BASE_URL, 'REACT_APP_BASE_URL');
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api", 
+  baseURL: process.env.REACT_APP_BASE_URL, 
   // baseURL: "https://870e-46-19-227-186.ngrok-free.app/api",
   // baseURL: "http://192.168.1.3:8000/api",
 
@@ -38,10 +37,10 @@ api.interceptors.request.use(
   }
 );
 
-export const PAYPAL_CLIENT_ID = "AYLXwxucl3hrRCQaDUQpAPgXEf9EcHOuFJfmttYoly2xW_5J-hAtCd4jRYYKMsKgr1xAIjB9T1_38Plf";
-export const PAYPAL_SECRET_KEY = "EIYlAlY6RfBacHEh0QYow0kyWr34U-pe0hmgm1zEMkuY9zKJ_oGuV9QVjJxWipxOxcFv06ulV9noq4lA";
+export const PAYPAL_CLIENT_ID = process.env.REACT_APP_PAYPAL_CLIENT_ID;
+export const PAYPAL_SECRET_KEY = process.env.REACT_APP_PAYPAL_SECRET;
 
-export const STORAGE_URL = "http://127.0.0.1:8000/storage";
+export const STORAGE_URL = process.env.REACT_APP_STORAGE_URL;
 // export const STORAGE_URL = "https://870e-46-19-227-186.ngrok-free.app/storage";
 // export const STORAGE_URL = "http://192.168.1.3:8000/storage";
 
@@ -49,6 +48,6 @@ export const STORAGE_URL = "http://127.0.0.1:8000/storage";
 // export const STORAGE_URL = 'https://cors-anywhere.herokuapp.com/http://dark-1.infinityfreeapp.com/storage'
 // export const PUSHER_APP_KEY = "5fa2841f32689bcde49e";
 // export const PUSHER_CLUSTER = "eu";
-export const PUSHER_APP_KEY = "6a43af93d7b7735f2b06";
-export const PUSHER_CLUSTER = "eu";
+export const PUSHER_APP_KEY = process.env.REACT_APP_PUSHER_APP_KEY;
+export const PUSHER_CLUSTER = process.env.REACT_APP_PUSHER_CLUSTER_KEY;
 export default api;
