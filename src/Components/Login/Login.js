@@ -5,6 +5,7 @@ import OtpVerificationModal from "./OtpVerificationModal";
 import "../Login/Login.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash, faEye, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -102,10 +103,32 @@ const Login = () => {
     }, 3000);
   };
 
-  const handleGoogleLogin = () => {
-    // Add your Google login logic here
-    console.log("Google login clicked");
-  };
+const handleGoogleLogin = async (credentialResponse) => {
+  try {
+    const response = await api.post('/google-auth', {
+      token: credentialResponse.credential
+    });
+
+    console.log('Backend response:', response.data);
+
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('user_id', response.data.user.id);
+      localStorage.setItem('request_id', response.data.user.request_id);
+      localStorage.setItem('is_verified', response.data.is_verified);
+
+      setShowSuccessModal(true);
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        navigate('/dashboard');
+      }, 3000);
+    }
+  } catch (error) {
+    console.error('Google login failed:', error);
+    setError(error.response?.data?.error || 'Google login failed');
+  }
+};
 
   return (
     <div className="container-layout">
@@ -173,17 +196,15 @@ const Login = () => {
 
           <div className="google-login-container google-login-container-div">
             <div className="or-divider">OR</div>
-            <button 
-              type="button" 
-              className="google-login-btn"
-              onClick={handleGoogleLogin}
-            >
-              <img 
-                src="https://www.google.com/favicon.ico" 
-                alt="Google" 
-              />
-              Login with Google
-            </button>
+           <GoogleLogin
+    onSuccess={handleGoogleLogin}
+    onError={() => {
+      console.error('Google Login Failed');
+      setError('Google login failed');
+    }}
+    useOneTap
+    flow="implicit"
+  />
           </div>
         </form>
 

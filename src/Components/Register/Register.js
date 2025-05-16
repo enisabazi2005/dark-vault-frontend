@@ -52,6 +52,7 @@ const handleGoogleRegister = async (googleToken) => {
     if (response.ok) {
       localStorage.setItem('token', data.token);
       console.log('User logged in:', data.user);
+       window.location.href = "/login";
     } else {
       console.error('Google Auth failed:', data);
     }
