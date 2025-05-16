@@ -12,7 +12,6 @@ import Settings from "./Components/Settings/Settings";
 import Friends from "./Components/Friends/Friends";
 import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import Groups from "./Components/Groups/Groups";
-import Payout from "./Components/Payout/Payout";
 import Bot from "./Components/Bot/Bot";
 import RouteTransition from "./Components/RouteTransition/RouteTransition";
 import "./App.css";
@@ -20,6 +19,9 @@ import { StoreProvider } from "./Store/store";
 import MeetingRoom from "./Components/MettingRoom/MettingRoom";
 import ErrorPage from "./Components/ErrorPage/ErrorPage";
 import Paypal from "./Components/Paypal/Paypal";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { GOOGLE_CLIENT_ID } from "./api";
+
 
 const App = () => {
   useEffect(() => {
@@ -27,9 +29,12 @@ const App = () => {
       window.location.href = "/login"; 
     }
   }, []); 
+  console.log("Google Client ID:", GOOGLE_CLIENT_ID);
+
 
   return (
     <div className="container">
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <StoreProvider>
         <Router>
           <RouteTransition>
@@ -59,6 +64,7 @@ const App = () => {
           </RouteTransition>
         </Router>
       </StoreProvider>
+      </GoogleOAuthProvider>
     </div>
   );
 };

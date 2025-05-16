@@ -619,16 +619,15 @@
     }
 }
 
-.google-login-container {
+.google-login-container-div {
     width: 100%;
-    margin-top: 20px;
     text-align: center;
 }
 
 .or-divider {
     display: flex;
     align-items: center;
-    margin: 20px 0;
+    margin: 10px 0;
     color: #7f8c8d;
     font-size: 14px;
 }

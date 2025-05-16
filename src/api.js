@@ -39,6 +39,8 @@ api.interceptors.request.use(
 
 export const PAYPAL_CLIENT_ID = process.env.REACT_APP_PAYPAL_CLIENT_ID;
 export const PAYPAL_SECRET_KEY = process.env.REACT_APP_PAYPAL_SECRET;
+export const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+export const GOOGLE_CLIENT_SECRET = process.env.REACT_APP_GOOGLE_CLIENT_SECRET
 
 export const STORAGE_URL = process.env.REACT_APP_STORAGE_URL;
 // export const STORAGE_URL = "https://870e-46-19-227-186.ngrok-free.app/storage";
