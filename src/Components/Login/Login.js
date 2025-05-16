@@ -103,32 +103,32 @@ const Login = () => {
     }, 3000);
   };
 
-const handleGoogleLogin = async (credentialResponse) => {
-  try {
-    const response = await api.post('/google-auth', {
-      token: credentialResponse.credential
-    });
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+      const response = await api.post("/google-auth", {
+        token: credentialResponse.credential,
+      });
 
-    console.log('Backend response:', response.data);
+      console.log("Backend response:", response.data);
 
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      localStorage.setItem('user_id', response.data.user.id);
-      localStorage.setItem('request_id', response.data.user.request_id);
-      localStorage.setItem('is_verified', response.data.is_verified);
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        localStorage.setItem("user_id", response.data.user.id);
+        localStorage.setItem("request_id", response.data.user.request_id);
+        localStorage.setItem("is_verified", response.data.is_verified);
 
-      setShowSuccessModal(true);
-      setTimeout(() => {
-        setShowSuccessModal(false);
-        navigate('/dashboard');
-      }, 3000);
+        setShowSuccessModal(true);
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          navigate("/dashboard");
+        }, 3000);
+      }
+    } catch (error) {
+      console.error("Google login failed:", error);
+      setError(error.response?.data?.error || "Google login failed");
     }
-  } catch (error) {
-    console.error('Google login failed:', error);
-    setError(error.response?.data?.error || 'Google login failed');
-  }
-};
+  };
 
   return (
     <div className="container-layout">
@@ -137,14 +137,19 @@ const handleGoogleLogin = async (credentialResponse) => {
         <div className="ocean-overlay"></div>
         <div className="ocean-content">
           <h1>Welcome Back</h1>
-          <p>Secure your digital assets with our advanced encryption technology. Your security is our top priority.</p>
+          <p>
+            Secure your digital assets with our advanced encryption technology.
+            Your security is our top priority.
+          </p>
         </div>
       </div>
-      
+
       <div className="form-section">
         <form
           onSubmit={handleSubmit}
-          className={`form ${showSuccessModal ? "register-container-blur" : ""}`}
+          className={`form ${
+            showSuccessModal ? "register-container-blur" : ""
+          }`}
         >
           <h2>Login</h2>
           {success && <p className="success">{success}</p>}
@@ -196,15 +201,15 @@ const handleGoogleLogin = async (credentialResponse) => {
 
           <div className="google-login-container google-login-container-div">
             <div className="or-divider">OR</div>
-           <GoogleLogin
-    onSuccess={handleGoogleLogin}
-    onError={() => {
-      console.error('Google Login Failed');
-      setError('Google login failed');
-    }}
-    useOneTap
-    flow="implicit"
-  />
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={() => {
+                console.error("Google Login Failed");
+                setError("Google login failed");
+              }}
+              useOneTap
+              flow="implicit"
+            />
           </div>
         </form>
 
