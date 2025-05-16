@@ -171,7 +171,7 @@ const Login = () => {
             Login
           </button>
 
-          <div className="google-login-container">
+          <div className="google-login-container google-login-container-div">
             <div className="or-divider">OR</div>
             <button 
               type="button" 

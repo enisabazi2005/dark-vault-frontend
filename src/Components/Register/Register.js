@@ -10,6 +10,9 @@ import {
   faCheckCircle,
   faUpload,
 } from "@fortawesome/free-solid-svg-icons";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import jwt_decode from 'jwt-decode';
+import { BASE_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "../../api";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -31,6 +34,32 @@ const Register = () => {
   const [haveFile, setHaveFile] = useState(false);
   const [redirectCount, setRedirectCount] = useState(3);
 
+const handleGoogleRegister = async (googleToken) => {
+  try {
+    console.log('Sending token to backend:', googleToken);
+    
+    const response = await fetch(`${BASE_URL}/google-auth`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ token: googleToken }),
+    });
+
+    const data = await response.json();
+    console.log('Backend response:', data);
+
+    if (response.ok) {
+      localStorage.setItem('token', data.token);
+      console.log('User logged in:', data.user);
+    } else {
+      console.error('Google Auth failed:', data);
+    }
+  } catch (err) {
+    console.error('Request failed:', err);
+  }
+};
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -123,6 +152,7 @@ const Register = () => {
       setError(error.response?.data?.message || "Registration failed.");
     }
   };
+
 
   return (
     <>
@@ -276,11 +306,23 @@ const Register = () => {
               </div>
             </div>
 
-            <button type="submit" className="registerButton">
+          <div className="register-btn-flex">
+             <button type="submit" className="registerButton">
               Register
             </button>
+<GoogleLogin
+  onSuccess={credentialResponse => {
+    // Directly use the credential (ID token) from Google
+    handleGoogleRegister(credentialResponse.credential);
+  }}
+  onError={(error) => {
+    console.error('Google Login Error:', error);
+  }}
+  useOneTap
+  flow="implicit"
+/>
+         </div>
           </form>
-
           <div className="textLink">
             <p>
               Have already an account? <Link to="/login">Click Here</Link>
