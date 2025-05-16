@@ -10,9 +10,8 @@ import {
   faCheckCircle,
   faUpload,
 } from "@fortawesome/free-solid-svg-icons";
-import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
-import jwt_decode from 'jwt-decode';
-import { BASE_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "../../api";
+import { GoogleLogin } from "@react-oauth/google";
+import { BASE_URL } from "../../api";
 
 const Register = () => {
   const [formData, setFormData] = useState({
