@@ -401,8 +401,8 @@ const Dashboard = () => {
               <div className="card-content">
                 <h2>Welcome Back</h2>
                 <div className="user-name">
-                  {myProfile
-                    ? `${myProfile?.name} ${myProfile?.lastname}`
+                  {user
+                    ? `${user?.name} ${user?.lastname}`
                     : "Loading..."}
                 </div>
                 <p className="welcome-message">
@@ -440,15 +440,27 @@ const Dashboard = () => {
                 <FontAwesomeIcon icon={faChartPie} />
                 <h3>Data Distribution</h3>
               </div>
-              <div className="card-content card-content-charts">
-                {totalStored === 0 ? (
+              <div className="card-content card-content-charts card-content-data-distribution">
+                {/* {totalStored === 0 ? (
                   <p className="empty-state">Nothing is stored yet</p>
                 ) : (
                   <PieChart series={[{ data }]} width={400} height={200} />
                 )}
                 <button className="refresh-chart-button" onClick={refreshChart}>
                   <FontAwesomeIcon icon={faArrowsRotate} />
-                </button>
+                </button> */}
+                <div className="chart-data-distribution">
+                  <div className="chart-data-distribution-child">
+                    {totalStored === 0 ? (
+                      <p className="empty-state">Nothing is stored yet</p>
+                    ) : (
+                    <PieChart series={[{ data }]} width={400} height={200} />
+                    )}
+                  <button className="refresh-chart-button" onClick={refreshChart}>
+                    <FontAwesomeIcon icon={faArrowsRotate} />
+                  </button>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="dashboard-card">
@@ -483,7 +495,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            {myProfile?.has_pro ? (
+            {user?.has_pro ? (
               <>
                 <div className="dashboard-card">
                   <div className="card-header">
