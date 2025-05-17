@@ -15,7 +15,7 @@ const api = axios.create({
   headers: {
     "Accept": "application/json",
     "Content-Type": "application/json",
-    "ngrok-skip-browser-warning": "true" // 👈 THIS LINE fixes the warning
+    "ngrok-skip-browser-warning": "true" 
 
     // "Origin": "https://dark-vault-frontend.vercel.app", 
     // "X-Requested-With": "XMLHttpRequest", 

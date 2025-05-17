@@ -15,7 +15,6 @@ const ProfileView = () => {
   const { myProfile, friends } = useStore();
   const defaultBlankPhotoUrl =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-  const [isViewed, setIsViewed] = useState("");
   const [downloadStatus, setDownloadStatus] = useState('idle');
 
 
@@ -98,10 +97,9 @@ const ProfileView = () => {
   const handleSelectUser = async (user) => {
     setSelectedUser(user);
     try {
-      const response = await api.post("/profile-viewed", {
+      await api.post("/profile-viewed", {
         viewed_user_id: user.id,
       });
-      setIsViewed(response.data);
     } catch (error) {
       console.error(error, "error");
       throw error;
