@@ -171,16 +171,19 @@ const handleGoogleRegister = async (googleToken) => {
           </div>
         </div>
       )}
-      
+
       {isModalVisible && <div className="modal-overlay"></div>}
-      
+
       <div className="container-layout">
         <div className="ocean-section">
           <div className="ocean-animation"></div>
           <div className="ocean-overlay"></div>
           <div className="ocean-content">
             <h1>Create Account</h1>
-            <p>Join our secure platform and start protecting your digital assets today. Your security is our top priority.</p>
+            <p>
+              Join our secure platform and start protecting your digital assets
+              today. Your security is our top priority.
+            </p>
           </div>
         </div>
 
@@ -306,22 +309,24 @@ const handleGoogleRegister = async (googleToken) => {
               </div>
             </div>
 
-          <div className="register-btn-flex">
-             <button type="submit" className="registerButton">
-              Register
-            </button>
-<GoogleLogin
-  onSuccess={credentialResponse => {
-    // Directly use the credential (ID token) from Google
-    handleGoogleRegister(credentialResponse.credential);
-  }}
-  onError={(error) => {
-    console.error('Google Login Error:', error);
-  }}
-  useOneTap
-  flow="implicit"
-/>
-         </div>
+            <div className="register-btn-flex">
+              <button type="submit" className="registerButton">
+                Register
+              </button>
+              <div className="or-divider">OR</div>
+              <div className="register-with-google-button">
+                <GoogleLogin
+                  onSuccess={(credentialResponse) => {
+                    handleGoogleRegister(credentialResponse.credential);
+                  }}
+                  onError={(error) => {
+                    console.error("Google Login Error:", error);
+                  }}
+                  useOneTap
+                  flow="implicit"
+                />
+              </div>
+            </div>
           </form>
           <div className="textLink">
             <p>

@@ -29,8 +29,6 @@ const App = () => {
       window.location.href = "/login"; 
     }
   }, []); 
-  console.log("Google Client ID:", GOOGLE_CLIENT_ID);
-
 
   return (
     <div className="container">

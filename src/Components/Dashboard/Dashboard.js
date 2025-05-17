@@ -401,8 +401,8 @@ const Dashboard = () => {
               <div className="card-content">
                 <h2>Welcome Back</h2>
                 <div className="user-name">
-                  {myProfile
-                    ? `${myProfile?.name} ${myProfile?.lastname}`
+                  {user
+                    ? `${user?.name} ${user?.lastname}`
                     : "Loading..."}
                 </div>
                 <p className="welcome-message">
@@ -495,7 +495,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            {myProfile?.has_pro ? (
+            {user?.has_pro ? (
               <>
                 <div className="dashboard-card">
                   <div className="card-header">
